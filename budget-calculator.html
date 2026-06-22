@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget Calculator — Track Income, Expenses & Savings</title>
+<meta name="description" content="Create a personal budget by entering income and expenses across categories. Visual pie chart shows where your money goes.">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f13;
+    color: #e0e0e8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 1100px;
+    width: 100%;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 10px 0 8px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 28px;
+  }
+  .card {
+    background: #1a1a24;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid #2a2a3a;
+  }
+  .card h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #2a2a3a;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .field-group {
+    margin-bottom: 12px;
+  }
+  .field-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .input-wrap {
+    position: relative;
+  }
+  .input-wrap .prefix {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 0.95rem;
+    pointer-events: none;
+    font-weight: 500;
+  }
+  .input-wrap input {
+    width: 100%;
+    padding: 10px 12px 10px 28px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #13131d;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-wrap input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 2px rgba(108,99,255,0.15);
+  }
+  .input-wrap input::placeholder { color: #555; }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #2a2a3a;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { font-size: 1rem; color: #ccc; font-weight: 500; }
+  .summary-row .value { font-size: 1.2rem; font-weight: 700; color: #fff; }
+  .summary-row .value.positive { color: #4ade80; }
+  .summary-row .value.negative { color: #f87171; }
+  .total-label { font-size: 1rem; color: #999; font-weight: 500; }
+  .total-income { color: #4ade80; font-weight: 700; }
+  .total-expenses { color: #fb923c; font-weight: 700; }
+  .remaining { color: #fff; font-weight: 700; }
+  .grand-total { border-top: 2px solid #333; margin-top: 4px; padding-top: 14px; }
+  .grand-total .label { font-size: 1.1rem; font-weight: 700; color: #fff; }
+  .grand-total .value { font-size: 1.4rem; }
+  .bottom-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .chart-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .pie-chart {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+  }
+  .pie-legend { width: 100%; max-height: 200px; overflow-y: auto; padding-right: 4px; }
+  .pie-legend::-webkit-scrollbar { width: 4px; }
+  .pie-legend::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    padding: 4px 0;
+    color: #ccc;
+  }
+  .legend-item .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-item .pct { margin-left: auto; color: #999; font-size: 0.78rem; }
+  .breakdown-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
+  .breakdown-list::-webkit-scrollbar { width: 4px; }
+  .breakdown-list::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+  .breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid #222;
+    font-size: 0.85rem;
+  }
+  .breakdown-item:last-child { border-bottom: none; }
+  .breakdown-item .cat-name { color: #bbb; }
+  .breakdown-item .cat-bar-wrap {
+    flex: 1;
+    margin: 0 12px;
+    height: 6px;
+    background: #222;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .breakdown-item .cat-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+  .breakdown-item .cat-pct { color: #999; font-size: 0.8rem; min-width: 48px; text-align: right; }
+  .no-expenses-msg { text-align: center; color: #555; padding: 30px 0; font-size: 0.9rem; }
+  footer {
+    text-align: center;
+    padding: 20px 0 10px;
+    color: #555;
+    font-size: 0.8rem;
+    border-top: 1px solid #1e1e2a;
+    width: 100%;
+  }
+  @media (max-width: 768px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .bottom-section { grid-template-columns: 1fr; }
+    .container { padding: 0; }
+    .card { padding: 16px; }
+    .pie-chart { width: 150px; height: 150px; }
+    h1 { font-size: 1.4rem; }
+    .summary-row .value { font-size: 1rem; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Budget Calculator \u2014 Track Income, Expenses & Savings",
+  "description": "Create a personal budget by entering income and expenses across categories. Visual pie chart shows where your money goes.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>💰 Budget Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p class="subtitle">Track your income &amp; expenses, visualize your spending</p>
+
+  <!-- Income -->
+  <div class="card" id="income-card">
+    <h2>💵 Income</h2>
+    <div class="grid-2">
+      <div class="field-group">
+        <label>Salary</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="income-salary" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+      </div>
+      <div class="field-group">
+        <label>Freelance</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="income-freelance" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+      </div>
+      <div class="field-group">
+        <label>Investments</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="income-investments" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+      </div>
+      <div class="field-group">
+        <label>Other</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="income-other" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expenses -->
+  <div class="card" id="expense-card">
+    <h2>📊 Expenses</h2>
+    <div class="grid-2">
+      <!-- Housing -->
+      <div>
+        <div class="field-group">
+          <label>🏠 Rent / Mortgage</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-rent" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+        <div class="field-group">
+          <label>🔌 Utilities</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-utilities" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+      </div>
+      <!-- Transportation -->
+      <div>
+        <div class="field-group">
+          <label>🚗 Car Payment</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-car" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+        <div class="field-group">
+          <label>⛽ Gas</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-gas" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+        <div class="field-group">
+          <label>🛡️ Insurance</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-insurance" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+      </div>
+      <!-- Food -->
+      <div>
+        <div class="field-group">
+          <label>🛒 Groceries</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-groceries" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+        <div class="field-group">
+          <label>🍽️ Dining Out</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-dining" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+      </div>
+      <!-- Others -->
+      <div>
+        <div class="field-group">
+          <label>🏥 Healthcare</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-healthcare" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+        <div class="field-group">
+          <label>🎬 Entertainment</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-entertainment" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+        <div class="field-group">
+          <label>🏦 Savings</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-savings" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+        <div class="field-group">
+          <label>💳 Debt</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-debt" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+        <div class="field-group">
+          <label>📦 Other</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="exp-other" min="0" step="0.01" placeholder="0.00" oninput="calc()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="card" id="summary-card">
+    <h2>📈 Summary</h2>
+    <div class="summary-row">
+      <span class="label">💰 Total Income</span>
+      <span class="value total-income" id="total-income">$0.00</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">📉 Total Expenses</span>
+      <span class="value total-expenses" id="total-expenses">$0.00</span>
+    </div>
+    <div class="summary-row grand-total">
+      <span class="label">📋 Remaining</span>
+      <span class="value remaining" id="remaining">$0.00</span>
+    </div>
+  </div>
+
+  <!-- Pie Chart + Breakdown -->
+  <div class="bottom-section">
+    <div class="card" id="chart-card">
+      <h2>🧩 Spending Breakdown</h2>
+      <div class="chart-container">
+        <div class="pie-chart" id="pie-chart" style="background: conic-gradient(#333 0deg 360deg);"></div>
+        <div class="pie-legend" id="pie-legend"></div>
+      </div>
+    </div>
+    <div class="card" id="breakdown-card">
+      <h2>📋 Expense Details</h2>
+      <div id="breakdown-list" class="breakdown-list">
+        <div class="no-expenses-msg">Enter expenses above to see breakdown</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Budget Calculator &mdash; Built with HTML, CSS &amp; JavaScript &bull; All calculations done client-side
+</footer>
+
+<script>
+function $(id) { return document.getElementById(id); }
+
+const COLORS = [
+  '#6c63ff', '#f59e0b', '#ef4444', '#10b981', '#3b82f6',
+  '#ec4899', '#8b5cf6', '#14b8a6', '#f97316', '#06b6d4',
+  '#84cc16', '#d946ef', '#0ea5e9', '#a855f7'
+];
+
+const EXPENSE_CATEGORIES = [
+  { id: 'exp-rent',        label: 'Rent / Mortgage', group: 'Housing' },
+  { id: 'exp-utilities',   label: 'Utilities',       group: 'Housing' },
+  { id: 'exp-car',         label: 'Car Payment',     group: 'Transportation' },
+  { id: 'exp-gas',         label: 'Gas',             group: 'Transportation' },
+  { id: 'exp-insurance',   label: 'Insurance',       group: 'Transportation' },
+  { id: 'exp-groceries',   label: 'Groceries',       group: 'Food' },
+  { id: 'exp-dining',      label: 'Dining Out',      group: 'Food' },
+  { id: 'exp-healthcare',  label: 'Healthcare',      group: 'Healthcare' },
+  { id: 'exp-entertainment', label: 'Entertainment', group: 'Entertainment' },
+  { id: 'exp-savings',     label: 'Savings',         group: 'Savings' },
+  { id: 'exp-debt',        label: 'Debt',            group: 'Debt' },
+  { id: 'exp-other',       label: 'Other',           group: 'Other' }
+];
+
+function getVal(id) {
+  const v = parseFloat($(id).value);
+  return isNaN(v) ? 0 : v;
+}
+
+function fmt(n) {
+  return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function calc() {
+  // Income totals
+  const salary      = getVal('income-salary');
+  const freelance   = getVal('income-freelance');
+  const investments = getVal('income-investments');
+  const otherInc    = getVal('income-other');
+  const totalIncome = salary + freelance + investments + otherInc;
+
+  // Expense totals
+  const expenses = EXPENSE_CATEGORIES.map(c => ({ ...c, val: getVal(c.id) }));
+  const totalExpenses = expenses.reduce((s, e) => s + e.val, 0);
+  const remaining = totalIncome - totalExpenses;
+
+  // Display totals
+  $('total-income').textContent = fmt(totalIncome);
+  $('total-expenses').textContent = fmt(totalExpenses);
+  const remEl = $('remaining');
+  remEl.textContent = fmt(Math.abs(remaining));
+  remEl.className = 'value remaining ' + (remaining >= 0 ? 'positive' : 'negative');
+  if (remaining >= 0) {
+    remEl.textContent = fmt(remaining);
+  } else {
+    remEl.textContent = '- ' + fmt(Math.abs(remaining));
+  }
+
+  // Pie chart
+  renderPie(expenses, totalExpenses);
+  renderBreakdown(expenses, totalIncome);
+}
+
+function renderPie(expenses, totalExpenses) {
+  const pie = $('pie-chart');
+  const legend = $('pie-legend');
+  legend.innerHTML = '';
+
+  if (totalExpenses === 0) {
+    pie.style.background = 'conic-gradient(#2a2a3a 0deg 360deg)';
+    legend.innerHTML = '<div class="legend-item"><span class="dot" style="background:#2a2a3a"></span>No expenses</div>';
+    return;
+  }
+
+  const nonZero = expenses.filter(e => e.val > 0);
+  let conicParts = [];
+  let cumulative = 0;
+  const colorMap = [];
+
+  nonZero.forEach((e, i) => {
+    const pct = e.val / totalExpenses;
+    const startDeg = cumulative * 360;
+    const endDeg = (cumulative + pct) * 360;
+    const color = COLORS[i % COLORS.length];
+    conicParts.push(color + ' ' + startDeg + 'deg ' + endDeg + 'deg');
+    colorMap.push({ label: e.label, pct: pct, color: color, val: e.val });
+    cumulative += pct;
+  });
+
+  pie.style.background = 'conic-gradient(' + conicParts.join(', ') + ')';
+
+  colorMap.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'legend-item';
+    div.innerHTML = '<span class="dot" style="background:' + item.color + '"></span>'
+      + item.label + ' <span class="pct">' + (item.pct * 100).toFixed(1) + '%</span>';
+    legend.appendChild(div);
+  });
+}
+
+function renderBreakdown(expenses, totalIncome) {
+  const container = $('breakdown-list');
+  container.innerHTML = '';
+
+  const nonZero = expenses.filter(e => e.val > 0);
+  if (nonZero.length === 0) {
+    container.innerHTML = '<div class="no-expenses-msg">Enter expenses above to see breakdown</div>';
+    return;
+  }
+
+  nonZero.forEach((e, i) => {
+    const pctOfIncome = totalIncome > 0 ? (e.val / totalIncome) * 100 : 0;
+    const color = COLORS[i % COLORS.length];
+    const div = document.createElement('div');
+    div.className = 'breakdown-item';
+    div.innerHTML = '<span class="cat-name">' + e.label + '</span>'
+      + '<div class="cat-bar-wrap"><div class="cat-bar" style="width:' + Math.min(pctOfIncome, 100) + '%;background:' + color + '"></div></div>'
+      + '<span class="cat-pct">' + pctOfIncome.toFixed(1) + '%</span>';
+    container.appendChild(div);
+  });
+}
+
+calc();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/salary-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Salary Calculator — Hourly to Annual Wage Converter</a>
+      <a href="/gpa-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GPA Calculator — Calculate Your Grade Point Average</a>
+      <a href="/grade-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Final Grade Calculator — What You Need on Your Final Exam</a>
+      <a href="/investment-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Investment Calculator — Project Investment Growth Over Time</a>
+      <a href="/savings-goal-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Savings Goal Calculator — Time to Reach Your Savings Target</a>
+      <a href="/mortgage-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Mortgage Calculator — Monthly Payment with Amortization</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

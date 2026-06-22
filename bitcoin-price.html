@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitcoin Price — Live BTC, ETH & SOL Prices</title>
+<meta name="description" content="Live cryptocurrency prices for Bitcoin, Ethereum, and Solana. Shows 24h change, high/low, and auto-refresh every 60 seconds.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:640px;width:100%;margin:0 auto;padding:20px 0;flex:1;display:flex;flex-direction:column}
+h1{text-align:center;font-size:1.8rem;margin-bottom:8px;color:#f7931a}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:32px;font-size:0.95rem}
+.btn{background:#238636;color:#fff;border:none;border-radius:8px;padding:12px 24px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn:active{transform:scale(.97)}
+.refresh-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+.auto-badge{font-size:.8rem;color:#8b949e;background:#21262d;padding:6px 12px;border-radius:20px}
+.coin-grid{display:flex;flex-direction:column;gap:16px}
+.coin-card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px}
+.coin-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.coin-icon{font-size:2rem;width:40px;text-align:center}
+.coin-name{font-size:1.1rem;font-weight:600;color:#f0f6fc}
+.coin-symbol{color:#8b949e;font-size:.85rem}
+.coin-price{font-size:2rem;font-weight:700;color:#f0f6fc;margin-bottom:8px}
+.coin-price.usd::before{content:'$';font-size:1.5rem}
+.change{font-size:.95rem;font-weight:600;padding:4px 10px;border-radius:6px;display:inline-block}
+.change.positive{color:#3fb950;background:#0d2818}
+.change.negative{color:#f85149;background:#2d1215}
+.hilo{display:flex;gap:24px;margin-top:12px;font-size:.9rem}
+.hilo-item{text-align:center}
+.hilo-label{color:#8b949e;font-size:.8rem;margin-bottom:2px}
+.hilo-value{font-weight:600;color:#f0f6fc}
+.spinner{display:none;width:36px;height:36px;border:4px solid #30363d;border-top-color:#f7931a;border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
+.spinner.active{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{display:none;color:#f85149;background:#2d1215;border:1px solid #5c1a1e;border-radius:8px;padding:16px;margin-bottom:16px;text-align:center}
+.error-msg.active{display:block}
+.last-updated{text-align:center;font-size:.8rem;color:#8b949e;margin-top:20px}
+.footer{text-align:center;padding:20px;color:#8b949e;font-size:.85rem;border-top:1px solid #21262d;margin-top:40px}
+.footer a{color:#58a6ff;text-decoration:none}
+@media(max-width:480px){h1{font-size:1.4rem}.coin-price{font-size:1.6rem}.coin-card{padding:16px}.refresh-bar{flex-direction:column;align-items:stretch;text-align:center}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Bitcoin Price \u2014 Live BTC, ETH & SOL Prices",
+  "description": "Live cryptocurrency prices for Bitcoin, Ethereum, and Solana. Shows 24h change, high/low, and auto-refresh every 60 seconds.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>&#128176; Crypto Prices</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Live BTC, ETH &amp; SOL prices from CoinGecko</p>
+
+<div class="refresh-bar">
+  <button class="btn" id="refreshBtn" onclick="fetchPrices()">&#128260; Refresh Now</button>
+  <span class="auto-badge" id="autoBadge">Auto-refresh in 60s</span>
+</div>
+
+<div class="spinner" id="spinner"></div>
+<div class="error-msg" id="errorMsg"></div>
+
+<div class="coin-grid" id="coinGrid" style="display:none">
+  <div class="coin-card" id="btcCard">
+    <div class="coin-header">
+      <span class="coin-icon">&#127937;</span>
+      <div>
+        <div class="coin-name">Bitcoin <span class="coin-symbol">BTC</span></div>
+      </div>
+    </div>
+    <div class="coin-price usd" id="btcPrice">--</div>
+    <div>
+      <span class="change" id="btcChange">--</span>
+    </div>
+    <div class="hilo">
+      <div class="hilo-item">
+        <div class="hilo-label">24h High</div>
+        <div class="hilo-value" id="btcHigh">--</div>
+      </div>
+      <div class="hilo-item">
+        <div class="hilo-label">24h Low</div>
+        <div class="hilo-value" id="btcLow">--</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="coin-card" id="ethCard">
+    <div class="coin-header">
+      <span class="coin-icon">&#9830;</span>
+      <div>
+        <div class="coin-name">Ethereum <span class="coin-symbol">ETH</span></div>
+      </div>
+    </div>
+    <div class="coin-price usd" id="ethPrice">--</div>
+    <div>
+      <span class="change" id="ethChange">--</span>
+    </div>
+    <div class="hilo">
+      <div class="hilo-item">
+        <div class="hilo-label">24h High</div>
+        <div class="hilo-value" id="ethHigh">--</div>
+      </div>
+      <div class="hilo-item">
+        <div class="hilo-label">24h Low</div>
+        <div class="hilo-value" id="ethLow">--</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="coin-card" id="solCard">
+    <div class="coin-header">
+      <span class="coin-icon">&#9889;</span>
+      <div>
+        <div class="coin-name">Solana <span class="coin-symbol">SOL</span></div>
+      </div>
+    </div>
+    <div class="coin-price usd" id="solPrice">--</div>
+    <div>
+      <span class="change" id="solChange">--</span>
+    </div>
+    <div class="hilo">
+      <div class="hilo-item">
+        <div class="hilo-label">24h High</div>
+        <div class="hilo-value" id="solHigh">--</div>
+      </div>
+      <div class="hilo-item">
+        <div class="hilo-label">24h Low</div>
+        <div class="hilo-value" id="solLow">--</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="last-updated" id="lastUpdated"></div>
+</div>
+
+<div class="footer">
+  Powered by <a href="https://www.coingecko.com/en/api" target="_blank">CoinGecko API</a> &mdash; Free API Site
+</div>
+
+<script>
+let autoRefreshTimer = null;
+let countdownTimer = null;
+let secondsLeft = 60;
+
+async function fetchPrices() {
+  const spinner = document.getElementById('spinner');
+  const errorMsg = document.getElementById('errorMsg');
+  const coinGrid = document.getElementById('coinGrid');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  refreshBtn.disabled = true;
+  spinner.classList.add('active');
+  errorMsg.classList.remove('active');
+
+  try {
+    const resp = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_24hr_high=true&include_24hr_low=true'
+    );
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const data = await resp.json();
+
+    // BTC
+    if (data.bitcoin) {
+      document.getElementById('btcPrice').textContent = data.bitcoin.usd?.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2}) || '--';
+      updateChange('btcChange', data.bitcoin.usd_24h_change);
+      document.getElementById('btcHigh').textContent = data.bitcoin.usd_24h_high ? '$'+data.bitcoin.usd_24h_high.toLocaleString('en-US', {minimumFractionDigits:2}) : '--';
+      document.getElementById('btcLow').textContent = data.bitcoin.usd_24h_low ? '$'+data.bitcoin.usd_24h_low.toLocaleString('en-US', {minimumFractionDigits:2}) : '--';
+    }
+
+    // ETH
+    if (data.ethereum) {
+      document.getElementById('ethPrice').textContent = data.ethereum.usd?.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2}) || '--';
+      updateChange('ethChange', data.ethereum.usd_24h_change);
+      document.getElementById('ethHigh').textContent = data.ethereum.usd_24h_high ? '$'+data.ethereum.usd_24h_high.toLocaleString('en-US', {minimumFractionDigits:2}) : '--';
+      document.getElementById('ethLow').textContent = data.ethereum.usd_24h_low ? '$'+data.ethereum.usd_24h_low.toLocaleString('en-US', {minimumFractionDigits:2}) : '--';
+    }
+
+    // SOL
+    if (data.solana) {
+      document.getElementById('solPrice').textContent = data.solana.usd?.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2}) || '--';
+      updateChange('solChange', data.solana.usd_24h_change);
+      document.getElementById('solHigh').textContent = data.solana.usd_24h_high ? '$'+data.solana.usd_24h_high.toLocaleString('en-US', {minimumFractionDigits:2}) : '--';
+      document.getElementById('solLow').textContent = data.solana.usd_24h_low ? '$'+data.solana.usd_24h_low.toLocaleString('en-US', {minimumFractionDigits:2}) : '--';
+    }
+
+    const now = new Date();
+    document.getElementById('lastUpdated').textContent = `Last updated: ${now.toLocaleString()}`;
+
+    coinGrid.style.display = 'flex';
+    resetAutoRefresh();
+  } catch (err) {
+    if (err.message.includes('429')) {
+      errorMsg.textContent = 'API rate limit hit. Try again in a minute.';
+    } else {
+      errorMsg.textContent = 'Failed to fetch prices. Check your connection.';
+    }
+    errorMsg.classList.add('active');
+  } finally {
+    spinner.classList.remove('active');
+    refreshBtn.disabled = false;
+  }
+}
+
+function updateChange(elId, val) {
+  const el = document.getElementById(elId);
+  if (val == null) { el.textContent = '--'; return; }
+  const sign = val >= 0 ? '+' : '';
+  const cls = val >= 0 ? 'positive' : 'negative';
+  el.textContent = `${sign}${val.toFixed(2)}%`;
+  el.className = `change ${cls}`;
+}
+
+function resetAutoRefresh() {
+  if (autoRefreshTimer) clearTimeout(autoRefreshTimer);
+  if (countdownTimer) clearInterval(countdownTimer);
+  secondsLeft = 60;
+  document.getElementById('autoBadge').textContent = 'Auto-refresh in 60s';
+  countdownTimer = setInterval(() => {
+    secondsLeft--;
+    document.getElementById('autoBadge').textContent = `Auto-refresh in ${secondsLeft}s`;
+    if (secondsLeft <= 0) {
+      clearInterval(countdownTimer);
+    }
+  }, 1000);
+  autoRefreshTimer = setTimeout(() => {
+    fetchPrices();
+  }, 60000);
+}
+
+document.addEventListener('DOMContentLoaded', fetchPrices);
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+      <a href="/github-profile" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GitHub Profile Viewer — Look Up Any GitHub User</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

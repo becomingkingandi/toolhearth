@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pregnancy Due Date Calculator — LMP & Conception Date</title>
+<meta name="description" content="Calculate your estimated due date based on last menstrual period or conception date. Shows gestational age, trimester, and milestone timeline.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:520px;width:100%;background:#1a1a2e;border-radius:16px;padding:24px;margin-top:20px}
+h1{font-size:22px;text-align:center;color:#ffffff;margin-bottom:8px}
+.subtitle{text-align:center;color:#888;font-size:14px;margin-bottom:20px}
+.input-group{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;color:#aaa;margin-bottom:4px}
+.radio-group{display:flex;gap:12px;margin-bottom:16px}
+.radio-group label{display:flex;align-items:center;gap:6px;font-size:14px;color:#ccc;cursor:pointer}
+.radio-group input{cursor:pointer}
+input[type="date"]{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#16162b;color:#e0e0e0;font-size:15px;outline:none}
+input[type="date"]:focus{border-color:#7c5cfc}
+button{width:100%;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#7c5cfc,#5c3cfc);color:#fff;margin-top:8px;transition:opacity .2s}
+button:hover{opacity:.9}
+.results{display:none;margin-top:20px;background:#16162b;border-radius:12px;padding:20px}
+.results.show{display:block}
+.result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#888;font-size:14px}
+.result-value{color:#fff;font-size:14px;font-weight:600;text-align:right}
+.timeline{margin-top:20px;padding:16px;background:#16162b;border-radius:12px}
+.timeline h3{font-size:14px;color:#aaa;margin-bottom:12px}
+.timeline-item{display:flex;align-items:center;gap:12px;padding:6px 0;font-size:13px}
+.timeline-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.timeline-dot.past{background:#7c5cfc}
+.timeline-dot.future{background:#333}
+.timeline-week{color:#888;width:40px;flex-shrink:0}
+.timeline-label{color:#ccc}
+.timeline-label.past{color:#7c5cfc;font-weight:600}
+.error{color:#ff6b6b;font-size:13px;margin-top:6px;display:none}
+@media(max-width:480px){.container{padding:16px}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Pregnancy Due Date Calculator \u2014 LMP & Conception Date",
+  "description": "Calculate your estimated due date based on last menstrual period or conception date. Shows gestational age, trimester, and milestone timeline.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>📅 Due Date Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Estimate your due date and track pregnancy milestones</p>
+
+<div class="radio-group">
+<label><input type="radio" name="mode" value="lmp" checked> Last Menstrual Period</label>
+<label><input type="radio" name="mode" value="conception"> Conception Date</label>
+</div>
+
+<div class="input-group">
+<label id="dateLabel" for="dateInput">First day of last menstrual period</label>
+<input type="date" id="dateInput">
+</div>
+
+<div class="error" id="errorMsg">Please select a valid date.</div>
+
+<button onclick="calculate()">Calculate</button>
+
+<div class="results" id="results">
+<div class="result-row"><span class="result-label">Estimated Due Date</span><span class="result-value" id="dueDate">—</span></div>
+<div class="result-row"><span class="result-label">Gestational Age</span><span class="result-value" id="gestationalAge">—</span></div>
+<div class="result-row"><span class="result-label">Trimester</span><span class="result-value" id="trimester">—</span></div>
+<div class="result-row"><span class="result-label">Conception Date</span><span class="result-value" id="conceptionDate">—</span></div>
+
+<div class="timeline">
+<h3>📋 Milestone Timeline</h3>
+<div id="timelineItems"></div>
+</div>
+</div>
+</div>
+
+<script>
+function calculate() {
+const mode = document.querySelector('input[name="mode"]:checked').value;
+const dateInput = document.getElementById('dateInput');
+const errorEl = document.getElementById('errorMsg');
+errorEl.style.display = 'none';
+
+if (!dateInput.value) {
+errorEl.textContent = 'Please select a valid date.';
+errorEl.style.display = 'block';
+return;
+}
+
+const selected = new Date(dateInput.value + 'T12:00:00');
+if (isNaN(selected.getTime())) {
+errorEl.style.display = 'block';
+return;
+}
+
+let lmp, conception, dueDate;
+
+if (mode === 'lmp') {
+lmp = new Date(selected);
+conception = addDays(lmp, 14);
+dueDate = addDays(lmp, 280);
+} else {
+conception = new Date(selected);
+lmp = addDays(conception, -14);
+dueDate = addDays(conception, 266);
+}
+
+const today = new Date();
+today.setHours(12,0,0,0);
+
+const daysPregnant = Math.floor((today - lmp) / (1000*60*60*24));
+let weeks = Math.floor(daysPregnant / 7);
+let days = daysPregnant % 7;
+if (weeks < 0) { weeks = 0; days = 0; }
+if (weeks > 42) { weeks = 42; days = 0; }
+
+const daysLeft = Math.max(0, Math.floor((dueDate - today) / (1000*60*60*24)));
+
+let trimester = '';
+if (weeks < 13) trimester = 'First Trimester (Weeks 1–12)';
+else if (weeks < 28) trimester = 'Second Trimester (Weeks 13–27)';
+else trimester = 'Third Trimester (Weeks 28–40)';
+
+document.getElementById('dueDate').textContent = formatDate(dueDate);
+document.getElementById('gestationalAge').textContent = weeks + ' weeks, ' + days + ' days' + (daysPregnant >= 0 ? ' (days pregnant: ' + daysPregnant + ')' : ' (not yet pregnant)');
+document.getElementById('trimester').textContent = daysPregnant < 0 ? 'Not yet pregnant' : trimester;
+document.getElementById('conceptionDate').textContent = formatDate(conception);
+
+const milestones = [
+{ week: 12, label: 'End of First Trimester', desc: 'First trimester screening done' },
+{ week: 20, label: 'Anatomy Scan', desc: 'Mid-pregnancy ultrasound' },
+{ week: 28, label: 'Third Trimester Begins', desc: 'Glucose screening, count kicks' },
+{ week: 40, label: 'Due Date', desc: 'Full term — baby arrives!' }
+];
+
+const timelineHtml = milestones.map(m => {
+const mDate = addDays(lmp, m.week * 7);
+const isPast = mDate <= today;
+return `<div class="timeline-item">
+<div class="timeline-dot ${isPast ? 'past' : 'future'}"></div>
+<div class="timeline-week">${isPast ? '✅' : '○'} Week ${m.week}</div>
+<div><div class="timeline-label ${isPast ? 'past' : ''}">${m.label}</div><div style="color:#666;font-size:12px">${m.desc} — ${formatDate(mDate)}</div></div>
+</div>`;
+}).join('');
+
+document.getElementById('timelineItems').innerHTML = timelineHtml;
+document.getElementById('results').classList.add('show');
+}
+
+function addDays(date, days) {
+const r = new Date(date);
+r.setDate(r.getDate() + days);
+return r;
+}
+
+function formatDate(date) {
+const d = new Date(date);
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+document.querySelectorAll('input[name="mode"]').forEach(r => {
+r.addEventListener('change', function() {
+const label = document.getElementById('dateLabel');
+label.textContent = this.value === 'lmp' ? 'First day of last menstrual period' : 'Date of conception';
+document.getElementById('results').classList.remove('show');
+});
+});
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+      <a href="/ovulation-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Ovulation Calculator — Fertility Window & Ovulation Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

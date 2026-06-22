@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base64 Encoder & Decoder — Encode Text to Base64 Online</title>
+<meta name="description" content="Encode text to Base64 or decode Base64 back to text. Free online Base64 converter with copy and swap functionality.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--radius:8px}
+  body{font-family:ui-monospace,'SF Mono','Cascadia Code','Fira Code',monospace;background:var(--bg);color:var(--text);padding:1.5rem;min-height:100vh}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+  .top h1{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:1.3rem;font-weight:600}
+  .top a{color:var(--muted);text-decoration:none;font-size:.85rem}
+  .top a:hover{color:var(--accent)}
+  .actions{display:flex;gap:.5rem;flex-wrap:wrap}
+  .actions button{padding:.45rem 1rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.82rem;cursor:pointer;font-family:inherit}
+  .actions button:hover{background:#1c2333;border-color:var(--accent)}
+  .actions button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .actions input[type=file]{font-size:.82rem;color:var(--muted)}
+  .actions input[type=file]::file-selector-button{padding:.45rem 1rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.82rem;cursor:pointer;font-family:inherit}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:1rem;height:calc(100vh - 150px)}
+  @media(max-width:800px){.panels{grid-template-columns:1fr;height:auto;min-height:50vh}}
+  .panel{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .panel-head{padding:.5rem .8rem;background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  .panel-head .mode-badge{font-size:.7rem;padding:2px 8px;border-radius:999px;background:rgba(88,166,255,.15);color:var(--accent)}
+  textarea{flex:1;background:var(--bg);color:var(--text);border:none;outline:none;padding:.8rem;font-family:inherit;font-size:.85rem;line-height:1.55;resize:none}
+  textarea::placeholder{color:#484f58}
+  #output{flex:1;padding:.8rem;overflow:auto;font-size:.85rem;line-height:1.55;white-space:pre-wrap;word-break:break-all}
+  .err-msg{color:var(--red);padding:.8rem;font-size:.85rem}
+  .copy-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.78rem;padding:2px 6px;border-radius:4px}
+  .copy-btn:hover{color:var(--accent);background:rgba(88,166,255,.1)}
+  .info{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.5rem;padding:.4rem .8rem;background:var(--surface);border-radius:var(--radius);font-size:.78rem;color:var(--muted)}
+  .info span{display:flex;align-items:center;gap:.3rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Base64 Encoder & Decoder \u2014 Encode Text to Base64 Online",
+  "description": "Encode text to Base64 or decode Base64 back to text. Free online Base64 converter with copy and swap functionality.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="top">
+  <h1><a href="index.html" style="color:var(--muted);text-decoration:none">←</a> 🔐 Base64 Encoder / Decoder</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="actions">
+    <button id="encBtn" class="active" onclick="setMode('encode')">Encode</button>
+    <button id="decBtn" onclick="setMode('decode')">Decode</button>
+    <button onclick="process()">Run</button>
+    <button onclick="clearAll()">Clear</button>
+    <button onclick="swap()">⇅ Swap</button>
+    <input type="file" onchange="loadFile(event)">
+    <button onclick="copyOutput()" class="copy-btn">📋 Copy</button>
+  </div>
+</div>
+<div class="panels">
+  <div class="panel">
+    <div class="panel-head">
+      <span id="inputLabel">Text to Encode</span>
+      <span id="inputCount" class="count" style="color:var(--muted)">0 bytes</span>
+    </div>
+    <textarea id="input" placeholder="Type or paste text here…" spellcheck="false"></textarea>
+  </div>
+  <div class="panel">
+    <div class="panel-head">
+      <span>Output</span>
+      <span id="outputInfo" class="mode-badge">Base64</span>
+    </div>
+    <div id="output">🔽 Type something and click <strong>Run</strong></div>
+  </div>
+</div>
+<div class="info">
+  <span id="dirInfo">📥 Encoding</span>
+  <span id="sizeInfo">📦 Input: 0 B</span>
+  <span id="ratio">⚖️ Ratio: —</span>
+</div>
+
+<script>
+const input = document.getElementById('input');
+const output = document.getElementById('output');
+const inputLabel = document.getElementById('inputLabel');
+const inputCount = document.getElementById('inputCount');
+const outputInfo = document.getElementById('outputInfo');
+const dirInfo = document.getElementById('dirInfo');
+const sizeInfo = document.getElementById('sizeInfo');
+const ratio = document.getElementById('ratio');
+const encBtn = document.getElementById('encBtn');
+const decBtn = document.getElementById('decBtn');
+
+let mode = 'encode';
+
+function setMode(m) {
+  mode = m;
+  encBtn.className = m === 'encode' ? 'active' : '';
+  decBtn.className = m === 'decode' ? 'active' : '';
+  inputLabel.textContent = m === 'encode' ? 'Text to Encode' : 'Base64 to Decode';
+  input.placeholder = m === 'encode' ? 'Type or paste text here…' : 'Paste Base64 string here…';
+  outputInfo.textContent = m === 'encode' ? 'Base64 output' : 'Decoded text';
+  dirInfo.textContent = m === 'encode' ? '📥 Encoding' : '📤 Decoding';
+  process();
+}
+
+function process() {
+  const raw = input.value;
+  if (!raw) { output.textContent = mode === 'encode' ? '🔽 Type something and click Run' : '🔽 Paste Base64 and click Run'; updateStats(raw); return; }
+  try {
+    if (mode === 'encode') {
+      const encoded = btoa(unescape(encodeURIComponent(raw)));
+      output.textContent = encoded;
+      output.className = '';
+    } else {
+      // Validate Base64
+      if (!/^[A-Za-z0-9+/]*={0,2}$/.test(raw.replace(/\s/g,''))) throw new Error('Invalid Base64 characters');
+      const bytes = Uint8Array.from(atob(raw.replace(/\s/g,'')), c => c.charCodeAt(0));
+      const decoded = new TextDecoder().decode(bytes);
+      output.textContent = decoded;
+      output.className = '';
+    }
+  } catch(e) {
+    output.innerHTML = `<div class="err-msg">❌ ${escapeHtml(e.message)}</div>`;
+    output.className = '';
+  }
+  updateStats(raw);
+}
+
+function updateStats(raw) {
+  const bytes = new TextEncoder().encode(raw).length;
+  inputCount.textContent = `${bytes} bytes`;
+  sizeInfo.innerHTML = `📦 Input: ${bytes >= 1024 ? (bytes/1024).toFixed(1)+' KB' : bytes+' B'}`;
+  const outText = output.textContent;
+  const outBytes = new TextEncoder().encode(outText).length;
+  if (bytes > 0 && outBytes > 0) {
+    const r = mode === 'encode' ? ((outBytes/bytes)*100).toFixed(1) : ((bytes/outBytes)*100).toFixed(1);
+    ratio.textContent = `⚖️ Ratio: ${r}% (${mode==='encode'?'+'+((outBytes/bytes-1)*100).toFixed(1)+'% overhead':'compressed'})`;
+  } else { ratio.textContent = '⚖️ Ratio: —'; }
+}
+
+function clearAll() { input.value=''; output.textContent=mode==='encode'?'🔽 Type something and click Run':'🔽 Paste Base64 and click Run'; updateStats(''); }
+function swap() { setMode(mode === 'encode' ? 'decode' : 'encode'); process(); }
+function copyOutput() { navigator.clipboard.writeText(output.textContent).catch(()=>{}); }
+
+function loadFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (mode === 'encode') {
+    const reader = new FileReader();
+    reader.onload = ev => { input.value = ev.target.result; process(); };
+    reader.readAsText(file);
+  } else {
+    const reader = new FileReader();
+    reader.onload = ev => { input.value = ev.target.result; process(); };
+    reader.readAsText(file);
+  }
+  e.target.value = '';
+}
+
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+input.addEventListener('input', process);
+document.addEventListener('keydown', e => { if ((e.metaKey||e.ctrlKey) && e.key==='Enter') process(); });
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+      <a href="/diff-checker" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Diff Checker — Compare Text Differences Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

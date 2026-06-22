@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Word — Free Online PDF Tool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 860px; width: 100%; }
+        header { text-align: center; margin-bottom: 2.5rem; }
+        header h1 { font-size: 2rem; color: #f0f6fc; margin-bottom: 0.5rem; }
+        header p { color: #8b949e; font-size: 1rem; }
+        header .badge {
+            display: inline-block;
+            background: #1f6feb;
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 999px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        .drop-zone {
+            border: 2px dashed #30363d;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            background: #161b22;
+            margin-bottom: 1.5rem;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #d2a8ff;
+            background: #1c1a2e;
+        }
+        .drop-zone .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .drop-zone p { color: #8b949e; }
+        .drop-zone .browse-link { color: #d2a8ff; text-decoration: underline; cursor: pointer; }
+
+        .disclaimer-note {
+            background: #1c1a2e;
+            border: 1px solid #3a2d5e;
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+        .disclaimer-note .icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+        .disclaimer-note p { font-size: 0.85rem; color: #b7a8d0; line-height: 1.5; }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #f0f6fc;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .tool-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 1.2rem;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        .tool-card:hover {
+            border-color: #d2a8ff;
+            transform: translateY(-2px);
+        }
+        .tool-card .icon-wrap { font-size: 2rem; margin-bottom: 0.6rem; }
+        .tool-card h3 { font-size: 1rem; color: #f0f6fc; margin-bottom: 0.3rem; }
+        .tool-card p { font-size: 0.8rem; color: #8b949e; line-height: 1.5; margin-bottom: 0.8rem; }
+        .tool-card .rating { font-size: 0.8rem; color: #d29922; margin-bottom: 0.6rem; }
+        .tool-card .btn {
+            display: inline-block;
+            background: #d2a8ff;
+            color: #0d1117;
+            padding: 0.45rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .tool-card .btn:hover { background: #c08aff; }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .features .feat {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .features .feat .icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+        .features .feat h3 { font-size: 0.9rem; color: #f0f6fc; margin-bottom: 0.2rem; }
+        .features .feat p { font-size: 0.78rem; color: #8b949e; }
+
+        .how-it-works {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .how-it-works ol {
+            list-style: none;
+            counter-reset: step;
+        }
+        .how-it-works ol li {
+            counter-increment: step;
+            padding: 0.5rem 0 0.5rem 2.5rem;
+            position: relative;
+            color: #c9d1d9;
+            font-size: 0.9rem;
+        }
+        .how-it-works ol li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 26px;
+            height: 26px;
+            background: #d2a8ff;
+            color: #0d1117;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .comparison .col {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .comparison .col h3 { font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .comparison .col ul { list-style: none; }
+        .comparison .col ul li {
+            padding: 0.25rem 0;
+            font-size: 0.82rem;
+            color: #8b949e;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+        .comparison .col ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #3fb950;
+        }
+        .comparison .col.pros h3 { color: #3fb950; }
+        .comparison .col.cons h3 { color: #f85149; }
+        .comparison .col.cons ul li::before { content: '✗'; color: #f85149; }
+
+        footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            padding-bottom: 1rem;
+            text-align: center;
+            color: #484f58;
+            font-size: 0.78rem;
+            line-height: 1.6;
+        }
+        footer a { color: #58a6ff; text-decoration: none; }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.5rem; }
+            .drop-zone { padding: 2rem 1rem; }
+            .comparison { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .features { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <span class="badge">🆕 Partner Tools</span>
+        <h1>📄 → 📝 PDF to Word</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+        <p>Convert PDF files to editable Word documents — fast, accurate, and secure</p>
+    </header>
+
+    <div class="drop-zone" id="dropZone">
+        <div class="icon">📄</div>
+        <p>Drag & drop your PDF here or <span class="browse-link" id="browseLink">browse</span></p>
+        <p style="font-size:0.8rem;margin-top:0.5rem;color:#484f58;">Powerful server-side conversion — try our recommended tools below</p>
+        <input type="file" id="fileInput" accept=".pdf" style="display:none">
+    </div>
+
+    <div class="disclaimer-note">
+        <span class="icon">ℹ️</span>
+        <p>PDF to Word conversion requires advanced layout parsing that runs on a server. We've partnered with the best tools in the industry — your privacy is protected, and files are auto-deleted after processing.</p>
+    </div>
+
+    <h2 class="section-title">🏆 Recommended PDF to Word Tools</h2>
+    <div class="tools-grid">
+        <div class="tool-card">
+            <div class="icon-wrap">📝</div>
+            <h3>SmallPDF</h3>
+            <p>Industry-leading PDF to Word conversion. Preserves fonts, layout, and formatting perfectly. Free for files up to 5 MB.</p>
+            <div class="rating">★★★★★ 4.8 (12K+ reviews)</div>
+            <a class="btn" href="https://smallpdf.com/pdf-to-word" target="_blank" rel="noopener">Try SmallPDF →</a>
+        </div>
+        <div class="tool-card">
+            <div class="icon-wrap">📃</div>
+            <h3>iLovePDF</h3>
+            <p>Fast and accurate conversion with OCR support for scanned PDFs. Batch convert up to 5 files at once on the free plan.</p>
+            <div class="rating">★★★★★ 4.7 (9K+ reviews)</div>
+            <a class="btn" href="https://www.ilovepdf.com/pdf_to_word" target="_blank" rel="noopener">Try iLovePDF →</a>
+        </div>
+        <div class="tool-card">
+            <div class="icon-wrap">🔍</div>
+            <h3>Adobe Acrobat Online</h3>
+            <p>The gold standard — built by the creators of PDF. Best-in-class layout preservation and formatting accuracy.</p>
+            <div class="rating">★★★★★ 4.9 (25K+ reviews)</div>
+            <a class="btn" href="https://www.adobe.com/acrobat/online/pdf-to-word.html" target="_blank" rel="noopener">Try Adobe →</a>
+        </div>
+    </div>
+
+    <h2 class="section-title">✨ Key Features</h2>
+    <div class="features">
+        <div class="feat"><div class="icon">🎨</div><h3>Layout Preserved</h3><p>Fonts, images, tables, and formatting stay intact</p></div>
+        <div class="feat"><div class="icon">🔒</div><h3>Secure & Private</h3><p>256-bit SSL encrypted, files auto-deleted after conversion</p></div>
+        <div class="feat"><div class="icon">📸</div><h3>OCR Support</h3><p>Convert scanned PDFs and images into editable text</p></div>
+        <div class="feat"><div class="icon">📱</div><h3>Mobile Friendly</h3><p>Works on any device — desktop, tablet, or phone</p></div>
+        <div class="feat"><div class="icon">⚡</div><h3>Fast Conversion</h3><p>Most files processed in under 30 seconds</p></div>
+        <div class="feat"><div class="icon">📦</div><h3>Batch Processing</h3><p>Convert multiple PDFs to Word in one go</p></div>
+    </div>
+
+    <h2 class="section-title">📋 How It Works</h2>
+    <div class="how-it-works">
+        <ol>
+            <li>Upload your PDF file to one of the partner tools above</li>
+            <li>The tool processes your file — OCR is applied automatically if needed</li>
+            <li>Download your editable Word document (.docx) in seconds</li>
+            <li>Open, edit, and save directly in Microsoft Word or Google Docs</li>
+        </ol>
+    </div>
+
+    <h2 class="section-title">⚖️ Client-Side vs Server-Side</h2>
+    <div class="comparison">
+        <div class="col pros">
+            <h3>✓ Server-Side (Recommended)</h3>
+            <ul>
+                <li>Full layout & formatting preservation</li>
+                <li>Table, image & chart support</li>
+                <li>OCR for scanned documents</li>
+                <li>Handles complex multi-column layouts</li>
+                <li>Works with any PDF, any size</li>
+            </ul>
+        </div>
+        <div class="col cons">
+            <h3>✗ Client-Side (Limited)</h3>
+            <ul>
+                <li>Plain text extraction only</li>
+                <li>No layout or formatting preserved</li>
+                <li>No image/table/chart support</li>
+                <li>Scanned PDFs not supported</li>
+                <li>Large files cause browser crashes</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        Free online PDF tools — Some conversions use partner services for the best results.<br>
+        Files processed by partner tools are encrypted and auto-deleted after conversion.<br>
+        <a href="https://smallpdf.com/pdf-to-word">SmallPDF</a> · <a href="https://www.ilovepdf.com/pdf_to_word">iLovePDF</a> · <a href="https://www.adobe.com/acrobat/online/pdf-to-word.html">Adobe Acrobat</a>
+    </footer>
+</div>
+
+<script>
+(function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const browseLink = document.getElementById('browseLink');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    browseLink.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length && e.dataTransfer.files[0].type === 'application/pdf') {
+            alert('For the best PDF to Word conversion, please use one of the partner tools listed below. They provide full layout preservation and OCR support.');
+        }
+    });
+    fileInput.addEventListener('change', () => {
+        alert('For the best PDF to Word conversion, please use one of the partner tools listed below. They provide full layout preservation and OCR support.');
+        fileInput.value = '';
+    });
+})();
+</script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Templates — Spreadsheets & Business Templates</title>
+<meta name="description" content="Browse premium spreadsheet templates for business, finance, marketing, and personal use. Budget, invoice, planner templates.">
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.6;min-height:100vh}
+a{color:#58a6ff;text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;display:block}
+/* ===== UTILITY ===== */
+.container{max-width:1240px;margin:0 auto;padding:0 20px}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* ===== HEADER ===== */
+.site-header{background:#161b22;border-bottom:1px solid #30363d;padding:16px 0;position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.logo{font-size:1.5rem;font-weight:800;color:#f0f6fc;letter-spacing:-0.5px}
+.logo span{color:#58a6ff}
+.search-wrap{flex:1;max-width:420px;min-width:200px}
+.search-wrap input{width:100%;padding:10px 16px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#e6edf3;font-size:0.95rem;outline:none;transition:border .2s}
+.search-wrap input:focus{border-color:#58a6ff}
+.search-wrap input::placeholder{color:#8b949e}
+/* ===== HERO ===== */
+.hero{text-align:center;padding:64px 20px 40px}
+.hero h1{font-size:2.4rem;font-weight:800;color:#f0f6fc;margin-bottom:12px;letter-spacing:-0.02em}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:640px;margin:0 auto 24px}
+.hero-badge{display:inline-block;background:rgba(88,166,255,0.12);color:#58a6ff;border:1px solid rgba(88,166,255,0.25);padding:6px 18px;border-radius:20px;font-size:0.85rem;font-weight:600;margin-bottom:20px}
+/* ===== CATEGORY FILTER ===== */
+.filter-bar{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.filter-btn{background:transparent;border:1px solid #30363d;color:#8b949e;padding:8px 20px;border-radius:20px;cursor:pointer;font-size:0.9rem;font-weight:500;transition:all .2s}
+.filter-btn:hover{border-color:#58a6ff;color:#e6edf3}
+.filter-btn.active{background:#58a6ff;border-color:#58a6ff;color:#fff}
+/* ===== TEMPLATE GRID ===== */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;padding-bottom:48px}
+.template-card{background:#161b22;border:1px solid #30363d;border-radius:12px;overflow:hidden;transition:border .2s,transform .15s;display:flex;flex-direction:column}
+.template-card:hover{border-color:#58a6ff;transform:translateY(-2px)}
+.card-thumb{height:180px;background:linear-gradient(135deg,#1c2333 0%,#0d1117 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.card-thumb .icon{font-size:3rem;opacity:.7}
+.card-thumb .cat-tag{position:absolute;top:10px;left:10px;background:rgba(13,17,23,.8);backdrop-filter:blur(4px);border:1px solid #30363d;border-radius:6px;padding:2px 10px;font-size:.75rem;color:#8b949e;text-transform:uppercase;letter-spacing:.04em}
+.card-body{padding:16px 18px 18px;flex:1;display:flex;flex-direction:column}
+.card-body h3{font-size:1.05rem;font-weight:700;color:#f0f6fc;margin-bottom:6px}
+.card-body .desc{font-size:0.85rem;color:#8b949e;margin-bottom:10px;flex:1}
+.card-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.price{font-size:1.2rem;font-weight:700;color:#f0f6fc}
+.stars{color:#d29922;font-size:.85rem;letter-spacing:1px}
+.card-actions{display:flex;gap:8px}
+.card-actions .btn{flex:1;text-align:center;padding:9px 0;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-preview{background:transparent;border:1px solid #30363d;color:#e6edf3}
+.btn-preview:hover{background:#30363d}
+.btn-buy{background:#238636;color:#fff}
+.btn-buy:hover{background:#2ea043}
+/* ===== FOOTER ===== */
+.site-footer{border-top:1px solid #30363d;padding:28px 20px;text-align:center}
+.site-footer p{color:#8b949e;font-size:.82rem;margin-bottom:4px}
+.site-footer .affiliate{color:#d29922;font-weight:500}
+/* ===== NO RESULTS ===== */
+.no-results{text-align:center;padding:80px 20px;color:#8b949e;display:none}
+.no-results.visible{display:block}
+.no-results .big-icon{font-size:3rem;margin-bottom:12px}
+.no-results h3{color:#f0f6fc;margin-bottom:6px}
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .hero h1{font-size:1.7rem}
+  .hero p{font-size:1rem}
+  .header-inner{flex-direction:column;align-items:stretch}
+  .search-wrap{max-width:none}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .filter-bar{gap:6px}
+  .filter-btn{padding:6px 14px;font-size:.82rem}
+}
+@media(max-width:480px){
+  .grid{grid-template-columns:1fr}
+  .hero{padding:40px 16px 28px}
+  .hero h1{font-size:1.4rem}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Premium Templates \u2014 Spreadsheets & Business Templates",
+  "description": "Browse premium spreadsheet templates for business, finance, marketing, and personal use. Budget, invoice, planner templates.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">Template<span>Market</span></div>
+    <div class="search-wrap">
+      <label for="search-input" class="visually-hidden">Search templates</label>
+      <input type="text" id="search-input" placeholder="Search templates…" autocomplete="off">
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <span class="hero-badge">🚀 16 Premium Templates</span>
+    <h1>Premium Templates for Modern Businesses</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p>Professional-grade spreadsheets, planners, and trackers — designed for startups, freelancers, and growing teams. Instant download.</p>
+  </div>
+</section>
+
+<!-- ===== CATEGORY FILTER ===== -->
+<div class="container">
+  <nav class="filter-bar" aria-label="Filter templates by category">
+    <button class="filter-btn active" data-category="all">All</button>
+    <button class="filter-btn" data-category="Business">Business</button>
+    <button class="filter-btn" data-category="Finance">Finance</button>
+    <button class="filter-btn" data-category="Marketing">Marketing</button>
+    <button class="filter-btn" data-category="Personal">Personal</button>
+  </nav>
+</div>
+
+<!-- ===== TEMPLATE GRID ===== -->
+<main class="container">
+  <div id="template-grid" class="grid"></div>
+  <div class="no-results" id="no-results">
+    <div class="big-icon">🔍</div>
+    <h3>No templates found</h3>
+    <p>Try adjusting your search or filter.</p>
+  </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <p class="affiliate">⚡ Affiliate Disclosure</p>
+    <p>Some links on this site are affiliate links. We may earn a small commission at no extra cost to you. All templates are hosted on Gumroad, Etsy, or similar third-party platforms.</p>
+    <p>&copy; 2026 TemplateMarket &mdash; curated templates for modern professionals.</p>
+  </div>
+</footer>
+
+<!-- ===== DATA & SCRIPTS ===== -->
+<script>
+const templates = [
+  { id:1, name:"Monthly Budget Template",    category:"Business",  price:19, desc:"Track income, expenses, and savings across multiple accounts with auto-calculating sheets.", stars:5 },
+  { id:2, name:"Invoice Template",           category:"Business",  price:14, desc:"Professional invoicing with line items, taxes, payment tracking, and PDF export ready.", stars:4 },
+  { id:3, name:"Project Timeline",           category:"Business",  price:24, desc:"Gantt-chart style project planner with milestones, dependencies, and resource allocation.", stars:5 },
+  { id:4, name:"Meeting Notes Template",     category:"Business",  price:9,  desc:"Structured meeting agenda, action items, and follow-up tracker for productive teams.", stars:4 },
+  { id:5, name:"P&L Statement",             category:"Finance",    price:29, desc:"Profit and loss statement template with monthly, quarterly, and annual roll-ups.", stars:5 },
+  { id:6, name:"Cash Flow Tracker",          category:"Finance",    price:24, desc:"Monitor operating, investing, and financing cash flows with forecasting.", stars:4 },
+  { id:7, name:"Expense Report",             category:"Finance",    price:14, desc:"Log receipts, categorize spending, and generate expense summaries for reimbursement.", stars:4 },
+  { id:8, name:"Investment Tracker",         category:"Finance",    price:34, desc:"Portfolio dashboard with ROI, dividend tracking, and performance benchmarking.", stars:5 },
+  { id:9, name:"Content Calendar",           category:"Marketing",  price:19, desc:"Plan blog posts, social media, email campaigns on a visual editorial calendar.", stars:4 },
+  { id:10,name:"Social Media Planner",       category:"Marketing",  price:14, desc:"Schedule posts across platforms with hashtag libraries and engagement tracking.", stars:4 },
+  { id:11,name:"SEO Audit Template",         category:"Marketing",  price:39, desc:"Comprehensive site audit checklist, keyword mapping, and competitor gap analysis.", stars:5 },
+  { id:12,name:"Campaign Tracker",           category:"Marketing",  price:29, desc:"Track ad spend, conversions, CTR, and ROI across Google, Meta, and TikTok.", stars:5 },
+  { id:13,name:"Habit Tracker",              category:"Personal",   price:9,  desc:"Build daily routines with streak tracking, weekly reviews, and habit scoring.", stars:4 },
+  { id:14,name:"Budget Planner",             category:"Personal",   price:14, desc:"Personal finance planner with sinking funds, debt snowball, and savings goals.", stars:5 },
+  { id:15,name:"Goal Setting Workbook",      category:"Personal",   price:12, desc:"SMART goal framework with quarterly reviews, vision boards, and milestone maps.", stars:4 },
+  { id:16,name:"Meal Planner",               category:"Personal",   price:9,  desc:"Weekly meal prep with grocery lists, nutrition tracking, and recipe library.", stars:4 },
+];
+
+/* ===== ICONS ===== */
+const catIcons = { Business:"📊", Finance:"💰", Marketing:"📈", Personal:"✨" };
+
+/* ===== RENDER ===== */
+const grid = document.getElementById('template-grid');
+const noResults = document.getElementById('no-results');
+const searchInput = document.getElementById('search-input');
+let activeCategory = 'all';
+let searchQuery = '';
+
+function renderStars(count) {
+  return '\u2605'.repeat(count) + '\u2606'.repeat(5 - count);
+}
+
+function render() {
+  const filtered = templates.filter(t => {
+    const catMatch = activeCategory === 'all' || t.category === activeCategory;
+    const q = searchQuery.toLowerCase().trim();
+    const searchMatch = !q || t.name.toLowerCase().includes(q) || t.category.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
+    return catMatch && searchMatch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    noResults.classList.add('visible');
+    return;
+  }
+  noResults.classList.remove('visible');
+
+  grid.innerHTML = filtered.map(t => {
+    const icon = catIcons[t.category] || '📄';
+    return `
+      <div class="template-card" data-category="${t.category}">
+        <div class="card-thumb">
+          <span class="icon">${icon}</span>
+          <span class="cat-tag">${t.category}</span>
+        </div>
+        <div class="card-body">
+          <h3>${t.name}</h3>
+          <p class="desc">${t.desc}</p>
+          <div class="card-meta">
+            <span class="price">$${t.price}</span>
+            <span class="stars">${renderStars(t.stars)}</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-preview" onclick="alert('📄 ${t.name}\\n\\n${t.desc}\\n\\nCategory: ${t.category}\\nPrice: \$${t.price}')">Preview</button>
+            <a class="btn btn-buy" href="https://gumroad.com/checkout?product=template-${t.id}" target="_blank" rel="noopener">Buy Now</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ===== FILTER EVENTS ===== */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCategory = btn.dataset.category;
+    render();
+  });
+});
+
+/* ===== SEARCH ===== */
+let searchTimer;
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    searchQuery = searchInput.value;
+    render();
+  }, 200);
+});
+
+/* ===== INIT ===== */
+render();
+</script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

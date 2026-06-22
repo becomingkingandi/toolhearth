@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fuel Cost Calculator — Trip Gas Cost Estimator</title>
+<meta name="description" content="Estimate the fuel cost for any road trip. Enter distance, MPG or L/100km, and fuel price. Supports US and metric units.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    .container { max-width: 500px; width: 100%; }
+    h1 { color: #58a6ff; text-align: center; margin-bottom: 24px; font-size: 1.5rem; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .card h2 { color: #8b949e; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; color: #8b949e; font-size: 0.85rem; margin-bottom: 4px; }
+    .input-group input { width: 100%; padding: 10px 12px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; font-size: 1rem; }
+    .input-group input:focus { outline: none; border-color: #58a6ff; }
+    .radio-group { display: flex; gap: 16px; margin-bottom: 14px; }
+    .radio-group label { color: #c9d1d9; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .radio-group input[type="radio"] { accent-color: #58a6ff; }
+    .row { display: flex; gap: 12px; }
+    .row .input-group { flex: 1; }
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .result-item { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 14px; text-align: center; }
+    .result-item .label { color: #8b949e; font-size: 0.75rem; text-transform: uppercase; }
+    .result-item .value { color: #58a6ff; font-size: 1.3rem; font-weight: 600; margin-top: 4px; }
+    .footer { text-align: center; color: #484f58; font-size: 0.75rem; padding: 20px 0; }
+    @media (max-width: 480px) { .results-grid { grid-template-columns: 1fr; } .row { flex-direction: column; gap: 0; } }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Fuel Cost Calculator \u2014 Trip Gas Cost Estimator",
+  "description": "Estimate the fuel cost for any road trip. Enter distance, MPG or L/100km, and fuel price. Supports US and metric units.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+  <div class="container">
+    <h1>⛽ Fuel Cost Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <div class="card">
+      <div class="radio-group">
+        <label><input type="radio" name="unit" value="mpg" checked onchange="update()"> US Units (mi, gal)</label>
+        <label><input type="radio" name="unit" value="l100" onchange="update()"> Metric (km, L)</label>
+      </div>
+      <div class="row">
+        <div class="input-group"><label id="distLabel">Distance (miles)</label><input type="number" id="distance" value="300" min="0" step="10" oninput="update()"></div>
+        <div class="input-group"><label id="effLabel">Fuel Efficiency (MPG)</label><input type="number" id="efficiency" value="25" min="0.1" step="0.5" oninput="update()"></div>
+      </div>
+      <div class="input-group"><label id="priceLabel">Fuel Price ($/gallon)</label><input type="number" id="price" value="3.50" min="0" step="0.01" oninput="update()"></div>
+    </div>
+    <div class="card">
+      <h2>Results</h2>
+      <div class="results-grid">
+        <div class="result-item"><div class="label" id="fuelLabel">Fuel Needed (gal)</div><div class="value" id="fuelResult">12.0</div></div>
+        <div class="result-item"><div class="label">Total Cost</div><div class="value" id="costResult">$42.00</div></div>
+        <div class="result-item"><div class="label" id="perLabel">Cost per Mile</div><div class="value" id="perResult">$0.14</div></div>
+      </div>
+    </div>
+    <div class="footer">Fuel Cost Calculator &mdash; Free Tool</div>
+  </div>
+  <script>
+    function fmt(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+    function update() {
+      const unit = document.querySelector('input[name="unit"]:checked').value;
+      const dist = parseFloat(document.getElementById('distance').value) || 0;
+      const eff = parseFloat(document.getElementById('efficiency').value) || 0.1;
+      const price = parseFloat(document.getElementById('price').value) || 0;
+
+      let fuel, cost, perUnit;
+
+      if (unit === 'mpg') {
+        document.getElementById('distLabel').textContent = 'Distance (miles)';
+        document.getElementById('effLabel').textContent = 'Fuel Efficiency (MPG)';
+        document.getElementById('priceLabel').textContent = 'Fuel Price ($/gallon)';
+        document.getElementById('fuelLabel').textContent = 'Fuel Needed (gal)';
+        document.getElementById('perLabel').textContent = 'Cost per Mile';
+        fuel = dist / eff;
+        cost = fuel * price;
+        perUnit = cost / (dist || 1);
+        document.getElementById('perResult').textContent = fmt(perUnit);
+      } else {
+        document.getElementById('distLabel').textContent = 'Distance (km)';
+        document.getElementById('effLabel').textContent = 'Fuel Efficiency (L/100km)';
+        document.getElementById('priceLabel').textContent = 'Fuel Price ($/liter)';
+        document.getElementById('fuelLabel').textContent = 'Fuel Needed (L)';
+        document.getElementById('perLabel').textContent = 'Cost per km';
+        fuel = (eff / 100) * dist;
+        cost = fuel * price;
+        perUnit = cost / (dist || 1);
+        document.getElementById('perResult').textContent = fmt(perUnit);
+      }
+
+      document.getElementById('fuelResult').textContent = fuel.toFixed(2) + (unit === 'mpg' ? ' gal' : ' L');
+      document.getElementById('costResult').textContent = fmt(cost);
+    }
+
+    update();
+  </script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/salary-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Salary Calculator — Hourly to Annual Wage Converter</a>
+      <a href="/gpa-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GPA Calculator — Calculate Your Grade Point Average</a>
+      <a href="/grade-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Final Grade Calculator — What You Need on Your Final Exam</a>
+      <a href="/investment-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Investment Calculator — Project Investment Growth Over Time</a>
+      <a href="/savings-goal-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Savings Goal Calculator — Time to Reach Your Savings Target</a>
+      <a href="/mortgage-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Mortgage Calculator — Monthly Payment with Amortization</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

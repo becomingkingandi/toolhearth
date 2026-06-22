@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Converter — HEX to RGB to HSL Converter</title>
+<meta name="description" content="Convert between HEX, RGB, and HSL color formats. Live preview with color picker and sliders. Free color conversion tool.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:700px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;justify-content:center}
+h1{font-size:1.6rem;font-weight:600;margin-bottom:4px;color:#f0f6fc}
+p.sub{color:#8b949e;font-size:0.9rem;margin-bottom:20px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px}
+.color-preview{width:100%;height:100px;border-radius:8px;margin-bottom:16px;border:1px solid #30363d;transition:background .2s}
+.input-group{display:flex;gap:8px;margin-bottom:10px}
+.input-group input{flex:1;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:10px 12px;color:#c9d1d9;font-size:0.9rem;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;outline:none}
+.input-group input:focus{border-color:#58a6ff}
+.input-group .copy-btn{background:transparent;border:1px solid #30363d;color:#c9d1d9;border-radius:6px;padding:10px 14px;cursor:pointer;font-size:0.8rem;transition:background .2s;flex-shrink:0}
+.input-group .copy-btn:hover{background:#1c2128}
+.input-group label{display:flex;align-items:center;font-size:0.85rem;color:#8b949e;min-width:45px;font-weight:500}
+.convert-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:10px}
+.format-card{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;text-align:center;cursor:pointer;transition:border-color .2s}
+.format-card:hover{border-color:#58a6ff}
+.format-card.active{border-color:#58a6ff;background:#0d1117}
+.format-card .fmt-name{font-size:0.75rem;color:#8b949e;margin-bottom:2px}
+.format-card .fmt-val{font-size:0.9rem;font-weight:600;color:#f0f6fc;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;word-break:break-all}
+input[type="color"]{width:40px;height:40px;border:none;border-radius:6px;cursor:pointer;background:transparent;padding:0}
+input[type="color"]::-webkit-color-swatch-wrapper{padding:0}
+input[type="color"]::-webkit-color-swatch{border:1px solid #30363d;border-radius:6px}
+input[type="range"]{width:100%;height:6px;background:#30363d;border-radius:3px;outline:none;appearance:none;-webkit-appearance:none}
+input[type="range"]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#58a6ff;cursor:pointer;border:2px solid #f0f6fc}
+.rgb-sliders{margin-top:14px}
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.slider-row label{font-size:0.82rem;font-weight:600;width:12px;color:#8b949e}
+.slider-row input[type="range"]{flex:1}
+.slider-row .slider-val{font-size:0.82rem;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;color:#c9d1d9;width:36px;text-align:right}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#238636;color:#fff;padding:10px 20px;border-radius:6px;font-size:0.85rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Color Converter \u2014 HEX to RGB to HSL Converter",
+  "description": "Convert between HEX, RGB, and HSL color formats. Live preview with color picker and sliders. Free color conversion tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🎨 CSS Color Converter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Convert between Hex, RGB, HSL, and pick any color</p>
+<div class="card">
+<div class="color-preview" id="preview"></div>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+<input type="color" id="colorPicker" value="#58a6ff" onchange="fromPicker(this.value)">
+<span style="font-size:0.85rem;color:#8b949e">Pick a color</span>
+</div>
+<div class="convert-row">
+<div class="format-card active" id="hexCard" onclick="selectFormat('hex')">
+<div class="fmt-name">HEX</div>
+<div class="fmt-val" id="hexVal">#58a6ff</div>
+</div>
+<div class="format-card" id="rgbCard" onclick="selectFormat('rgb')">
+<div class="fmt-name">RGB</div>
+<div class="fmt-val" id="rgbVal">rgb(88,166,255)</div>
+</div>
+<div class="format-card" id="hslCard" onclick="selectFormat('hsl')">
+<div class="fmt-name">HSL</div>
+<div class="fmt-val" id="hslVal">hsl(212,100%,67%)</div>
+</div>
+</div>
+<label for="colorInput" style="font-size:0.8rem;font-weight:500;color:#8b949e;display:block;margin-bottom:4px">Enter any CSS color value</label>
+<div class="input-group">
+<input type="text" id="colorInput" placeholder="#ff6600  |  rgb(255,102,0)  |  hsl(24,100%,50%)  |  rebeccapurple" oninput="parseInput(this.value)">
+</div>
+<div class="rgb-sliders">
+<div class="slider-row">
+<label style="color:#f85149">R</label>
+<input type="range" id="rSlider" min="0" max="255" value="88" oninput="fromSliders()">
+<span class="slider-val" id="rVal">88</span>
+</div>
+<div class="slider-row">
+<label style="color:#3fb950">G</label>
+<input type="range" id="gSlider" min="0" max="255" value="166" oninput="fromSliders()">
+<span class="slider-val" id="gVal">166</span>
+</div>
+<div class="slider-row">
+<label style="color:#58a6ff">B</label>
+<input type="range" id="bSlider" min="0" max="255" value="255" oninput="fromSliders()">
+<span class="slider-val" id="bVal">255</span>
+</div>
+</div>
+</div>
+<div class="toast" id="toast">Copied!</div>
+</div>
+<script>
+let r=88,g=166,b=255;
+
+function fromPicker(hex) {
+  r = parseInt(hex.slice(1,3),16);
+  g = parseInt(hex.slice(3,5),16);
+  b = parseInt(hex.slice(5,7),16);
+  updateAll();
+}
+
+function parseInput(val) {
+  val = val.trim();
+  if(!val) return;
+  // Try hex
+  const hexMatch = val.match(/^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/);
+  if(hexMatch) {
+    let h = hexMatch[1];
+    if(h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    r = parseInt(h.slice(0,2),16);
+    g = parseInt(h.slice(2,4),16);
+    b = parseInt(h.slice(4,6),16);
+    updateAll();
+    return;
+  }
+  // Try rgb/rgba
+  const rgbMatch = val.match(/rgba?\s*\(\s*(\d+)\s*[,)]?\s*(\d+)\s*[,)]?\s*(\d+)/i);
+  if(rgbMatch) {
+    r = clamp(+rgbMatch[1]); g = clamp(+rgbMatch[2]); b = clamp(+rgbMatch[3]);
+    updateAll();
+    return;
+  }
+  // Try hsl
+  const hslMatch = val.match(/hsla?\s*\(\s*(\d+)\s*[,)]?\s*(\d+)%?\s*[,)]?\s*(\d+)%/i);
+  if(hslMatch) {
+    const [rr,gg,bb] = hslToRgb(+hslMatch[1], +hslMatch[2], +hslMatch[3]);
+    r=rr; g=gg; b=bb;
+    updateAll();
+    return;
+  }
+  // Try named color
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.fillStyle = val;
+  if(ctx.fillStyle && ctx.fillStyle !== '#000000') {
+    const c = new Option().style;
+    c.color = val;
+    if(c.color) {
+      document.body.appendChild(document.createElement('div')).style.color = val;
+      const computed = getComputedStyle(document.body.lastChild).color;
+      document.body.removeChild(document.body.lastChild);
+      const m = computed.match(/(\d+)/g);
+      if(m) { r=clamp(+m[0]); g=clamp(+m[1]); b=clamp(+m[2]); updateAll(); return; }
+    }
+  }
+}
+
+function fromSliders() {
+  r = +document.getElementById('rSlider').value;
+  g = +document.getElementById('gSlider').value;
+  b = +document.getElementById('bSlider').value;
+  updateAll();
+}
+
+function updateAll() {
+  document.getElementById('rSlider').value = r;
+  document.getElementById('gSlider').value = g;
+  document.getElementById('bSlider').value = b;
+  document.getElementById('rVal').textContent = r;
+  document.getElementById('gVal').textContent = g;
+  document.getElementById('bVal').textContent = b;
+  const hex = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+  const hsl = rgbToHsl(r,g,b);
+  document.getElementById('preview').style.background = hex;
+  document.getElementById('colorPicker').value = hex;
+  document.getElementById('hexVal').textContent = hex;
+  document.getElementById('rgbVal').textContent = `rgb(${r},${g},${b})`;
+  document.getElementById('hslVal').textContent = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+  document.getElementById('colorInput').value = hex;
+  const active = document.querySelector('.format-card.active');
+  if(active) copyActive();
+}
+
+function selectFormat(fmt) {
+  document.querySelectorAll('.format-card').forEach(c => c.classList.remove('active'));
+  document.getElementById(fmt+'Card').classList.add('active');
+  copyActive();
+}
+
+function copyActive() {
+  const active = document.querySelector('.format-card.active');
+  const val = active.querySelector('.fmt-val').textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = 'Copied ' + val;
+    t.style.opacity = '1';
+    setTimeout(() => t.style.opacity = '0', 1500);
+  });
+}
+
+function clamp(v) { return Math.max(0, Math.min(255, Math.round(+v))); }
+
+function rgbToHsl(r,g,b) {
+  r/=255; g/=255; b/=255;
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h=0, s=0, l=(max+min)/2;
+  if(max!==min) {
+    const d = max-min;
+    s = l > 0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max) {
+      case r: h = ((g-b)/d + (g<b?6:0))/6; break;
+      case g: h = ((b-r)/d + 2)/6; break;
+      case b: h = ((r-g)/d + 4)/6; break;
+    }
+  }
+  return {h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100)};
+}
+
+function hslToRgb(h,s,l) {
+  s/=100; l/=100;
+  const c = (1 - Math.abs(2*l-1)) * s;
+  const x = c * (1 - Math.abs((h/60)%2 - 1));
+  const m = l - c/2;
+  let r1=0,g1=0,b1=0;
+  if(h<60) {r1=c;g1=x;}
+  else if(h<120) {r1=x;g1=c;}
+  else if(h<180) {g1=c;b1=x;}
+  else if(h<240) {g1=x;b1=c;}
+  else if(h<300) {r1=x;b1=c;}
+  else {r1=c;b1=x;}
+  return [Math.round((r1+m)*255), Math.round((g1+m)*255), Math.round((b1+m)*255)];
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/color-palette" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Color Palette Generator — Create Color Schemes</a>
+      <a href="/gradient-builder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Gradient Builder — Create Linear & Radial Gradients</a>
+      <a href="/typography-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Typography Tester — Preview Fonts & Text Styles</a>
+      <a href="/box-shadow" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Box Shadow Generator — Create Shadow Effects</a>
+      <a href="/grid-layout" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Grid Layout Builder — Design Responsive Grids</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

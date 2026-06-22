@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dice Roller — Roll D4, D6, D8, D10, D12, D20, D100</title>
+<meta name="description" content="Roll virtual dice with any number of sides. Supports D4 through D100, multiple dice, and roll history.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.container{max-width:500px;width:100%}
+h1{text-align:center;color:#ffd700;margin:24px 0 20px;font-size:1.6rem}
+.controls{background:#1e1e1e;border-radius:12px;padding:20px;display:flex;flex-wrap:wrap;gap:14px;margin-bottom:16px}
+.controls label{display:flex;flex-direction:column;flex:1;min-width:100px;gap:4px;font-size:.85rem;color:#aaa}
+.controls select,.controls input{padding:10px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:#e0e0e0;font-size:1rem}
+.btn{background:#ffd700;color:#111;border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:.15s;flex:1;min-width:100px}
+.btn:hover{background:#ffed4a;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+#result{text-align:center;padding:30px;font-size:2.5rem;font-weight:700;background:#1a1a2e;border-radius:12px;margin-bottom:16px;min-height:100px;transition:.3s}
+#result.rolling{animation:flip .5s ease}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(180deg);opacity:.5}100%{transform:rotateX(360deg)}}
+#result .total{font-size:.9rem;color:#888;margin-top:8px}
+#result .dice-type{font-size:.85rem;color:#ffd700}
+#history{background:#1e1e1e;border-radius:12px;padding:16px}
+#history h3{font-size:.95rem;color:#aaa;margin-bottom:10px}
+#historyList{list-style:none;font-size:.9rem}
+#historyList li{padding:6px 0;border-bottom:1px solid #2a2a2a;display:flex;justify-content:space-between;color:#ccc}
+#historyList li:last-child{border-bottom:none}
+.clear-btn{background:transparent;color:#f55;border:1px solid #f55;border-radius:6px;padding:4px 12px;font-size:.8rem;cursor:pointer;float:right}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Dice Roller \u2014 Roll D4, D6, D8, D10, D12, D20, D100",
+  "description": "Roll virtual dice with any number of sides. Supports D4 through D100, multiple dice, and roll history.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🎲 Dice Roller</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="controls">
+<label>Dice Type
+<select id="diceType">
+<option value="d4">d4</option><option value="d6" selected>d6</option><option value="d8">d8</option>
+<option value="d10">d10</option><option value="d12">d12</option><option value="d20">d20</option><option value="d100">d100</option>
+</select></label>
+<label>Number
+<select id="diceCount">
+<option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option>
+<option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+<option value="9">9</option><option value="10">10</option>
+</select></label>
+<button class="btn" id="rollBtn">🎲 Roll</button>
+</div>
+<div id="result">
+<span id="resultValues">—</span>
+<div class="dice-type" id="resultDice"></div>
+<div class="total" id="resultTotal"></div>
+</div>
+<div id="history">
+<h3>📜 History <button class="clear-btn" id="clearHistory">Clear</button></h3>
+<ul id="historyList"></ul>
+</div>
+</div>
+<script>
+const diceType=document.getElementById('diceType');
+const diceCount=document.getElementById('diceCount');
+const rollBtn=document.getElementById('rollBtn');
+const resultValues=document.getElementById('resultValues');
+const resultDice=document.getElementById('resultDice');
+const resultTotal=document.getElementById('resultTotal');
+const resultDiv=document.getElementById('result');
+const historyList=document.getElementById('historyList');
+let history=JSON.parse(localStorage.getItem('diceHistory')||'[]');
+
+function renderHistory(){
+historyList.innerHTML=history.slice().reverse().map(h=>
+`<li><span>${h.values.join(', ')}</span><span>${h.dice} · sum ${h.sum}</span></li>`
+).join('');
+}
+function roll(){
+const sides=parseInt(diceType.value.slice(1));
+const count=parseInt(diceCount.value);
+const values=[];
+for(let i=0;i<count;i++)values.push(Math.floor(Math.random()*sides)+1);
+const sum=values.reduce((a,b)=>a+b,0);
+resultDiv.classList.remove('rolling');
+void resultDiv.offsetWidth;
+resultDiv.classList.add('rolling');
+resultValues.textContent=values.join(', ');
+resultDice.textContent=`${diceType.value} × ${count}`;
+resultTotal.textContent=`Total: ${sum}`;
+history.push({dice:diceType.value,count,values,sum});
+if(history.length>50)history=history.slice(-50);
+localStorage.setItem('diceHistory',JSON.stringify(history));
+renderHistory();
+}
+rollBtn.addEventListener('click',roll);
+document.getElementById('clearHistory').addEventListener('click',()=>{
+history=[];
+localStorage.removeItem('diceHistory');
+renderHistory();
+});
+renderHistory();
+</script>
+</div>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Random Name Generator — Character & Username Ideas</title>
+<meta name="description" content="Generate random names for characters, usernames, or projects. Choose from modern, classical, or fantasy styles.">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+  .container{background:#1a1a2e;border-radius:24px;padding:32px;width:100%;max-width:500px;margin:0 auto;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+  h1{text-align:center;font-size:1.3rem;color:#8888aa;margin-bottom:24px;font-weight:500;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px}
+  .controls{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+  .control-row{display:flex;gap:10px;flex-wrap:wrap}
+  .control-group{flex:1;min-width:120px}
+  .control-group label{display:block;font-size:.75rem;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .control-group select,.control-group input{width:100%;background:#0f0f1a;border:2px solid #2a2a45;border-radius:10px;padding:8px 12px;font-size:.9rem;color:#fff;outline:none}
+  .control-group select:focus,.control-group input:focus{border-color:#ab47bc}
+  .control-group select option{background:#1a1a2e}
+  .btn-row{display:flex;gap:10px;margin-bottom:20px}
+  .btn{padding:12px 24px;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;flex:1;text-align:center}
+  .btn:active{transform:scale(.95)}
+  .btn-primary{background:#ab47bc;color:#fff}
+  .btn-primary:hover{background:#9c27b0}
+  .btn-secondary{background:#2a2a45;color:#e0e0e0}
+  .btn-secondary:hover{background:#35355a}
+  .btn-secondary:disabled{opacity:.4;cursor:not-allowed}
+  .results{background:#0f0f1a;border-radius:16px;padding:16px;min-height:100px;max-height:400px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#2a2a45 transparent}
+  .results::-webkit-scrollbar{width:4px}
+  .results::-webkit-scrollbar-thumb{background:#2a2a45;border-radius:4px}
+  .name-item{padding:8px 12px;border-bottom:1px solid #1a1a2e;font-size:1rem;color:#e0e0e0;display:flex;justify-content:space-between;align-items:center}
+  .name-item:last-child{border-bottom:none}
+  .name-item .name-tag{font-size:.65rem;color:#555;text-transform:uppercase;letter-spacing:1px;background:#1a1a2e;padding:2px 8px;border-radius:4px}
+  .empty-results{text-align:center;padding:30px 0;color:#555;font-size:.9rem}
+  .count-display{text-align:center;margin-top:12px;font-size:.8rem;color:#666}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Random Name Generator \u2014 Character & Username Ideas",
+  "description": "Generate random names for characters, usernames, or projects. Choose from modern, classical, or fantasy styles.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🎲 Name Generator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="controls">
+    <div class="control-row">
+      <div class="control-group">
+        <label>Gender</label>
+        <select id="genderSelect">
+          <option value="any">Any</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Style</label>
+        <select id="styleSelect">
+          <option value="all">All</option>
+          <option value="modern">Modern</option>
+          <option value="classical">Classical</option>
+          <option value="fantasy">Fantasy</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Count</label>
+        <input type="number" id="countInput" value="5" min="1" max="20">
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" id="generateBtn">Generate</button>
+    <button class="btn btn-secondary" id="copyBtn" disabled>Copy All</button>
+  </div>
+  <div class="results" id="results">
+    <div class="empty-results">Tap Generate to see names</div>
+  </div>
+  <div class="count-display" id="countDisplay"></div>
+</div>
+<script>
+  (function(){
+    // ~100 male + ~100 female names
+    const NAMES = {
+      male: {
+        modern: [
+          'Aiden','Jackson','Liam','Noah','Ethan','Mason','Lucas','Logan','Carter','Jayden',
+          'Caleb','Ryan','Owen','Wyatt','Gavin','Hunter','Tyler','Dylan','Zachary','Connor',
+          'Brayden','Dominic','Xavier','Cole','Jace','Miles','Riley','Cooper','Parker','Chase',
+          'Kai','Finn','Ryder','Landon','Grayson','Asher','Leo','Ezra','Nolan','Hudson',
+          'Easton','Aaron','Josiah','Micah','Adrian','Nicholas','Brooks','Lincoln','Jordan','Blake'
+        ],
+        classical: [
+          'James','John','Robert','Michael','William','David','Richard','Joseph','Thomas','Charles',
+          'Christopher','Daniel','Matthew','Anthony','Mark','Steven','Paul','Andrew','Kenneth','George',
+          'Edward','Brian','Kevin','Ronald','Timothy','Jason','Jeffrey','Frank','Gary','Raymond',
+          'Stephen','Dennis','Jerry','Peter','Larry','Henry','Douglas','Patrick','Carl','Arthur',
+          'Albert','Fred','Walter','Harold','Jack','Roger','Ralph','Roy','Eugene','Howard'
+        ],
+        fantasy: [
+          'Aldric','Brom','Cedric','Dorian','Eldrin','Fenris','Gareth','Haldir','Ignis','Jorath',
+          'Kaelen','Lorien','Magnus','Nerian','Orin','Peregrin','Quillon','Riven','Sylas','Theron',
+          'Ulric','Valdris','Wulfric','Xandar','Yorick','Zephyr','Arannis','Balinor','Corvin','Drask',
+          'Eryndor','Faelan','Grimm','Hadrian','Ithil','Kael','Lucian','Morthil','Nyx','Oberon',
+          'Pyralis','Rhogar','Sorian','Thrain','Umbra','Varek','Warden','Xylander','Yarrow','Zarathos'
+        ]
+      },
+      female: {
+        modern: [
+          'Emma','Olivia','Ava','Sophia','Isabella','Mia','Charlotte','Amelia','Harper','Evelyn',
+          'Abigail','Emily','Ella','Elizabeth','Camila','Luna','Sofia','Avery','Scarlett','Grace',
+          'Chloe','Victoria','Riley','Aria','Lily','Aurora','Nora','Hannah','Zoey','Penelope',
+          'Layla','Stella','Maya','Genesis','Naomi','Elena','Samantha','Aaliyah','Claire','Sadie',
+          'Kinsley','Kylie','Aubrey','Brooklyn','Paisley','Emilia','Madelyn','Leah','Skylar','Valentina'
+        ],
+        classical: [
+          'Mary','Patricia','Jennifer','Linda','Barbara','Elizabeth','Susan','Jessica','Sarah','Karen',
+          'Lisa','Nancy','Betty','Margaret','Sandra','Dorothy','Ashley','Kimberly','Donna','Carol',
+          'Michelle','Emily','Amanda','Helen','Melissa','Deborah','Stephanie','Rebecca','Sharon','Laura',
+          'Cynthia','Kathleen','Joyce','Shirley','Angela','Anna','Ruth','Beverly','Christine','Janet',
+          'Catherine','Carolyn','Jane','Martha','Gloria','Ann','Diane','Frances','Alice','Rose'
+        ],
+        fantasy: [
+          'Aelwyn','Briar','Celestine','Drusilla','Elara','Faelivrin','Galadriel','Haelia','Ilyana','Juniper',
+          'Kaelia','Liriel','Mirabelle','Nymeria','Orianna','Paloma','Quilla','Rowan','Seraphina','Thalia',
+          'Una','Vivienne','Wynne','Xanthe','Ylva','Zephyra','Amaryllis','Belladonna','Cressida','Dahlia',
+          'Elowen','Fiora','Gwyneira','Helianthe','Isolde','Jasmine','Kestrel','Lyra','Morgana','Nerida',
+          'Ophelia','Petra','Rosalind','Sylvanis','Titania','Ursula','Vesper','Willow','Ysabel','Zinnia'
+        ]
+      }
+    };
+
+    const resultsEl = document.getElementById('results');
+    const generateBtn = document.getElementById('generateBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const countDisplay = document.getElementById('countDisplay');
+    const genderSelect = document.getElementById('genderSelect');
+    const styleSelect = document.getElementById('styleSelect');
+    const countInput = document.getElementById('countInput');
+
+    let lastNames = [];
+
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){
+        let j = Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]] = [arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    function generate(){
+      let gender = genderSelect.value;
+      let style = styleSelect.value;
+      let count = Math.min(20, Math.max(1, parseInt(countInput.value,10)||5));
+
+      let pool = [];
+      if(gender==='any' || gender==='male'){
+        if(style==='all' || style==='modern') pool.push(...NAMES.male.modern);
+        if(style==='all' || style==='classical') pool.push(...NAMES.male.classical);
+        if(style==='all' || style==='fantasy') pool.push(...NAMES.male.fantasy);
+      }
+      if(gender==='any' || gender==='female'){
+        if(style==='all' || style==='modern') pool.push(...NAMES.female.modern);
+        if(style==='all' || style==='classical') pool.push(...NAMES.female.classical);
+        if(style==='all' || style==='fantasy') pool.push(...NAMES.female.fantasy);
+      }
+
+      if(pool.length===0){pool=NAMES.male.modern;}
+
+      // Get tags for each name
+      function getTag(name){
+        for(let g of ['male','female']){
+          for(let s of ['modern','classical','fantasy']){
+            if(NAMES[g][s].includes(name)) return g+' / '+s;
+          }
+        }
+        return '';
+      }
+
+      let selected = [];
+      let available = [...pool];
+      shuffle(available);
+      count = Math.min(count, available.length);
+      selected = available.slice(0, count);
+      lastNames = selected;
+
+      if(selected.length===0){
+        resultsEl.innerHTML = '<div class="empty-results">No names match your filters</div>';
+        countDisplay.textContent = '';
+        copyBtn.disabled = true;
+        return;
+      }
+
+      let html = '';
+      selected.forEach(name => {
+        let tag = getTag(name);
+        html += '<div class="name-item"><span>'+name+'</span><span class="name-tag">'+tag+'</span></div>';
+      });
+      resultsEl.innerHTML = html;
+      countDisplay.textContent = 'Generated '+selected.length+' name'+(selected.length>1?'s':'');
+      copyBtn.disabled = false;
+    }
+
+    function copyAll(){
+      if(lastNames.length===0) return;
+      let text = lastNames.join('\n');
+      navigator.clipboard.writeText(text).then(()=>{
+        copyBtn.textContent = 'Copied!';
+        copyBtn.style.background = '#26a69a';
+        setTimeout(()=>{
+          copyBtn.textContent = 'Copy All';
+          copyBtn.style.background = '';
+        }, 1500);
+      }).catch(()=>{
+        // fallback
+        let ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(()=>{copyBtn.textContent='Copy All';},1500);
+      });
+    }
+
+    generateBtn.addEventListener('click', generate);
+    copyBtn.addEventListener('click', copyAll);
+    countInput.addEventListener('keydown', function(e){if(e.key==='Enter') generate();});
+
+    // Initial generation
+    generate();
+  })();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

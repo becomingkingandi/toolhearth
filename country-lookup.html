@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Country Lookup — Find Country Information & Flags</title>
+<meta name="description" content="Look up 50+ countries with flag emoji, capital, currency, and calling code. Search and filter by any field.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;padding:20px;display:flex;flex-direction:column;align-items:center}
+h1{font-size:1.8rem;margin:20px 0;color:#fff}
+.container{width:100%;max-width:700px}
+.search-wrap{position:relative;margin-bottom:20px}
+.search-wrap input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid #333;background:#1a1a2e;color:#e0e0e0;font-size:1rem;outline:none;transition:border .2s}
+.search-wrap input:focus{border-color:#6c63ff}
+.search-wrap input::placeholder{color:#555}
+.count{font-size:.8rem;color:#666;margin-bottom:12px;text-align:right}
+.country-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.country-list li{padding:10px 14px;background:#1a1a2e;border-radius:8px;border:1px solid #2a2a40;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px}
+.country-list li:hover{border-color:#6c63ff;background:#20203a}
+.country-list li .flag{font-size:1.5rem}
+.country-list li .name{font-size:.9rem;font-weight:500}
+.detail-card{background:linear-gradient(135deg,#1a1a2e,#20203a);border:1px solid #6c63ff;border-radius:12px;padding:24px;margin-top:16px;display:none;max-width:450px;width:100%}
+.detail-card .flag-big{font-size:3rem;margin-bottom:8px}
+.detail-card h2{font-size:1.4rem;color:#fff;margin-bottom:12px}
+.detail-card .info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a2a40;font-size:.9rem}
+.detail-card .info-row:last-child{border:none}
+.detail-card .info-row .label{color:#888}
+.detail-card .info-row .value{color:#e0e0e0;font-weight:500}
+.detail-card .close-btn{background:none;border:1px solid #444;color:#888;border-radius:6px;padding:6px 14px;font-size:.8rem;cursor:pointer;margin-top:12px;transition:all .2s}
+.detail-card .close-btn:hover{border-color:#ff4757;color:#ff4757}
+.no-results{text-align:center;color:#666;padding:40px;font-size:.95rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Country Lookup \u2014 Find Country Information & Flags",
+  "description": "Look up 50+ countries with flag emoji, capital, currency, and calling code. Search and filter by any field.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<h1>🌍 Country Lookup</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="container">
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Search by name, capital, currency, code..." oninput="filterCountries()" autofocus>
+  </div>
+  <div class="count" id="countDisplay">Showing 50 countries</div>
+  <ul class="country-list" id="countryList"></ul>
+  <div class="detail-card" id="detailCard"></div>
+</div>
+
+<script>
+const COUNTRIES = [
+  {name:"United States",capital:"Washington, D.C.",currency:"USD ($)",calling:"+1",flag:"🇺🇸"},
+  {name:"Canada",capital:"Ottawa",currency:"CAD ($)",calling:"+1",flag:"🇨🇦"},
+  {name:"United Kingdom",capital:"London",currency:"GBP (£)",calling:"+44",flag:"🇬🇧"},
+  {name:"Germany",capital:"Berlin",currency:"EUR (€)",calling:"+49",flag:"🇩🇪"},
+  {name:"France",capital:"Paris",currency:"EUR (€)",calling:"+33",flag:"🇫🇷"},
+  {name:"Italy",capital:"Rome",currency:"EUR (€)",calling:"+39",flag:"🇮🇹"},
+  {name:"Spain",capital:"Madrid",currency:"EUR (€)",calling:"+34",flag:"🇪🇸"},
+  {name:"Portugal",capital:"Lisbon",currency:"EUR (€)",calling:"+351",flag:"🇵🇹"},
+  {name:"Netherlands",capital:"Amsterdam",currency:"EUR (€)",calling:"+31",flag:"🇳🇱"},
+  {name:"Belgium",capital:"Brussels",currency:"EUR (€)",calling:"+32",flag:"🇧🇪"},
+  {name:"Switzerland",capital:"Bern",currency:"CHF",calling:"+41",flag:"🇨🇭"},
+  {name:"Sweden",capital:"Stockholm",currency:"SEK (kr)",calling:"+46",flag:"🇸🇪"},
+  {name:"Norway",capital:"Oslo",currency:"NOK (kr)",calling:"+47",flag:"🇳🇴"},
+  {name:"Denmark",capital:"Copenhagen",currency:"DKK (kr)",calling:"+45",flag:"🇩🇰"},
+  {name:"Finland",capital:"Helsinki",currency:"EUR (€)",calling:"+358",flag:"🇫🇮"},
+  {name:"Poland",capital:"Warsaw",currency:"PLN (zł)",calling:"+48",flag:"🇵🇱"},
+  {name:"Russia",capital:"Moscow",currency:"RUB (₽)",calling:"+7",flag:"🇷🇺"},
+  {name:"China",capital:"Beijing",currency:"CNY (¥)",calling:"+86",flag:"🇨🇳"},
+  {name:"Japan",capital:"Tokyo",currency:"JPY (¥)",calling:"+81",flag:"🇯🇵"},
+  {name:"South Korea",capital:"Seoul",currency:"KRW (₩)",calling:"+82",flag:"🇰🇷"},
+  {name:"India",capital:"New Delhi",currency:"INR (₹)",calling:"+91",flag:"🇮🇳"},
+  {name:"Indonesia",capital:"Jakarta",currency:"IDR (Rp)",calling:"+62",flag:"🇮🇩"},
+  {name:"Thailand",capital:"Bangkok",currency:"THB (฿)",calling:"+66",flag:"🇹🇭"},
+  {name:"Vietnam",capital:"Hanoi",currency:"VND (₫)",calling:"+84",flag:"🇻🇳"},
+  {name:"Singapore",capital:"Singapore",currency:"SGD ($)",calling:"+65",flag:"🇸🇬"},
+  {name:"Malaysia",capital:"Kuala Lumpur",currency:"MYR (RM)",calling:"+60",flag:"🇲🇾"},
+  {name:"Philippines",capital:"Manila",currency:"PHP (₱)",calling:"+63",flag:"🇵🇭"},
+  {name:"Australia",capital:"Canberra",currency:"AUD ($)",calling:"+61",flag:"🇦🇺"},
+  {name:"New Zealand",capital:"Wellington",currency:"NZD ($)",calling:"+64",flag:"🇳🇿"},
+  {name:"Brazil",capital:"Brasília",currency:"BRL (R$)",calling:"+55",flag:"🇧🇷"},
+  {name:"Argentina",capital:"Buenos Aires",currency:"ARS ($)",calling:"+54",flag:"🇦🇷"},
+  {name:"Mexico",capital:"Mexico City",currency:"MXN ($)",calling:"+52",flag:"🇲🇽"},
+  {name:"South Africa",capital:"Pretoria",currency:"ZAR (R)",calling:"+27",flag:"🇿🇦"},
+  {name:"Nigeria",capital:"Abuja",currency:"NGN (₦)",calling:"+234",flag:"🇳🇬"},
+  {name:"Egypt",capital:"Cairo",currency:"EGP (£)",calling:"+20",flag:"🇪🇬"},
+  {name:"Kenya",capital:"Nairobi",currency:"KES (KSh)",calling:"+254",flag:"🇰🇪"},
+  {name:"Turkey",capital:"Ankara",currency:"TRY (₺)",calling:"+90",flag:"🇹🇷"},
+  {name:"United Arab Emirates",capital:"Abu Dhabi",currency:"AED (د.إ)",calling:"+971",flag:"🇦🇪"},
+  {name:"Saudi Arabia",capital:"Riyadh",currency:"SAR (﷼)",calling:"+966",flag:"🇸🇦"},
+  {name:"Israel",capital:"Jerusalem",currency:"ILS (₪)",calling:"+972",flag:"🇮🇱"},
+  {name:"Pakistan",capital:"Islamabad",currency:"PKR (₨)",calling:"+92",flag:"🇵🇰"},
+  {name:"Bangladesh",capital:"Dhaka",currency:"BDT (৳)",calling:"+880",flag:"🇧🇩"},
+  {name:"Greece",capital:"Athens",currency:"EUR (€)",calling:"+30",flag:"🇬🇷"},
+  {name:"Ireland",capital:"Dublin",currency:"EUR (€)",calling:"+353",flag:"🇮🇪"},
+  {name:"Czech Republic",capital:"Prague",currency:"CZK (Kč)",calling:"+420",flag:"🇨🇿"},
+  {name:"Romania",capital:"Bucharest",currency:"RON (lei)",calling:"+40",flag:"🇷🇴"},
+  {name:"Ukraine",capital:"Kyiv",currency:"UAH (₴)",calling:"+380",flag:"🇺🇦"},
+  {name:"Colombia",capital:"Bogotá",currency:"COP ($)",calling:"+57",flag:"🇨🇴"},
+  {name:"Chile",capital:"Santiago",currency:"CLP ($)",calling:"+56",flag:"🇨🇱"},
+  {name:"Peru",capital:"Lima",currency:"PEN (S/)",calling:"+51",flag:"🇵🇪"}
+];
+
+function filterCountries() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const list = document.getElementById('countryList');
+  const countDisplay = document.getElementById('countDisplay');
+  const detail = document.getElementById('detailCard');
+  detail.style.display = 'none';
+
+  const filtered = q ? COUNTRIES.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.capital.toLowerCase().includes(q) ||
+    c.currency.toLowerCase().includes(q) ||
+    c.calling.includes(q) ||
+    c.flag.includes(q)
+  ) : COUNTRIES;
+
+  countDisplay.textContent = `Showing ${filtered.length} country${filtered.length!==1?'ies':'y'}`;
+  list.innerHTML = '';
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="no-results">No countries match your search.</div>';
+    return;
+  }
+  filtered.forEach(c => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="flag">${c.flag}</span><span class="name">${c.name}</span>`;
+    li.onclick = () => showDetail(c);
+    list.appendChild(li);
+  });
+}
+
+function showDetail(c) {
+  const card = document.getElementById('detailCard');
+  card.style.display = 'block';
+  card.innerHTML = `
+    <div class="flag-big">${c.flag}</div>
+    <h2>${c.name}</h2>
+    <div class="info-row"><span class="label">Capital</span><span class="value">${c.capital}</span></div>
+    <div class="info-row"><span class="label">Currency</span><span class="value">${c.currency}</span></div>
+    <div class="info-row"><span class="label">Calling Code</span><span class="value">${c.calling}</span></div>
+    <div class="info-row"><span class="label">Flag Emoji</span><span class="value" style="font-size:1.3rem">${c.flag}</span></div>
+    <button class="close-btn" onclick="document.getElementById('detailCard').style.display='none'">Close</button>
+  `;
+  card.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+filterCountries();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/mime-types" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">MIME Type Reference — Complete Content-Type Lookup</a>
+      <a href="/world-clock" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">World Clock — Current Time in Cities Worldwide</a>
+      <a href="/html-entity-reference" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">HTML Entity Reference — Complete Character Entities</a>
+      <a href="/seo-meta-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">SEO Meta Tag Generator — Generate & Preview Meta Tags</a>
+      <a href="/browser-info" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Browser Info — See Your Browser & Device Details</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tip Calculator — Split Bill & Calculate Tip Amount</title>
+<meta name="description" content="Quickly calculate the tip amount and split the bill between any number of people. Preset tip percentages or custom amount.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    .container { max-width: 500px; width: 100%; }
+    h1 { color: #58a6ff; text-align: center; margin-bottom: 24px; font-size: 1.5rem; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .card h2 { color: #8b949e; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; color: #8b949e; font-size: 0.85rem; margin-bottom: 4px; }
+    .input-group input { width: 100%; padding: 10px 12px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; font-size: 1rem; }
+    .input-group input:focus { outline: none; border-color: #58a6ff; }
+    .tip-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tip-btn { padding: 8px 16px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+    .tip-btn.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+    .tip-btn:hover { border-color: #58a6ff; }
+    .row { display: flex; gap: 12px; }
+    .row .input-group { flex: 1; }
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .result-item { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 14px; text-align: center; }
+    .result-item .label { color: #8b949e; font-size: 0.75rem; text-transform: uppercase; }
+    .result-item .value { color: #58a6ff; font-size: 1.3rem; font-weight: 600; margin-top: 4px; }
+    .result-item.full { grid-column: 1 / -1; }
+    .footer { text-align: center; color: #484f58; font-size: 0.75rem; padding: 20px 0; }
+    @media (max-width: 480px) { .results-grid { grid-template-columns: 1fr; } .row { flex-direction: column; gap: 0; } }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Tip Calculator \u2014 Split Bill & Calculate Tip Amount",
+  "description": "Quickly calculate the tip amount and split the bill between any number of people. Preset tip percentages or custom amount.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+  <div class="container">
+    <h1>💵 Tip Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <div class="card">
+      <div class="input-group"><label>Bill Amount ($)</label><input type="number" id="bill" value="100" min="0" step="0.01" oninput="update()"></div>
+      <h2>Tip %</h2>
+      <div class="tip-presets" id="presets">
+        <button class="tip-btn" data-val="10">10%</button>
+        <button class="tip-btn" data-val="15">15%</button>
+        <button class="tip-btn active" data-val="18">18%</button>
+        <button class="tip-btn" data-val="20">20%</button>
+        <button class="tip-btn" data-val="25">25%</button>
+        <button class="tip-btn" data-val="custom">Custom</button>
+      </div>
+      <div class="input-group" id="customGroup" style="display:none;"><label>Custom Tip (%)</label><input type="number" id="customTip" value="15" min="0" max="100" step="0.5" oninput="selectCustom(); update()"></div>
+      <div class="input-group"><label>Split Between (# of people)</label><input type="number" id="split" value="1" min="1" max="10" step="1" oninput="update()"></div>
+    </div>
+    <div class="card">
+      <h2>Results</h2>
+      <div class="results-grid">
+        <div class="result-item"><div class="label">Tip Amount</div><div class="value" id="tipResult">$18.00</div></div>
+        <div class="result-item"><div class="label">Total Bill</div><div class="value" id="totalResult">$118.00</div></div>
+        <div class="result-item"><div class="label">Per Person Total</div><div class="value" id="perPersonResult">$118.00</div></div>
+        <div class="result-item"><div class="label">Per Person Tip</div><div class="value" id="perPersonTipResult">$18.00</div></div>
+      </div>
+    </div>
+    <div class="footer">Tip Calculator &mdash; Free Tool</div>
+  </div>
+  <script>
+    let activeTip = 18;
+
+    document.querySelectorAll('.tip-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const val = this.dataset.val;
+        if (val === 'custom') {
+          document.getElementById('customGroup').style.display = 'block';
+          activeTip = parseFloat(document.getElementById('customTip').value) || 15;
+        } else {
+          document.getElementById('customGroup').style.display = 'none';
+          activeTip = parseFloat(val);
+        }
+        update();
+      });
+    });
+
+    function selectCustom() {
+      document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.tip-btn[data-val="custom"]').classList.add('active');
+      document.getElementById('customGroup').style.display = 'block';
+      activeTip = parseFloat(document.getElementById('customTip').value) || 15;
+      update();
+    }
+
+    function fmt(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+    function update() {
+      const bill = parseFloat(document.getElementById('bill').value) || 0;
+      const people = parseInt(document.getElementById('split').value) || 1;
+      const tipPct = activeTip / 100;
+      const tip = bill * tipPct;
+      const total = bill + tip;
+      const perPerson = total / people;
+      const perPersonTip = tip / people;
+
+      document.getElementById('tipResult').textContent = fmt(tip);
+      document.getElementById('totalResult').textContent = fmt(total);
+      document.getElementById('perPersonResult').textContent = fmt(perPerson);
+      document.getElementById('perPersonTipResult').textContent = fmt(perPersonTip);
+    }
+
+    update();
+  </script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/salary-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Salary Calculator — Hourly to Annual Wage Converter</a>
+      <a href="/gpa-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GPA Calculator — Calculate Your Grade Point Average</a>
+      <a href="/grade-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Final Grade Calculator — What You Need on Your Final Exam</a>
+      <a href="/investment-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Investment Calculator — Project Investment Growth Over Time</a>
+      <a href="/savings-goal-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Savings Goal Calculator — Time to Reach Your Savings Target</a>
+      <a href="/mortgage-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Mortgage Calculator — Monthly Payment with Amortization</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

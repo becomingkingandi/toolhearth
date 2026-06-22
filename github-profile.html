@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Profile Viewer — Look Up Any GitHub User</title>
+<meta name="description" content="View any GitHub user's profile, including avatar, bio, followers, repositories, and total stars. Free developer lookup tool.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+  .container { max-width: 680px; margin: 0 auto; padding: 20px; flex: 1; width: 100%; }
+  h1 { text-align: center; margin: 30px 0; font-size: 2rem; background: linear-gradient(135deg,#f78166,#bc8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .search-box { display: flex; gap: 10px; margin-bottom: 30px; }
+  .search-box input { flex: 1; padding: 14px 18px; border: 1px solid #30363d; border-radius: 8px; background: #161b22; color: #c9d1d9; font-size: 1rem; outline: none; transition: border .2s; }
+  .search-box input:focus { border-color: #f78166; }
+  .search-box button { padding: 14px 28px; border: none; border-radius: 8px; background: #238636; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .2s; white-space: nowrap; }
+  .search-box button:hover { background: #2ea043; }
+  .search-box button:disabled { opacity: .6; cursor: not-allowed; }
+  .loading { text-align: center; padding: 40px; display: none; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #30363d; border-top-color: #f78166; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg { background: #3a1c1c; border: 1px solid #f85149; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; }
+  .profile { display: none; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; }
+  .profile-top { display: flex; gap: 24px; align-items: flex-start; margin-bottom: 24px; }
+  .avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #30363d; flex-shrink: 0; }
+  .profile-info { flex: 1; }
+  .profile-info h2 { font-size: 1.6rem; color: #f0f6fc; margin-bottom: 4px; }
+  .profile-info .login { color: #8b949e; font-size: 1rem; margin-bottom: 6px; }
+  .profile-info .bio { color: #c9d1d9; margin: 8px 0; font-size: .95rem; line-height: 1.5; }
+  .profile-info .location { color: #8b949e; font-size: .88rem; margin-bottom: 4px; }
+  .profile-info .location::before { content: "📍 "; }
+  .profile-info .joined { color: #8b949e; font-size: .85rem; }
+  .profile-info .joined::before { content: "📅 Joined "; }
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: #0d1117; border: 1px solid #21262d; border-radius: 8px; padding: 16px; text-align: center; }
+  .stat-card .num { font-size: 1.5rem; font-weight: 700; color: #f0f6fc; }
+  .stat-card .label { color: #8b949e; font-size: .78rem; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+  .repo-section h3 { color: #8b949e; font-size: .9rem; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .repo-section .count { color: #f0f6fc; font-size: 1.2rem; }
+  @media (max-width: 500px) { .container { padding: 14px; } h1 { font-size: 1.5rem; } .search-box { flex-direction: column; } .profile-top { flex-direction: column; align-items: center; text-align: center; } .stats { grid-template-columns: repeat(2,1fr); } }
+  .footer { text-align: center; padding: 24px; color: #484f58; font-size: .85rem; border-top: 1px solid #21262d; margin-top: 30px; }
+  .footer a { color: #58a6ff; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "GitHub Profile Viewer \u2014 Look Up Any GitHub User",
+  "description": "View any GitHub user's profile, including avatar, bio, followers, repositories, and total stars. Free developer lookup tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🐙 GitHub Profile</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="search-box">
+    <input type="text" id="usernameInput" placeholder="Enter GitHub username..." autofocus>
+    <button id="searchBtn">Search</button>
+  </div>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>Fetching profile...</span>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="profile" id="profile"></div>
+</div>
+<div class="footer">Powered by <a href="https://docs.github.com/en/rest" target="_blank">GitHub API</a> &middot; <a href="https://github.com/me-shemika/cheat-sheet" target="_blank">GitHub</a></div>
+<script>
+  const input = document.getElementById('usernameInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const loading = document.getElementById('loading');
+  const errorMsg = document.getElementById('errorMsg');
+  const profileDiv = document.getElementById('profile');
+
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') search(); });
+  searchBtn.addEventListener('click', search);
+
+  async function search() {
+    const username = input.value.trim();
+    if (!username) return;
+    loading.style.display = 'block';
+    errorMsg.style.display = 'none';
+    profileDiv.style.display = 'none';
+    searchBtn.disabled = true;
+    try {
+      const [userRes, reposRes] = await Promise.all([
+        fetch(`https://api.github.com/users/${encodeURIComponent(username)}`),
+        fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`)
+      ]);
+      if (!userRes.ok) throw new Error(userRes.status === 403 ? 'Rate limited. Try again later.' : `User "${username}" not found.`);
+      const user = await userRes.json();
+      const repos = userRes.ok ? await reposRes.json() : [];
+      render(user, repos);
+    } catch (err) {
+      errorMsg.textContent = err.message;
+      errorMsg.style.display = 'block';
+    } finally {
+      loading.style.display = 'none';
+      searchBtn.disabled = false;
+    }
+  }
+
+  function render(user, repos) {
+    const stars = repos.reduce((s, r) => s + r.stargazers_count, 0);
+    const joined = new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const html = `
+      <div class="profile-top">
+        <img class="avatar" src="${user.avatar_url}" alt="${user.login}">
+        <div class="profile-info">
+          <h2>${user.name || user.login}</h2>
+          <div class="login">@${user.login}</div>
+          ${user.bio ? `<div class="bio">${user.bio}</div>` : ''}
+          ${user.location ? `<div class="location">${user.location}</div>` : ''}
+          <div class="joined">${joined}</div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat-card"><div class="num">${user.public_repos}</div><div class="label">Repos</div></div>
+        <div class="stat-card"><div class="num">${stars}</div><div class="label">Stars</div></div>
+        <div class="stat-card"><div class="num">${user.followers}</div><div class="label">Followers</div></div>
+        <div class="stat-card"><div class="num">${user.following}</div><div class="label">Following</div></div>
+      </div>
+      <div class="repo-section">
+        <h3>Public Repositories</h3>
+        <div class="count">${user.public_repos} total</div>
+      </div>
+    `;
+    profileDiv.innerHTML = html;
+    profileDiv.style.display = 'block';
+  }
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

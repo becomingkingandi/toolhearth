@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Palette Generator — Create Color Schemes</title>
+<meta name="description" content="Generate beautiful color palettes using color harmony rules. Analogous, complementary, triadic, and monochromatic schemes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0b0d14; color: #e4e6ef; min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+    .back { display: inline-flex; align-items: center; gap: 6px; color: #8b8fa4; text-decoration: none; font-size: 0.9rem; margin-bottom: 24px; }
+    .back:hover { color: #818cf8; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+    .sub { color: #8b8fa4; margin-bottom: 32px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 32px; }
+    .color-picker-wrap { display: flex; align-items: center; gap: 12px; background: #141824; border: 1px solid #1f2335; border-radius: 12px; padding: 8px 16px; }
+    .color-picker-wrap label { font-size: 0.85rem; font-weight: 500; color: #8b8fa4; }
+    .color-picker-wrap input[type="color"] { width: 44px; height: 44px; border: 2px solid #1f2335; border-radius: 8px; cursor: pointer; background: none; padding: 2px; }
+    .color-picker-wrap input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    .color-picker-wrap input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
+    select { background: #141824; color: #e4e6ef; border: 1px solid #1f2335; border-radius: 8px; padding: 10px 16px; font-size: 0.9rem; font-family: inherit; cursor: pointer; }
+    select:focus { outline: none; border-color: #818cf8; }
+    .btn { background: #818cf8; color: #0b0d14; border: none; border-radius: 8px; padding: 10px 20px; font-size: 0.9rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .palette { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 32px; }
+    .swatch { border-radius: 12px; padding: 24px 16px; min-height: 140px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; overflow: hidden; }
+    .swatch .hex { font-size: 0.8rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: inline-block; width: fit-content; cursor: pointer; }
+    .swatch .hex:hover { background: rgba(0,0,0,0.6); }
+    .swatch .role { font-size: 0.7rem; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+    .info { background: #141824; border: 1px solid #1f2335; border-radius: 12px; padding: 20px 24px; }
+    .info h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: #8b8fa4; text-transform: uppercase; letter-spacing: 0.05em; }
+    .info p { font-size: 0.85rem; color: #8b8fa4; line-height: 1.6; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1f2335; color: #e4e6ef; padding: 10px 24px; border-radius: 8px; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+    .random-btn { background: #1f2335; color: #e4e6ef; border: 1px solid #3b3f5c; }
+    @media (max-width: 500px) {
+      .palette { grid-template-columns: 1fr 1fr; }
+      .controls { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Color Palette Generator \u2014 Create Color Schemes",
+  "description": "Generate beautiful color palettes using color harmony rules. Analogous, complementary, triadic, and monochromatic schemes.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="index.html">← Back to Toolkit</a>
+    <h1>🌈 Color Palette Generator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p class="sub">Generate harmonious color schemes from any base color.</p>
+    <div class="controls">
+      <div class="color-picker-wrap">
+        <label>Base</label>
+        <input type="color" id="baseColor" value="#6366f1" />
+      </div>
+      <select id="ruleSelect">
+        <option value="analogous">Analogous</option>
+        <option value="monochromatic">Monochromatic</option>
+        <option value="complementary">Complementary</option>
+        <option value="triadic" selected>Triadic</option>
+        <option value="tetradic">Tetradic</option>
+      </select>
+      <button class="btn random-btn" onclick="randomColor()">🎲 Random</button>
+    </div>
+    <div class="palette" id="palette"></div>
+    <div class="info">
+      <h3>💡 About this scheme</h3>
+      <p id="desc">A triadic color scheme uses three colors evenly spaced around the color wheel (120° apart). It offers high contrast while retaining harmony — great for vibrant, balanced designs.</p>
+    </div>
+  </div>
+  <div class="toast" id="toast">Copied!</div>
+  <script>
+    function hslToHex(h, s, l) {
+      l /= 100; s /= 100;
+      const a = s * Math.min(l, 1 - l);
+      const f = n => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');
+      };
+      return `#${f(0)}${f(8)}${f(4)}`;
+    }
+    function hexToHsl(hex) {
+      let r = parseInt(hex.slice(1,3),16)/255, g = parseInt(hex.slice(3,5),16)/255, b = parseInt(hex.slice(5,7),16)/255;
+      const max = Math.max(r,g,b), min = Math.min(r,g,b);
+      let h = 0, s = 0, l = (max+min)/2;
+      if (max !== min) {
+        const d = max-min;
+        s = l > 0.5 ? d/(2-max-min) : d/(max+min);
+        switch (max) {
+          case r: h = ((g-b)/d+(g<b?6:0))*60; break;
+          case g: h = ((b-r)/d+2)*60; break;
+          case b: h = ((r-g)/d+4)*60; break;
+        }
+      }
+      return { h: Math.round(h), s: Math.round(s*100), l: Math.round(l*100) };
+    }
+    function generatePalette() {
+      const base = document.getElementById('baseColor').value;
+      const rule = document.getElementById('ruleSelect').value;
+      const hsl = hexToHsl(base);
+      let colors = [];
+      switch (rule) {
+        case 'analogous': {
+          for (let i = -1; i <= 2; i++) colors.push(hslToHex(hsl.h + i*30, hsl.s + (i===0?0:i*3), hsl.l + (i===0?0:i*4)));
+          break;
+        }
+        case 'monochromatic': {
+          for (let i = -2; i <= 2; i++) colors.push(hslToHex(hsl.h, hsl.s, Math.min(95,Math.max(10,hsl.l + i*12))));
+          break;
+        }
+        case 'complementary': {
+          colors = [
+            hslToHex(hsl.h, hsl.s, hsl.l),
+            hslToHex((hsl.h+180)%360, hsl.s, hsl.l),
+            hslToHex(hsl.h, hsl.s-10, Math.min(90,hsl.l+15)),
+            hslToHex((hsl.h+180)%360, hsl.s-10, Math.min(90,hsl.l+15)),
+            hslToHex(hsl.h, Math.max(10,hsl.s-8), Math.max(15,hsl.l-18)),
+          ];
+          break;
+        }
+        case 'triadic': {
+          for (let i = 0; i < 5; i++) {
+            const h = (hsl.h + i*120 + (i>2?60:0)) % 360;
+            const s = Math.min(100, Math.max(15, hsl.s + (i===2?-15:i===3?10:0)));
+            const l = Math.min(90, Math.max(12, hsl.l + (i<=1?0:i===2?-12:i===3?8:-6)));
+            colors.push(hslToHex(h, s, l));
+          }
+          break;
+        }
+        case 'tetradic': {
+          for (let i = 0; i < 4; i++) {
+            const h = (hsl.h + i*90) % 360;
+            colors.push(hslToHex(h, hsl.s, hsl.l));
+          }
+          break;
+        }
+      }
+      renderPalette(colors, rule);
+    }
+    const roleNames = {
+      analogous: ['Base', 'Left', 'Far Left', 'Right'],
+      monochromatic: ['Dark', 'Dim', 'Base', 'Light', 'Bright'],
+      complementary: ['Primary', 'Complement', 'Primary Light', 'Complement Light', 'Dark Accent'],
+      triadic: ['Primary', 'Secondary', 'Tertiary', 'Accent 1', 'Accent 2'],
+      tetradic: ['A', 'B', 'C', 'D'],
+    };
+    const descriptions = {
+      analogous: 'Analogous colors sit next to each other on the color wheel (30° apart). They create serene, harmonious designs — perfect for minimalist or nature-inspired interfaces.',
+      monochromatic: 'Monochromatic schemes use a single hue with varying lightness levels. The result is clean, elegant, and easy on the eyes — ideal for content-heavy apps.',
+      complementary: 'Complementary colors sit opposite each other on the color wheel (180°). This creates strong contrast and visual pop — great for CTAs and emphasis.',
+      triadic: 'A triadic color scheme uses three colors evenly spaced around the color wheel (120° apart). It offers high contrast while retaining harmony — great for vibrant, balanced designs.',
+      tetradic: 'Tetradic (double-complementary) uses four colors arranged into two complementary pairs (90° apart). Rich and complex — best for bold, colorful branding.',
+    };
+    function renderPalette(colors, rule) {
+      const container = document.getElementById('palette');
+      container.innerHTML = '';
+      const roles = roleNames[rule] || colors.map((_,i)=>`Color ${i+1}`);
+      colors.forEach((hex, i) => {
+        const swatch = document.createElement('div');
+        swatch.className = 'swatch';
+        swatch.style.background = hex;
+        const textColor = isLight(hex) ? '#1a1a2e' : '#fff';
+        swatch.style.color = textColor;
+        const hexSpan = document.createElement('span');
+        hexSpan.className = 'hex';
+        hexSpan.textContent = hex.toUpperCase();
+        hexSpan.onclick = () => copyHex(hex);
+        const role = document.createElement('div');
+        role.className = 'role';
+        role.textContent = roles[i] || `Swatch ${i+1}`;
+        swatch.appendChild(role);
+        swatch.appendChild(hexSpan);
+        container.appendChild(swatch);
+      });
+      document.getElementById('desc').textContent = descriptions[rule] || '';
+    }
+    function isLight(hex) {
+      const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      return (r*0.299 + g*0.587 + b*0.114) > 155;
+    }
+    function copyHex(hex) {
+      navigator.clipboard.writeText(hex);
+      const toast = document.getElementById('toast');
+      toast.textContent = `Copied ${hex}!`;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1500);
+    }
+    function randomColor() {
+      const hex = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');
+      document.getElementById('baseColor').value = hex;
+      generatePalette();
+    }
+    document.getElementById('baseColor').addEventListener('input', generatePalette);
+    document.getElementById('ruleSelect').addEventListener('change', generatePalette);
+    generatePalette();
+  </script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/color-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Color Converter — HEX to RGB to HSL Converter</a>
+      <a href="/gradient-builder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Gradient Builder — Create Linear & Radial Gradients</a>
+      <a href="/typography-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Typography Tester — Preview Fonts & Text Styles</a>
+      <a href="/box-shadow" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Box Shadow Generator — Create Shadow Effects</a>
+      <a href="/grid-layout" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Grid Layout Builder — Design Responsive Grids</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

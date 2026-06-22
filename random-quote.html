@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random Quote Generator — Inspirational & Wisdom Quotes</title>
+<meta name="description" content="Get inspired with random quotes from famous authors and thinkers. Filter by category. Free daily quote generator.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:680px;width:100%;margin:0 auto;padding:20px 0;flex:1;display:flex;flex-direction:column}
+h1{text-align:center;font-size:1.8rem;margin-bottom:8px;color:#58a6ff}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:32px;font-size:0.95rem}
+.controls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px;align-items:center}
+.controls select,.controls button{flex:1;min-width:140px}
+select{background:#161b22;color:#c9d1d9;border:1px solid #30363d;border-radius:8px;padding:12px 16px;font-size:1rem;cursor:pointer;appearance:auto}
+select:focus{outline:2px solid #58a6ff;outline-offset:2px}
+.btn{background:#238636;color:#fff;border:none;border-radius:8px;padding:12px 24px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn:active{transform:scale(.97)}
+.btn-secondary{background:#21262d;color:#c9d1d9;border:1px solid #30363d}
+.btn-secondary:hover{background:#30363d}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:32px;margin-bottom:20px}
+.quote-text{font-size:1.3rem;line-height:1.7;min-height:80px;text-align:center;color:#f0f6fc;font-style:italic;transition:opacity .3s}
+.quote-text.loading{opacity:.4}
+.quote-author{text-align:center;color:#8b949e;margin-top:16px;font-size:1rem;font-style:normal}
+.spinner{display:none;width:36px;height:36px;border:4px solid #30363d;border-top-color:#58a6ff;border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
+.spinner.active{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{display:none;color:#f85149;background:#2d1215;border:1px solid #5c1a1e;border-radius:8px;padding:16px;margin-bottom:16px;text-align:center}
+.error-msg.active{display:block}
+.actions{display:flex;gap:12px;margin-top:20px;justify-content:center}
+.actions .btn{flex:0 1 auto}
+.footer{text-align:center;padding:20px;color:#8b949e;font-size:.85rem;border-top:1px solid #21262d;margin-top:40px}
+.footer a{color:#58a6ff;text-decoration:none}
+@media(max-width:480px){h1{font-size:1.4rem}.quote-text{font-size:1.1rem}.card{padding:20px}.controls{flex-direction:column}.controls select,.controls button{width:100%}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Random Quote Generator \u2014 Inspirational & Wisdom Quotes",
+  "description": "Get inspired with random quotes from famous authors and thinkers. Filter by category. Free daily quote generator.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>&#10077; Random Quote Generator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Wisdom, inspiration, and thought-provoking words</p>
+
+<div class="controls">
+  <select id="tagSelect" aria-label="Filter by tag">
+    <option value="">Any Topic</option>
+    <option value="inspiration">Inspiration</option>
+    <option value="wisdom">Wisdom</option>
+    <option value="life">Life</option>
+    <option value="success">Success</option>
+    <option value="love">Love</option>
+    <option value="happiness">Happiness</option>
+    <option value="knowledge">Knowledge</option>
+    <option value="motivation">Motivation</option>
+    <option value="courage">Courage</option>
+    <option value="faith">Faith</option>
+  </select>
+  <button class="btn" id="newQuoteBtn" onclick="fetchQuote()">&#128260; New Quote</button>
+</div>
+
+<div class="card">
+  <div class="spinner" id="spinner"></div>
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="quote-text" id="quoteText">Click "New Quote" for inspiration!</div>
+  <div class="quote-author" id="quoteAuthor"></div>
+</div>
+
+<div class="actions">
+  <button class="btn btn-secondary" id="copyBtn" onclick="copyQuote()">&#128203; Copy</button>
+</div>
+</div>
+
+<div class="footer">
+  Powered by <a href="https://api.quotable.io" target="_blank">Quotable API</a> &mdash; Free API Site
+</div>
+
+<script>
+let currentQuote = '';
+let currentAuthor = '';
+
+async function fetchQuote() {
+  const btn = document.getElementById('newQuoteBtn');
+  const spinner = document.getElementById('spinner');
+  const quoteText = document.getElementById('quoteText');
+  const quoteAuthor = document.getElementById('quoteAuthor');
+  const errorMsg = document.getElementById('errorMsg');
+  const tag = document.getElementById('tagSelect').value;
+
+  btn.disabled = true;
+  spinner.classList.add('active');
+  quoteText.classList.add('loading');
+  errorMsg.classList.remove('active');
+
+  try {
+    let url = 'https://api.quotable.io/random';
+    if (tag) url += `?tags=${encodeURIComponent(tag)}`;
+
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const data = await resp.json();
+    currentQuote = data.content;
+    currentAuthor = data.author || 'Unknown';
+
+    quoteText.textContent = `"${currentQuote}"`;
+    quoteAuthor.textContent = `— ${currentAuthor}`;
+    quoteText.classList.remove('loading');
+  } catch (err) {
+    quoteText.textContent = '';
+    quoteAuthor.textContent = '';
+    quoteText.classList.remove('loading');
+    errorMsg.textContent = 'Failed to fetch quote. Please try again.';
+    errorMsg.classList.add('active');
+  } finally {
+    spinner.classList.remove('active');
+    btn.disabled = false;
+  }
+}
+
+function copyQuote() {
+  if (!currentQuote) return;
+  const text = `"${currentQuote}" — ${currentAuthor}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.textContent;
+    btn.textContent = '&#10003; Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  }).catch(() => {
+    alert('Failed to copy. Select the text manually.');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', fetchQuote);
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+      <a href="/github-profile" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GitHub Profile Viewer — Look Up Any GitHub User</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

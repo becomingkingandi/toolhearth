@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random Dog Pictures — Cute Dog Image Generator</title>
+<meta name="description" content="Browse random dog pictures by breed. Free cute dog photo generator powered by the Dog CEO API.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+  .container { max-width: 680px; margin: 0 auto; padding: 20px; flex: 1; width: 100%; }
+  h1 { text-align: center; margin: 30px 0; font-size: 2rem; background: linear-gradient(135deg,#e3b341,#f78166); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .controls button { padding: 12px 24px; border: none; border-radius: 8px; background: #238636; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .2s; white-space: nowrap; }
+  .controls button:hover { background: #2ea043; }
+  .controls button:disabled { opacity: .6; cursor: not-allowed; }
+  .controls select { flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #30363d; border-radius: 8px; background: #161b22; color: #c9d1d9; font-size: .95rem; outline: none; cursor: pointer; }
+  .controls select:focus { border-color: #e3b341; }
+  .loading { text-align: center; padding: 40px; display: none; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #30363d; border-top-color: #e3b341; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg { background: #3a1c1c; border: 1px solid #f85149; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; }
+  .image-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; display: none; }
+  .image-card img { width: 100%; display: block; max-height: 500px; object-fit: contain; background: #0d1117; }
+  .image-card .breed-label { padding: 14px 18px; color: #8b949e; font-size: .95rem; text-align: center; border-top: 1px solid #21262d; }
+  .image-card .breed-label strong { color: #e3b341; text-transform: capitalize; }
+  .footer { text-align: center; padding: 24px; color: #484f58; font-size: .85rem; border-top: 1px solid #21262d; margin-top: 30px; }
+  .footer a { color: #58a6ff; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  @media (max-width: 500px) { .container { padding: 14px; } h1 { font-size: 1.5rem; } .controls { flex-direction: column; } .controls select { width: 100%; } .controls button { width: 100%; } }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Random Dog Pictures \u2014 Cute Dog Image Generator",
+  "description": "Browse random dog pictures by breed. Free cute dog photo generator powered by the Dog CEO API.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🐕 Dog Pics</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="controls">
+    <button id="newDogBtn">🎲 New Dog</button>
+    <select id="breedSelect"><option value="">All breeds</option></select>
+  </div>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>Fetching a good boy...</span>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="image-card" id="imageCard">
+    <img id="dogImage" src="" alt="Dog">
+    <div class="breed-label">Breed: <strong id="breedName">unknown</strong></div>
+  </div>
+</div>
+<div class="footer">Powered by <a href="https://dog.ceo/dog-api/" target="_blank">Dog CEO API</a> &middot; <a href="https://github.com/me-shemika/cheat-sheet" target="_blank">GitHub</a></div>
+<script>
+  const newDogBtn = document.getElementById('newDogBtn');
+  const breedSelect = document.getElementById('breedSelect');
+  const loading = document.getElementById('loading');
+  const errorMsg = document.getElementById('errorMsg');
+  const imageCard = document.getElementById('imageCard');
+  const dogImage = document.getElementById('dogImage');
+  const breedName = document.getElementById('breedName');
+
+  newDogBtn.addEventListener('click', fetchDog);
+
+  async function fetchDog() {
+    const breed = breedSelect.value;
+    loading.style.display = 'block';
+    errorMsg.style.display = 'none';
+    imageCard.style.display = 'none';
+    newDogBtn.disabled = true;
+    try {
+      const url = breed
+        ? `https://dog.ceo/api/breed/${breed}/images/random`
+        : 'https://dog.ceo/api/breeds/image/random';
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed to fetch dog pic.');
+      const data = await res.json();
+      if (data.status !== 'success') throw new Error('API error.');
+      const extractedBreed = extractBreed(data.message);
+      dogImage.src = data.message;
+      breedName.textContent = extractedBreed;
+      imageCard.style.display = 'block';
+    } catch (err) {
+      errorMsg.textContent = err.message;
+      errorMsg.style.display = 'block';
+    } finally {
+      loading.style.display = 'none';
+      newDogBtn.disabled = false;
+    }
+  }
+
+  function extractBreed(url) {
+    // https://images.dog.ceo/breeds/husky/n02110185_1234.jpg
+    const match = url.match(/\/breeds\/([^/]+)/);
+    if (!match) return 'unknown';
+    return match[1].replace(/-/g, ' ');
+  }
+
+  // Load breed list
+  async function loadBreeds() {
+    try {
+      const res = await fetch('https://dog.ceo/api/breeds/list/all');
+      const data = await res.json();
+      if (data.status !== 'success') return;
+      const breeds = data.message;
+      const frag = document.createDocumentFragment();
+      for (const [breed, subs] of Object.entries(breeds)) {
+        if (subs.length) {
+          subs.forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = `${breed}/${sub}`;
+            opt.textContent = `${sub} ${breed}`;
+            frag.appendChild(opt);
+          });
+        } else {
+          const opt = document.createElement('option');
+          opt.value = breed;
+          opt.textContent = breed.charAt(0).toUpperCase() + breed.slice(1);
+          frag.appendChild(opt);
+        }
+      }
+      breedSelect.appendChild(frag);
+    } catch {}
+  }
+
+  loadBreeds();
+  fetchDog();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

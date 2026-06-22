@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Content Repurposing — Turn One Video Into Dozen Posts</title>
+<meta name="description" content="AI-powered content repurposing service. Turn podcasts, webinars, and videos into social posts, emails, and blog articles.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{width:100%;max-width:1100px;margin:0 auto;padding:0 24px}
+/* Hero */
+.hero{text-align:center;padding:100px 24px 80px;background:linear-gradient(180deg,#0d1117 0%,#161b22 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(88,166,255,.08) 0%,transparent 50%),radial-gradient(circle at 70% 60%,rgba(210,135,255,.06) 0%,transparent 50%);pointer-events:none}
+.hero-content{position:relative;z-index:1}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.02em;margin-bottom:20px;background:linear-gradient(135deg,#e6edf3 0%,#58a6ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:clamp(1rem,2vw,1.2rem);color:#8b949e;max-width:620px;margin:0 auto 32px}
+.btn{display:inline-block;padding:14px 40px;border-radius:8px;font-size:1.05rem;font-weight:600;text-decoration:none;transition:all .25s;cursor:pointer;border:none}
+.btn-primary{background:linear-gradient(135deg,#238636,#2ea043);color:#fff;box-shadow:0 4px 14px rgba(35,134,54,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(35,134,54,.45)}
+/* Sections */
+.section{padding:80px 0}
+.section-title{text-align:center;font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:700;margin-bottom:56px;letter-spacing:-.01em}
+.section-title span{color:#58a6ff}
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.step{text-align:center;padding:32px 20px;border-radius:12px;background:#161b22;border:1px solid #21262d;position:relative;transition:border-color .3s}
+.step:hover{border-color:#30363d}
+.step-number{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#238636,#2ea043);color:#fff;font-weight:700;font-size:1.2rem;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.step h3{font-size:1.15rem;margin-bottom:10px}
+.step p{color:#8b949e;font-size:.95rem}
+.step-arrow{display:none}
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.feature-card{padding:28px 24px;border-radius:12px;background:#161b22;border:1px solid #21262d;transition:border-color .3s}
+.feature-card:hover{border-color:#30363d}
+.feature-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:16px}
+.feature-icon.blue{background:rgba(88,166,255,.12);color:#58a6ff}
+.feature-icon.green{background:rgba(46,160,67,.12);color:#2ea043}
+.feature-icon.purple{background:rgba(210,135,255,.12);color:#d287ff}
+.feature-icon.orange{background:rgba(255,166,87,.12);color:#ffa657}
+.feature-icon.cyan{background:rgba(87,207,255,.12);color:#57cfff}
+.feature-card h3{font-size:1.05rem;margin-bottom:8px}
+.feature-card p{color:#8b949e;font-size:.92rem}
+/* Pricing */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
+.pricing-card{text-align:center;padding:36px 24px;border-radius:12px;background:#161b22;border:1px solid #21262d;transition:transform .3s,border-color .3s;position:relative}
+.pricing-card:hover{transform:translateY(-4px);border-color:#30363d}
+.pricing-card.featured{border-color:#238636;background:linear-gradient(180deg,#161b22 0%,#1a2a1d 100%)}
+.pricing-card.featured .pricing-badge{display:inline-block;padding:4px 14px;border-radius:20px;background:#238636;color:#fff;font-size:.78rem;font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:.04em}
+.pricing-card:not(.featured) .pricing-badge{display:none}
+.pricing-name{font-size:1.1rem;font-weight:600;margin-bottom:8px}
+.pricing-price{font-size:2.4rem;font-weight:800;margin-bottom:4px}
+.pricing-price span{font-size:1rem;font-weight:400;color:#8b949e}
+.pricing-desc{color:#8b949e;font-size:.9rem;margin-bottom:20px}
+.pricing-hours{font-size:.88rem;color:#58a6ff;margin-bottom:24px}
+.pricing-cta{display:inline-block;width:100%;padding:12px;border-radius:8px;font-weight:600;text-decoration:none;transition:all .25s;border:1px solid #30363d;color:#e6edf3;background:transparent;cursor:pointer}
+.pricing-cta:hover{background:#21262d}
+.pricing-card.featured .pricing-cta{background:#238636;border-color:#238636;color:#fff}
+.pricing-card.featured .pricing-cta:hover{background:#2ea043}
+/* Testimonials */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.testimonial-card{padding:28px 24px;border-radius:12px;background:#161b22;border:1px solid #21262d}
+.testimonial-stars{color:#d29922;font-size:1rem;margin-bottom:12px}
+.testimonial-text{color:#c9d1d9;font-size:.95rem;font-style:italic;margin-bottom:20px;line-height:1.7}
+.testimonial-author{display:flex;align-items:center;gap:12px}
+.testimonial-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#58a6ff,#d287ff);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#fff;flex-shrink:0}
+.testimonial-name{font-weight:600;font-size:.92rem}
+.testimonial-role{color:#8b949e;font-size:.82rem}
+/* FAQ */
+.faq-list{max-width:740px;margin:0 auto}
+.faq-item{border:1px solid #21262d;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.faq-question{width:100%;padding:18px 20px;background:#161b22;border:none;color:#e6edf3;font-size:1rem;font-weight:500;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.faq-question:hover{background:#1c2128}
+.faq-question::after{content:'+';font-size:1.3rem;color:#8b949e;transition:transform .3s;flex-shrink:0;margin-left:12px}
+.faq-item.active .faq-question::after{transform:rotate(45deg)}
+.faq-answer{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;color:#8b949e;font-size:.92rem;line-height:1.7}
+.faq-item.active .faq-answer{max-height:300px;padding:0 20px 18px}
+/* CTA Section */
+.cta-section{text-align:center;padding:80px 24px;background:linear-gradient(180deg,#161b22 0%,#0d1117 100%)}
+.cta-section h2{font-size:clamp(1.4rem,3vw,1.9rem);margin-bottom:16px}
+.cta-section p{color:#8b949e;margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto}
+/* Footer */
+.footer{text-align:center;padding:32px 24px;border-top:1px solid #21262d;color:#8b949e;font-size:.88rem}
+/* Mobile */
+@media(max-width:768px){
+.hero{padding:64px 20px 48px}
+.steps{grid-template-columns:1fr;gap:16px}
+.pricing-grid{grid-template-columns:1fr;gap:16px;max-width:400px;margin:0 auto}
+.features-grid{grid-template-columns:1fr}
+.testimonials-grid{grid-template-columns:1fr}
+.section{padding:56px 0}
+.section-title{margin-bottom:36px}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AI Content Repurposing \u2014 Turn One Video Into Dozen Posts",
+  "description": "AI-powered content repurposing service. Turn podcasts, webinars, and videos into social posts, emails, and blog articles.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+<div class="hero-content container">
+<h1>Turn One Piece of Content Into Dozens</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p>Stop re-recording and start repurposing. Transform your podcasts, webinars, and YouTube videos into clips, social posts, emails, and blogs — all with AI. Save hours every week.</p>
+<a href="#" class="btn btn-primary">Get Started</a>
+</div>
+</section>
+
+<!-- How It Works -->
+<section class="section" id="how-it-works">
+<div class="container">
+<h2 class="section-title">How It Works in <span>3 Steps</span></h2>
+<div class="steps">
+<div class="step">
+<div class="step-number">1</div>
+<h3>Upload Your Content</h3>
+<p>Drop a podcast episode, webinar recording, or YouTube video link. We support 20+ formats.</p>
+</div>
+<div class="step">
+<div class="step-number">2</div>
+<h3>AI Repurposes It</h3>
+<p>Our engine analyzes your content, identifies key moments, and reformats everything automatically.</p>
+</div>
+<div class="step">
+<div class="step-number">3</div>
+<h3>Get Your Content Pack</h3>
+<p>Download short clips, social posts, email drafts, and a blog article — ready to publish.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Features -->
+<section class="section" id="features">
+<div class="container">
+<h2 class="section-title">Everything You <span>Need</span></h2>
+<div class="features-grid">
+<div class="feature-card">
+<div class="feature-icon blue">🎬</div>
+<h3>Auto-Clip Generation</h3>
+<p>AI finds the best moments and turns them into bite-sized clips for TikTok, Reels, and Shorts.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon green">📱</div>
+<h3>Multi-Platform Formats</h3>
+<p>Auto-crop and re-format for every platform — YouTube, Instagram, LinkedIn, Twitter, and more.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon purple">🎯</div>
+<h3>Brand Voice Preservation</h3>
+<p>Your tone, your terms, your style. The AI learns your brand voice and stays consistent across every output.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon orange">📅</div>
+<h3>Scheduled Posting</h3>
+<p>Queue your repurposed content to publish automatically across all your social channels.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon cyan">📊</div>
+<h3>Analytics Dashboard</h3>
+<p>Track what's working — see engagement, click-through rates, and content performance at a glance.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Pricing -->
+<section class="section" id="pricing">
+<div class="container">
+<h2 class="section-title">Simple <span>Pricing</span></h2>
+<div class="pricing-grid">
+<div class="pricing-card">
+<div class="pricing-badge"></div>
+<div class="pricing-name">Starter</div>
+<div class="pricing-price">$49<span>/mo</span></div>
+<div class="pricing-hours">5 hours of content / month</div>
+<div class="pricing-desc">Perfect for solo creators just getting started with content repurposing.</div>
+<a href="#" class="pricing-cta">Get Started</a>
+</div>
+<div class="pricing-card featured">
+<div class="pricing-badge">Most Popular</div>
+<div class="pricing-name">Pro</div>
+<div class="pricing-price">$149<span>/mo</span></div>
+<div class="pricing-hours">20 hours of content / month</div>
+<div class="pricing-desc">Best for growing teams who need consistent multi-platform output.</div>
+<a href="#" class="pricing-cta">Get Started</a>
+</div>
+<div class="pricing-card">
+<div class="pricing-badge"></div>
+<div class="pricing-name">Agency</div>
+<div class="pricing-price">$499<span>/mo</span></div>
+<div class="pricing-hours">100 hours of content / month</div>
+<div class="pricing-desc">Built for agencies and media houses at scale.</div>
+<a href="#" class="pricing-cta">Get Started</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Testimonials -->
+<section class="section" id="testimonials">
+<div class="container">
+<h2 class="section-title">Loved by <span>Creators</span></h2>
+<div class="testimonials-grid">
+<div class="testimonial-card">
+<div class="testimonial-stars">★★★★★</div>
+<p class="testimonial-text">"This tool saved me 10+ hours a week. I used to spend all day repurposing my podcast — now it takes 20 minutes."</p>
+<div class="testimonial-author">
+<div class="testimonial-avatar">JM</div>
+<div>
+<div class="testimonial-name">Jessica Moreno</div>
+<div class="testimonial-role">Podcaster, The Growth Lab</div>
+</div>
+</div>
+</div>
+<div class="testimonial-card">
+<div class="testimonial-stars">★★★★★</div>
+<p class="testimonial-text">"We scaled our agency's content output 5x without hiring. The brand voice preservation is uncanny — it sounds just like us."</p>
+<div class="testimonial-author">
+<div class="testimonial-avatar">ML</div>
+<div>
+<div class="testimonial-name">Marcus Liu</div>
+<div class="testimonial-role">CEO, Brightwave Media</div>
+</div>
+</div>
+</div>
+<div class="testimonial-card">
+<div class="testimonial-stars">★★★★★</div>
+<p class="testimonial-text">"I upload one webinar and get a week's worth of content. Clips, LinkedIn posts, a blog — all done. Absolute game-changer."</p>
+<div class="testimonial-author">
+<div class="testimonial-avatar">SK</div>
+<div>
+<div class="testimonial-name">Sarah Kim</div>
+<div class="testimonial-role">Content Strategist</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+<div class="container">
+<h2 class="section-title">Frequently Asked <span>Questions</span></h2>
+<div class="faq-list">
+<div class="faq-item">
+<button class="faq-question">What types of content can I repurpose?</button>
+<div class="faq-answer">You can upload podcasts, webinars, YouTube videos, Zoom calls, audio files, and more. We support MP4, MOV, MP3, WAV, and direct YouTube links — over 20 formats total.</div>
+</div>
+<div class="faq-item">
+<button class="faq-question">How long does the AI take to process content?</button>
+<div class="faq-answer">Most uploads are processed in under 10 minutes. A 1-hour podcast typically takes 5–8 minutes. You'll get an email notification when your content pack is ready.</div>
+</div>
+<div class="faq-item">
+<button class="faq-question">Can I customize the output before publishing?</button>
+<div class="faq-answer">Absolutely. Every piece of repurposed content comes with an editor — tweak the copy, swap clips, adjust formatting, or override the AI's suggestions before you publish.</div>
+</div>
+<div class="faq-item">
+<button class="faq-question">Is my content secure and private?</button>
+<div class="faq-answer">Yes. All uploads are encrypted at rest and in transit. We never use your content to train our models, and you can delete everything from your account at any time.</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+<div class="container">
+<h2>Ready to Work Smarter?</h2>
+<p>Join thousands of creators and teams who turned hours of work into minutes.</p>
+<a href="#" class="btn btn-primary">Get Started Free</a>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+<div class="container">
+AI Content Repurposing — Work smarter, not longer
+</div>
+</footer>
+
+<script>
+document.querySelectorAll('.faq-question').forEach(btn=>{
+btn.addEventListener('click',()=>{
+const item=btn.closest('.faq-item');
+const isActive=item.classList.contains('active');
+document.querySelectorAll('.faq-item.active').forEach(el=>el.classList.remove('active'));
+if(!isActive)item.classList.add('active');
+});
+});
+</script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

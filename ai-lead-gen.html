@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Lead Generation — Find Qualified B2B Leads Automatically</title>
+<meta name="description" content="AI system that finds, researches, and qualifies B2B leads. Company research, contact finding, and intent signals.">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0b0d11;
+            --bg2: #11141b;
+            --bg3: #181d28;
+            --border: #252b3a;
+            --text: #e4e8ef;
+            --text2: #8b92a5;
+            --accent: #6c5ce7;
+            --accent2: #a29bfe;
+            --green: #00cec9;
+            --grad: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            --radius: 12px;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        a { color: var(--accent2); text-decoration: none; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+        /* ─── NAV ─── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(11,13,17,.85); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        nav .container {
+            display: flex; align-items: center; justify-content: space-between;
+            padding-top: 14px; padding-bottom: 14px;
+        }
+        .logo { font-weight: 700; font-size: 1.25rem; letter-spacing: -.02em; }
+        .logo span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 28px; font-size: .9rem; align-items: center; }
+        .nav-links a { color: var(--text2); transition: color .2s; }
+        .nav-links a:hover { color: var(--text); }
+        .btn {
+            display: inline-block; padding: 10px 24px; border-radius: 8px;
+            font-weight: 600; font-size: .9rem; cursor: pointer;
+            border: none; text-decoration: none; transition: all .2s;
+        }
+        .btn-primary { background: var(--grad); color: #fff; }
+        .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+        .btn-outline {
+            background: transparent; border: 1px solid var(--border); color: var(--text);
+        }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+        .btn-large { padding: 14px 36px; font-size: 1rem; }
+
+        /* ─── HERO ─── */
+        .hero {
+            text-align: center; padding: 100px 0 80px;
+            background: radial-gradient(ellipse at 50% 0%, rgba(108,92,231,.12) 0%, transparent 60%);
+        }
+        .hero-badge {
+            display: inline-block; padding: 6px 16px; border-radius: 100px;
+            background: rgba(108,92,231,.15); color: var(--accent2);
+            font-size: .8rem; font-weight: 600; letter-spacing: .03em;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: clamp(2.4rem, 6vw, 3.8rem); font-weight: 800;
+            line-height: 1.15; letter-spacing: -.03em; margin-bottom: 20px;
+        }
+        .hero h1 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p {
+            font-size: 1.15rem; color: var(--text2);
+            max-width: 600px; margin: 0 auto 36px;
+        }
+        .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .hero-stats {
+            display: flex; gap: 48px; justify-content: center; margin-top: 56px;
+            flex-wrap: wrap;
+        }
+        .hero-stats div { text-align: center; }
+        .hero-stats strong { font-size: 1.8rem; display: block; color: var(--text); }
+        .hero-stats span { font-size: .85rem; color: var(--text2); }
+
+        /* ─── SECTIONS ─── */
+        section { padding: 80px 0; }
+        section h2 {
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            font-weight: 700; text-align: center; margin-bottom: 12px;
+        }
+        section > .container > p.subtitle {
+            text-align: center; color: var(--text2); max-width: 540px;
+            margin: 0 auto 48px; font-size: 1.05rem;
+        }
+
+        /* ─── HOW IT WORKS ─── */
+        .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+        .step-card {
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 36px 28px;
+            text-align: center; transition: border-color .2s;
+        }
+        .step-card:hover { border-color: var(--accent); }
+        .step-num {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: var(--grad); display: inline-flex; align-items: center;
+            justify-content: center; font-weight: 700; font-size: 1.1rem;
+            margin-bottom: 20px; color: #fff;
+        }
+        .step-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .step-card p { font-size: .92rem; color: var(--text2); }
+
+        /* ─── FEATURES ─── */
+        .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+        .feat {
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 28px 24px;
+            transition: border-color .2s;
+        }
+        .feat:hover { border-color: var(--accent); }
+        .feat-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(108,92,231,.12); display: flex;
+            align-items: center; justify-content: center; margin-bottom: 14px;
+            font-size: 1.2rem;
+        }
+        .feat h3 { font-size: 1rem; margin-bottom: 6px; }
+        .feat p { font-size: .88rem; color: var(--text2); }
+
+        /* ─── PRICING ─── */
+        .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; align-items: start; }
+        .price-card {
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 36px 28px;
+            text-align: center; position: relative;
+        }
+        .price-card.popular {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(108,92,231,.06), rgba(162,155,254,.04));
+            transform: scale(1.04);
+        }
+        .price-badge {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--grad); color: #fff; padding: 4px 18px;
+            border-radius: 100px; font-size: .75rem; font-weight: 600;
+        }
+        .price-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+        .price-card .price { font-size: 2.6rem; font-weight: 800; margin: 12px 0 4px; }
+        .price-card .price span { font-size: 1rem; font-weight: 400; color: var(--text2); }
+        .price-card .leads { font-size: .9rem; color: var(--text2); margin-bottom: 20px; }
+        .price-card ul { list-style: none; text-align: left; margin: 0 0 28px; }
+        .price-card li { padding: 8px 0; font-size: .9rem; display: flex; align-items: center; gap: 10px; }
+        .price-card li::before { content: '✓'; color: var(--green); font-weight: 700; }
+        .price-card .btn { width: 100%; }
+
+        /* ─── INTEGRATIONS ─── */
+        .integrations-grid {
+            display: grid; grid-template-columns: repeat(4,1fr); gap: 20px;
+        }
+        .int-card {
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 28px 20px;
+            text-align: center; transition: border-color .2s;
+        }
+        .int-card:hover { border-color: var(--accent); }
+        .int-icon { font-size: 2rem; margin-bottom: 10px; }
+        .int-card h4 { font-size: .95rem; }
+
+        /* ─── FAQ ─── */
+        .faq-list { max-width: 720px; margin: 0 auto; }
+        .faq-item {
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: var(--radius); margin-bottom: 12px;
+            overflow: hidden; cursor: pointer;
+        }
+        .faq-q {
+            padding: 18px 24px; font-weight: 600; font-size: .95rem;
+            display: flex; justify-content: space-between; align-items: center;
+            user-select: none;
+        }
+        .faq-q::after {
+            content: '+'; font-size: 1.3rem; color: var(--text2);
+            transition: transform .3s;
+        }
+        .faq-item.open .faq-q::after { content: '−'; }
+        .faq-a {
+            max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .35s;
+            padding: 0 24px; font-size: .9rem; color: var(--text2); line-height: 1.7;
+        }
+        .faq-item.open .faq-a { max-height: 300px; padding: 0 24px 18px; }
+
+        /* ─── CTA ─── */
+        .cta-section {
+            text-align: center; background: var(--bg2);
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+        }
+        .cta-section h2 { margin-bottom: 16px; }
+        .cta-section p { color: var(--text2); max-width: 480px; margin: 0 auto 32px; }
+
+        /* ─── FOOTER ─── */
+        footer {
+            border-top: 1px solid var(--border); padding: 36px 0;
+            text-align: center; color: var(--text2); font-size: .85rem;
+        }
+        footer .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        footer a { color: var(--text2); }
+        footer a:hover { color: var(--text); }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 900px) {
+            .steps, .features-grid, .pricing-grid { grid-template-columns: repeat(2,1fr); }
+            .integrations-grid { grid-template-columns: repeat(2,1fr); }
+            .price-card.popular { transform: none; }
+        }
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .steps, .features-grid, .pricing-grid { grid-template-columns: 1fr; }
+            .integrations-grid { grid-template-columns: repeat(2,1fr); }
+            .hero-stats { gap: 24px; }
+            footer .container { flex-direction: column; }
+            section { padding: 56px 0; }
+            .hero { padding: 64px 0 48px; }
+            .price-card.popular { transform: none; }
+        }
+    </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AI Lead Generation \u2014 Find Qualified B2B Leads Automatically",
+  "description": "AI system that finds, researches, and qualifies B2B leads. Company research, contact finding, and intent signals.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+    <div class="container">
+        <div class="logo"><span>LeadSync</span> AI</div>
+        <div class="nav-links">
+            <a href="#how">How it Works</a>
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+            <a href="#" class="btn btn-primary">Get Started</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-badge">⚡ AI-Powered Lead Generation</div>
+        <h1>Find Your Next Customer<br><span>Automatically</span></h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+        <p>Stop wasting time prospecting. Our AI finds, researches, and qualifies B2B leads — delivering a ready-to-contact pipeline to your inbox every single day.</p>
+        <div class="hero-actions">
+            <a href="#" class="btn btn-primary btn-large">Start Free Trial</a>
+            <a href="#how" class="btn btn-outline btn-large">See How It Works</a>
+        </div>
+        <div class="hero-stats">
+            <div><strong>12K+</strong><span>Active users</span></div>
+            <div><strong>2.4M</strong><span>Leads generated</span></div>
+            <div><strong>38%</strong><span>Avg. reply rate</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how">
+    <div class="container">
+        <h2>How It Works</h2>
+        <p class="subtitle">Three simple steps from profile to pipeline. No manual searching, no spreadsheets, no guesswork.</p>
+        <div class="steps">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>Define Your Ideal Customer Profile</h3>
+                <p>Tell our AI who you want to reach — industry, company size, role, territory. One setup, done.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>AI Searches + Enriches</h3>
+                <p>Our engine scans thousands of sources, enriches each record with contacts, intel, and intent signals.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Receive Qualified Leads Daily</h3>
+                <p>Every morning you get a fresh batch of vetted, enriched leads ready for outreach — no manual effort required.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section id="features" style="background:var(--bg2);">
+    <div class="container">
+        <h2>Everything You Need to Close Deals</h2>
+        <p class="subtitle">A complete lead-intelligence platform that turns raw data into revenue.</p>
+        <div class="features-grid">
+            <div class="feat">
+                <div class="feat-icon">🏢</div>
+                <h3>Company Research</h3>
+                <p>Deep-dive firmographics, funding history, tech stack, recent news, and growth signals for every prospect.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon">👤</div>
+                <h3>Contact Finding</h3>
+                <p>Direct-dial phone numbers, verified emails, and LinkedIn profiles for decision-makers at target companies.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon">📡</div>
+                <h3>Intent Signals</h3>
+                <p>Know who is actively researching your category — job changes, content engagement, and buying triggers.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon">🔗</div>
+                <h3>CRM Export</h3>
+                <p>One-click sync with HubSpot, Salesforce, Pipedrive, or Close. Enriched leads land where you work.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon">✉️</div>
+                <h3>Email Enrichment</h3>
+                <p>Bounce-proof verified emails with confidence scoring. Spend your outreach budget on sends, not guesswork.</p>
+            </div>
+            <div class="feat">
+                <div class="feat-icon">📊</div>
+                <h3>Weekly Pipeline Report</h3>
+                <p>Automated summary of new leads, reply rates, pipeline velocity, and recommendations — right to your inbox.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ INTEGRATIONS ═══ -->
+<section id="integrations">
+    <div class="container">
+        <h2>Works Where You Work</h2>
+        <p class="subtitle">Native integrations with the tools your team already uses every day.</p>
+        <div class="integrations-grid">
+            <div class="int-card">
+                <div class="int-icon">🔶</div>
+                <h4>HubSpot</h4>
+            </div>
+            <div class="int-card">
+                <div class="int-icon">☁️</div>
+                <h4>Salesforce</h4>
+            </div>
+            <div class="int-card">
+                <div class="int-icon">📌</div>
+                <h4>Pipedrive</h4>
+            </div>
+            <div class="int-card">
+                <div class="int-icon">🔒</div>
+                <h4>Close</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ PRICING ═══ -->
+<section id="pricing" style="background:var(--bg2);">
+    <div class="container">
+        <h2>Simple, Transparent Pricing</h2>
+        <p class="subtitle">Start small and scale as you grow. Every plan includes a 14-day free trial.</p>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>Starter</h3>
+                <div class="price">$199<span>/mo</span></div>
+                <div class="leads">500 verified leads per month</div>
+                <ul>
+                    <li>Company research &amp; enrichment</li>
+                    <li>Email &amp; phone contact finding</li>
+                    <li>Basic intent signals</li>
+                    <li>CRM export (1 integration)</li>
+                    <li>Weekly pipeline report</li>
+                    <li>Email support</li>
+                </ul>
+                <a href="#" class="btn btn-outline">Start Free Trial</a>
+            </div>
+
+            <div class="price-card popular">
+                <div class="price-badge">Most Popular</div>
+                <h3>Growth</h3>
+                <div class="price">$499<span>/mo</span></div>
+                <div class="leads">2,000 verified leads per month</div>
+                <ul>
+                    <li>Everything in Starter</li>
+                    <li>Advanced intent signals</li>
+                    <li>Unlimited CRM integrations</li>
+                    <li>Email enrichment with scoring</li>
+                    <li>Priority support</li>
+                    <li>Custom lead scoring rules</li>
+                </ul>
+                <a href="#" class="btn btn-primary">Start Free Trial</a>
+            </div>
+
+            <div class="price-card">
+                <h3>Scale</h3>
+                <div class="price">Custom</div>
+                <div class="leads">Unlimited leads, tailored to you</div>
+                <ul>
+                    <li>Everything in Growth</li>
+                    <li>Dedicated account manager</li>
+                    <li>Custom integrations &amp; API access</li>
+                    <li>Custom data sources &amp; fields</li>
+                    <li>SLA guarantee</li>
+                    <li>Onboarding &amp; training</li>
+                </ul>
+                <a href="#" class="btn btn-outline">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section id="faq">
+    <div class="container">
+        <h2>Frequently Asked Questions</h2>
+        <p class="subtitle">Everything you need to know about LeadSync AI.</p>
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-q">How does the AI find leads?</div>
+                <div class="faq-a">LeadSync combines dozens of public and premium data sources — company databases, job boards, intent data providers, social networks, and news feeds — to identify companies and contacts that match your ideal customer profile. The AI cross-references and deduplicates every record before it reaches your pipeline.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">How accurate are the email addresses and phone numbers?</div>
+                <div class="faq-a">We verify every email and phone in real time using multi-stage checks (SMTP validation, syntax, domain reputation, and bounce history). Our accuracy consistently exceeds 95% for emails and 85% for phone numbers.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Can I integrate with my existing CRM?</div>
+                <div class="faq-a">Absolutely. LeadSync offers native one-click integrations with HubSpot, Salesforce, Pipedrive, and Close. We also provide a REST API and Zapier connection for any other tool in your stack.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">What are intent signals, and how do they work?</div>
+                <div class="faq-a">Intent signals track behavioral data — job changes, content consumption, funding announcements, and competitor research — to identify prospects actively in-market for your solution. Growth and Scale plans surface these as priority alerts so you reach buyers at the right moment.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Is there a free trial?</div>
+                <div class="faq-a">Yes! Every plan includes a 14-day free trial with full access to the features in your chosen tier. No credit card required to start — cancel anytime during the trial with no obligation.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">What kind of support do you offer?</div>
+                <div class="faq-a">Starter plans include email support with a 24-hour response SLA. Growth plans get priority support (4-hour response). Scale plans include a dedicated account manager and same-day support. All plans have access to our knowledge base and community forum.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to Fill Your Pipeline?</h2>
+        <p>Join thousands of B2B teams who wake up to a fresh batch of qualified leads every morning.</p>
+        <a href="#" class="btn btn-primary btn-large">Start Your Free Trial</a>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+    <div class="container">
+        <span>&copy; 2026 LeadSync AI. All rights reserved.</span>
+        <span>
+            <a href="#">Privacy Policy</a> · 
+            <a href="#">Terms of Service</a> · 
+            <a href="#">Contact</a>
+        </span>
+    </div>
+</footer>
+
+<!-- ═══ FAQ ACCORDION ═══ -->
+<script>
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.querySelector('.faq-q').addEventListener('click', () => {
+            const open = document.querySelector('.faq-item.open');
+            if (open && open !== item) open.classList.remove('open');
+            item.classList.toggle('open');
+        });
+    });
+</script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

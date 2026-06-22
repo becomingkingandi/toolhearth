@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Maker / Wheel Spinner — Make Random Choices</title>
+<meta name="description" content="Enter options and spin the wheel to make a random decision. Fun animated wheel picker for groups or tough choices.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.container{max-width:500px;width:100%}
+h1{text-align:center;color:#ffd700;margin:24px 0 20px;font-size:1.6rem}
+textarea{width:100%;padding:14px;border-radius:10px;border:1px solid #333;background:#1e1e1e;color:#e0e0e0;font-size:.95rem;resize:vertical;min-height:120px;font-family:inherit}
+textarea::placeholder{color:#666}
+.btn{background:#ffd700;color:#111;border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:.15s;width:100%;margin:12px 0}
+.btn:hover{background:#ffed4a;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.wheel-container{position:relative;width:280px;height:280px;margin:16px auto}
+canvas{width:280px;height:280px;border-radius:50%;box-shadow:0 0 20px rgba(255,215,0,.2);transition:.1s}
+#wheelCanvas.spinning{transition:none}
+#pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:2rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));z-index:2}
+#selectedDisplay{text-align:center;padding:16px;background:#1a1a2e;border-radius:10px;margin:12px 0;font-size:1.2rem;font-weight:600;color:#ffd700;min-height:56px;display:flex;align-items:center;justify-content:center}
+#history{background:#1e1e1e;border-radius:12px;padding:16px;margin-top:12px}
+#history h3{font-size:.95rem;color:#aaa;margin-bottom:10px}
+#historyList{list-style:none;font-size:.9rem}
+#historyList li{padding:6px 0;border-bottom:1px solid #2a2a2a;color:#ccc}
+#historyList li:last-child{border-bottom:none}
+.clear-btn{background:transparent;color:#f55;border:1px solid #f55;border-radius:6px;padding:4px 12px;font-size:.8rem;cursor:pointer;float:right}
+.hint{text-align:center;color:#666;font-size:.8rem;margin-bottom:8px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Decision Maker / Wheel Spinner \u2014 Make Random Choices",
+  "description": "Enter options and spin the wheel to make a random decision. Fun animated wheel picker for groups or tough choices.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🎯 Decision Maker</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<textarea id="optionsInput" placeholder="Enter one option per line…&#10;e.g.:&#10;Pizza&#10;Sushi&#10;Tacos"></textarea>
+<button class="btn" id="spinBtn">🎡 Spin the Wheel</button>
+<div class="wheel-container">
+<div id="pointer">▼</div>
+<canvas id="wheelCanvas" width="280" height="280"></canvas>
+</div>
+<div id="selectedDisplay">—</div>
+<div id="history">
+<h3>📜 History <button class="clear-btn" id="clearHistory">Clear</button></h3>
+<ul id="historyList"></ul>
+</div>
+</div>
+<script>
+const optionsInput=document.getElementById('optionsInput');
+const spinBtn=document.getElementById('spinBtn');
+const canvas=document.getElementById('wheelCanvas');
+const ctx=canvas.getContext('2d');
+const selectedDisplay=document.getElementById('selectedDisplay');
+const historyList=document.getElementById('historyList');
+const colors=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6b9d','#c084fc','#fb923c','#34d399','#60a5fa','#a78bfa','#f472b6','#22d3ee'];
+let options=['Pizza','Sushi','Tacos'];
+let isSpinning=false;
+let history=JSON.parse(localStorage.getItem('decisionHistory')||'[]');
+
+function drawWheel(){
+const w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=w/2-4;
+ctx.clearRect(0,0,w,h);
+if(options.length===0){ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#333';ctx.fill();ctx.fillStyle='#888';ctx.font='16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Add options',cx,cy);return}
+const arc=2*Math.PI/options.length;
+options.forEach((opt,i)=>{
+const start=i*arc-Math.PI/2;
+const end=start+arc;
+ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
+ctx.fillStyle=colors[i%colors.length];ctx.fill();
+ctx.strokeStyle='rgba(0,0,0,.3)';ctx.lineWidth=1;ctx.stroke();
+ctx.save();ctx.translate(cx,cy);ctx.rotate(start+arc/2);
+ctx.fillStyle='#111';ctx.font='12px sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';
+const maxChars=12;let label=opt.length>maxChars?opt.slice(0,maxChars)+'…':opt;
+ctx.fillText(label,r-12,0);ctx.restore();
+});
+}
+function spin(){
+if(isSpinning)return;
+const options=optionsInput.value.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
+if(options.length<2){selectedDisplay.textContent='⚠️ Need at least 2 options';return}
+isSpinning=true;spinBtn.disabled=true;
+const selectedIndex=Math.floor(Math.random()*options.length);
+const totalSlices=options.length;
+const extraSpins=5+Math.floor(Math.random()*5);
+const targetAngle=(extraSpins*360)+(360-selectedIndex*(360/totalSlices)-Math.random()*(360/totalSlices));
+const duration=3000;const startTime=performance.now();
+const startRotation=parseFloat(canvas.dataset.rotation||'0');
+function animate(now){
+const elapsed=now-startTime;
+const progress=Math.min(elapsed/duration,1);
+const eased=1-Math.pow(1-progress,3);
+const currentAngle=startRotation+targetAngle*eased;
+canvas.style.transform=`rotate(${currentAngle}deg)`;
+canvas.dataset.rotation=currentAngle;
+if(progress<1){requestAnimationFrame(animate)}else{
+isSpinning=false;spinBtn.disabled=false;
+const chosen=options[selectedIndex];
+selectedDisplay.textContent=`✅ ${chosen}`;
+selectedDisplay.style.color='#6bcb77';
+history.push(chosen);localStorage.setItem('decisionHistory',JSON.stringify(history));
+renderHistory();
+}
+}
+requestAnimationFrame(animate);
+}
+function renderHistory(){
+historyList.innerHTML=history.slice().reverse().map(h=>`<li>${h}</li>`).join('');
+}
+optionsInput.addEventListener('input',()=>{
+const opts=optionsInput.value.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
+options=opts.length>0?opts:['Pizza','Sushi','Tacos'];
+drawWheel();
+});
+optionsInput.value=options.join('\n');
+spinBtn.addEventListener('click',spin);
+document.getElementById('clearHistory').addEventListener('click',()=>{history=[];localStorage.removeItem('decisionHistory');renderHistory();});
+drawWheel();renderHistory();
+</script>
+</div>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Encoder & Decoder — Encode URL Parameters Online</title>
+<meta name="description" content="Encode or decode URLs and URL components. Free online URL percent-encoding tool with copy support.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:800px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column}
+h1{font-size:1.6rem;font-weight:600;margin-bottom:4px;color:#f0f6fc}
+p.sub{color:#8b949e;font-size:0.9rem;margin-bottom:20px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px}
+textarea{width:100%;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;color:#c9d1d9;font-size:0.85rem;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;resize:vertical;outline:none;min-height:120px;tab-size:2}
+textarea:focus{border-color:#58a6ff}
+label{display:block;font-size:0.85rem;font-weight:500;color:#8b949e;margin-bottom:4px;margin-top:14px}
+label:first-of-type{margin-top:0}
+.tab-bar{display:flex;gap:4px;margin-bottom:14px;border-bottom:1px solid #30363d}
+.tab{background:transparent;border:none;color:#8b949e;padding:8px 16px;font-size:0.9rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab:hover{color:#c9d1d9}
+.tab.active{color:#f0f6fc;border-bottom-color:#58a6ff;font-weight:500}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:500;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn-outline{background:transparent;border:1px solid #30363d;color:#c9d1d9}
+.btn-outline:hover{background:#1c2128}
+.btn-danger{background:#da3633}
+.btn-danger:hover{background:#f85149}
+.result-box{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;font-size:0.85rem;color:#c9d1d9;word-break:break-all;min-height:50px;margin-top:10px;position:relative}
+.result-box .copy-mini{position:absolute;top:8px;right:8px;background:transparent;border:1px solid #30363d;color:#8b949e;border-radius:4px;padding:4px 8px;font-size:0.72rem;cursor:pointer}
+.result-box .copy-mini:hover{background:#1c2128;color:#c9d1d9}
+.escaped{color:#ffa657}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#238636;color:#fff;padding:10px 20px;border-radius:6px;font-size:0.85rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.options-row{display:flex;gap:16px;margin-top:8px;font-size:0.82rem;color:#8b949e;align-items:center}
+.options-row label{display:inline;margin:0;font-size:0.82rem;cursor:pointer}
+.options-row input[type="checkbox"]{accent-color:#58a6ff;cursor:pointer}
+.char-count{text-align:right;font-size:0.8rem;color:#484f58;margin-top:4px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "URL Encoder & Decoder \u2014 Encode URL Parameters Online",
+  "description": "Encode or decode URLs and URL components. Free online URL percent-encoding tool with copy support.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🔗 URL Encoder / Decoder</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Encode or decode URL components and full URLs</p>
+<div class="card">
+<div class="tab-bar">
+<button class="tab active" id="tab-encode" onclick="switchTab('encode')">Encode</button>
+<button class="tab" id="tab-decode" onclick="switchTab('decode')">Decode</button>
+</div>
+<label for="inputField" id="inputLabel">Text to encode</label>
+<textarea id="inputField" placeholder="Type or paste text here..." oninput="process()"></textarea>
+<div class="options-row">
+<label><input type="checkbox" id="componentOnly" checked onchange="process()"> Component-encode only (not full URL)</label>
+</div>
+<div class="btn-group">
+<button class="btn" onclick="process()">Convert</button>
+<button class="btn btn-outline" onclick="clearAll()">Clear</button>
+<button class="btn btn-outline" onclick="sample()">Sample</button>
+</div>
+<div class="char-count" id="charCount"></div>
+<div id="resultSection">
+<div id="resultBox" class="result-box" style="display:none">
+<button class="copy-mini" onclick="copyResult()">📋 Copy</button>
+<div id="resultContent"></div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+let mode = 'encode';
+
+function switchTab(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+m).classList.add('active');
+  if(mode==='encode') {
+    document.getElementById('inputLabel').textContent = 'Text to encode';
+    document.getElementById('componentOnly').parentElement.style.display = '';
+  } else {
+    document.getElementById('inputLabel').textContent = 'URL to decode';
+    document.getElementById('componentOnly').parentElement.style.display = 'none';
+  }
+  process();
+}
+
+function process() {
+  const input = document.getElementById('inputField').value;
+  const box = document.getElementById('resultBox');
+  const content = document.getElementById('resultContent');
+  document.getElementById('charCount').textContent = input.length + ' chars';
+  if (!input) { box.style.display = 'none'; return; }
+  try {
+    let result;
+    if (mode === 'encode') {
+      const comp = document.getElementById('componentOnly').checked;
+      result = comp ? encodeURIComponent(input) : encodeURI(input);
+    } else {
+      result = decodeURIComponent(input.replace(/\+/g, ' '));
+    }
+    content.textContent = result;
+    box.style.display = 'block';
+  } catch(e) {
+    content.innerHTML = '<span style="color:#f85149">Error: ' + esc(e.message) + '</span>';
+    box.style.display = 'block';
+  }
+}
+
+function copyResult() {
+  const val = document.getElementById('resultContent').textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = 'Copied!';
+    t.style.opacity = '1';
+    setTimeout(() => t.style.opacity = '0', 1500);
+  });
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function clearAll() {
+  document.getElementById('inputField').value = '';
+  document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('charCount').textContent = '';
+}
+function sample() {
+  if (mode === 'encode') {
+    document.getElementById('inputField').value = 'Hello World! Query: name=John Doe & age=30 @work';
+  } else {
+    document.getElementById('inputField').value = 'https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dhello%2Bworld%26lang%3Den';
+  }
+  process();
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

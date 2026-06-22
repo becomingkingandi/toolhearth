@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCII Table — Complete ASCII Character Reference (0-127)</title>
+<meta name="description" content="Complete ASCII table with decimal, hex, binary, and character values. Printable and control character categories with search.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:system-ui,-apple-system,sans-serif;padding:16px}
+.container{max-width:1000px;margin:0 auto}
+h1{color:#58a6ff;margin-bottom:8px;font-size:1.4rem;text-align:center}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:16px;font-size:.9rem}
+.search-bar{margin-bottom:16px}
+.search-bar input{width:100%;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:.9rem;outline:none}
+.search-bar input:focus{border-color:#58a6ff}
+.filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#8b949e;cursor:pointer;font-size:.82rem;transition:all .2s}
+.filter-btn:hover{background:#30363d}
+.filter-btn.active{background:#1f6feb;border-color:#1f6feb;color:#fff}
+.legend{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;font-size:.8rem}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-color{width:14px;height:14px;border-radius:3px}
+.legend-color.printable{background:#1f6feb}
+.legend-color.control{background:#da3633}
+.table-wrap{overflow-x:auto;border:1px solid #30363d;border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:#161b22;color:#8b949e;font-weight:600;padding:10px 12px;text-align:left;border-bottom:2px solid #30363d;position:sticky;top:0}
+td{padding:8px 12px;border-bottom:1px solid #21262d;color:#c9d1d9}
+tr:hover td{background:#1c2128}
+tr.control td{color:#f85149}
+tr.control td:first-child{border-left:3px solid #da3633}
+tr.printable td{color:#c9d1d9}
+tr.printable td:first-child{border-left:3px solid #1f6feb}
+.char-cell{font-size:1.2rem;text-align:center;font-family:monospace}
+.char-cell.extended{color:#d2a8ff}
+.count{color:#8b949e;font-size:.85rem;margin-top:8px;text-align:right}
+.code-cell{font-family:monospace;color:#f0883e}
+.bin-cell{font-family:monospace;color:#7ee787;font-size:.8rem}
+@media(max-width:600px){td,th{padding:6px 8px;font-size:.78rem}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ASCII Table \u2014 Complete ASCII Character Reference (0-127)",
+  "description": "Complete ASCII table with decimal, hex, binary, and character values. Printable and control character categories with search.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>📊 ASCII Table (0–127)</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Complete ASCII reference with decimal, hex, binary, and descriptions</p>
+
+<div class="legend">
+<div class="legend-item"><div class="legend-color printable"></div> Printable</div>
+<div class="legend-item"><div class="legend-color control"></div> Control / Non-printable</div>
+</div>
+
+<div class="filters">
+<button class="filter-btn active" data-filter="all">All</button>
+<button class="filter-btn" data-filter="printable">Printable (32–126)</button>
+<button class="filter-btn" data-filter="control">Control (0–31, 127)</button>
+<button class="filter-btn" data-filter="extended">Extended (128–255)</button>
+</div>
+
+<div class="search-bar">
+<input type="text" id="searchInput" placeholder="Search by decimal, hex, binary, char, or description..." oninput="renderTable()">
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Dec</th><th>Hex</th><th>Binary</th><th>Char</th><th>Description</th></tr></thead>
+<tbody id="asciiBody"></tbody>
+</table>
+</div>
+<div class="count" id="asciiCount">Showing 0 characters</div>
+</div>
+
+<script>
+const descriptions = [
+'NUL (null)', 'SOH (start of heading)', 'STX (start of text)', 'ETX (end of text)',
+'EOT (end of transmission)', 'ENQ (enquiry)', 'ACK (acknowledge)', 'BEL (bell)',
+'BS  (backspace)', 'TAB (horizontal tab)', 'LF  (line feed)', 'VT  (vertical tab)',
+'FF  (form feed)', 'CR  (carriage return)', 'SO  (shift out)', 'SI  (shift in)',
+'DLE (data link escape)', 'DC1 (device control 1)', 'DC2 (device control 2)', 'DC3 (device control 3)',
+'DC4 (device control 4)', 'NAK (negative ack)', 'SYN (synchronous idle)', 'ETB (end of trans. block)',
+'CAN (cancel)', 'EM  (end of medium)', 'SUB (substitute)', 'ESC (escape)',
+'FS  (file separator)', 'GS  (group separator)', 'RS  (record separator)', 'US  (unit separator)',
+'Space', '!', '"', '#', '$', '%', '&', "'",
+'(', ')', '*', '+', ',', '-', '.', '/',
+'0', '1', '2', '3', '4', '5', '6', '7',
+'8', '9', ':', ';', '<', '=', '>', '?',
+'@', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+'X', 'Y', 'Z', '[', '\\', ']', '^', '_',
+'`', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+'x', 'y', 'z', '{', '|', '}', '~', 'DEL'
+];
+
+const extendedDescs = [
+'€', '', '‚', 'ƒ', '„', '…', '†', '‡', 'ˆ', '‰', 'Š', '‹', 'Œ', '', 'Ž', '',
+'', '‘', '’', '“', '”', '•', '–', '—', '˜', '™', 'š', '›', 'œ', '', 'ž', 'Ÿ',
+' ', '¡', '¢', '£', '¤', '¥', '¦', '§', '¨', '©', 'ª', '«', '¬', '­', '®', '¯',
+'°', '±', '²', '³', '´', 'µ', '¶', '·', '¸', '¹', 'º', '»', '¼', '½', '¾', '¿',
+'À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï',
+'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', '×', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'Þ', 'ß',
+'à', 'á', 'â', 'ã', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï',
+'ð', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', '÷', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'þ', 'ÿ'
+];
+
+let filter = 'all';
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+btn.addEventListener('click', function() {
+document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+this.classList.add('active');
+filter = this.dataset.filter;
+renderTable();
+});
+});
+
+function renderTable() {
+const q = document.getElementById('searchInput').value.toLowerCase();
+const tbody = document.getElementById('asciiBody');
+tbody.innerHTML = '';
+let count = 0;
+
+for (let i = 0; i < 128; i++) {
+if (filter === 'printable' && (i < 32 || i > 126)) continue;
+if (filter === 'control' && i >= 32 && i <= 126) continue;
+
+const isControl = (i < 32 || i === 127);
+const char = isControl ? (i === 127 ? '␡' : String.fromCharCode(9216 + i)) : String.fromCharCode(i);
+const bin = i.toString(2).padStart(8, '0');
+const hex = i.toString(16).toUpperCase().padStart(2, '0');
+const desc = descriptions[i] || '';
+
+if (q && !String(i).includes(q) && !hex.toLowerCase().includes(q) && !bin.includes(q) && !desc.toLowerCase().includes(q) && !(char.toLowerCase() === q)) continue;
+
+count++;
+const tr = document.createElement('tr');
+tr.className = isControl ? 'control' : 'printable';
+tr.innerHTML = `<td>${i}</td><td class="code-cell">${hex}</td><td class="bin-cell">${bin}</td><td class="char-cell ${!isControl && char.charCodeAt(0) > 127 ? 'extended' : ''}">${char}</td><td>${desc}</td>`;
+tbody.appendChild(tr);
+}
+
+document.getElementById('asciiCount').textContent = `Showing ${count} characters`;
+}
+
+renderTable();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

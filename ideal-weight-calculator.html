@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ideal Weight Calculator — Robinson, Miller, Devine & Hamwi Formulas</title>
+<meta name="description" content="Calculate your ideal body weight using four medical formulas. Compare results from Robinson, Miller, Devine, and Hamwi methods.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px;
+  }
+  .container { max-width: 800px; width: 100%; }
+  h1 {
+    font-size: 1.6rem; font-weight: 700; color: #ffffff;
+    text-align: center; margin-bottom: 24px; letter-spacing: -0.5px;
+  }
+  h1 span { color: #6c9bff; }
+  .card {
+    background: #1a1a2e; border: 1px solid #2a2a44;
+    border-radius: 14px; padding: 24px; margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 1.05rem; font-weight: 600; color: #c0c0e0;
+    margin-bottom: 16px;
+  }
+  .input-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .input-group {
+    display: flex; flex-direction: column;
+  }
+  .input-group.full { grid-column: 1 / -1; }
+  .input-group label {
+    font-size: 0.8rem; color: #8888aa; margin-bottom: 4px; font-weight: 500;
+  }
+  .input-group input, .input-group select {
+    background: #12121f; border: 1px solid #2e2e4a; border-radius: 8px;
+    padding: 10px 12px; font-size: 1rem; color: #ffffff; outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-group select option { background: #1a1a2e; }
+  .input-group input:focus, .input-group select:focus {
+    border-color: #6c9bff; box-shadow: 0 0 0 2px rgba(108,155,255,0.15);
+  }
+  .input-group input::placeholder { color: #555577; }
+  .input-group .row-group {
+    display: flex; gap: 8px;
+  }
+  .input-group .row-group input { flex: 1; }
+  .input-group .row-group .suf {
+    background: #1e1e36; border: 1px solid #2e2e4a; border-radius: 8px;
+    padding: 10px 12px; font-size: 0.85rem; color: #8888aa;
+    white-space: nowrap; display: flex; align-items: center;
+  }
+  button {
+    width: 100%; background: linear-gradient(135deg, #4a7cf7, #6c9bff);
+    border: none; border-radius: 10px; padding: 12px; font-size: 1rem;
+    font-weight: 600; color: #fff; cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s; margin-top: 8px;
+  }
+  button:hover { opacity: 0.9; }
+  button:active { transform: scale(0.98); }
+
+  .formula-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .formula-card {
+    background: #141428; border-radius: 12px; padding: 16px;
+    text-align: center; border: 1px solid #1f1f38;
+    transition: border-color 0.2s;
+  }
+  .formula-card:hover { border-color: #2a2a4a; }
+  .formula-card .name {
+    font-size: 0.8rem; color: #8888aa; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 2px;
+  }
+  .formula-card .year {
+    font-size: 0.7rem; color: #555577; margin-bottom: 6px;
+  }
+  .formula-card .value {
+    font-size: 1.35rem; font-weight: 700; color: #ffffff;
+  }
+  .formula-card .value.accent { color: #6c9bff; }
+  .formula-card .unit {
+    font-size: 0.75rem; color: #8888aa; margin-top: 2px;
+  }
+  .range-box {
+    background: linear-gradient(135deg, #1a1a3e, #14142e);
+    border: 1px solid #3a3a6a; border-radius: 12px; padding: 18px 20px;
+    text-align: center; margin-top: 14px;
+  }
+  .range-box .label {
+    font-size: 0.8rem; color: #8888aa; text-transform: uppercase;
+    letter-spacing: 0.3px; margin-bottom: 4px;
+  }
+  .range-box .value {
+    font-size: 1.5rem; font-weight: 700; color: #6c9bff;
+  }
+  .range-box .unit {
+    font-size: 0.8rem; color: #8888aa;
+  }
+  .range-box .sub {
+    font-size: 0.8rem; color: #8888aa; margin-top: 4px;
+  }
+  footer {
+    text-align: center; font-size: 0.8rem;
+    color: #555577; padding: 20px 0 10px; margin-top: 8px;
+  }
+  .convert-toggle {
+    text-align: center; margin-top: 10px;
+  }
+  .convert-toggle a {
+    color: #6c9bff; font-size: 0.82rem; cursor: pointer; text-decoration: none;
+  }
+  .convert-toggle a:hover { text-decoration: underline; }
+  @media (max-width: 600px) {
+    body { padding: 12px 10px; }
+    .card { padding: 16px; }
+    .input-grid { grid-template-columns: 1fr; }
+    .formula-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .formula-card { padding: 12px; }
+    .formula-card .value { font-size: 1.15rem; }
+    h1 { font-size: 1.3rem; }
+    .range-box .value { font-size: 1.3rem; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Ideal Weight Calculator \u2014 Robinson, Miller, Devine & Hamwi Formulas",
+  "description": "Calculate your ideal body weight using four medical formulas. Compare results from Robinson, Miller, Devine, and Hamwi methods.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>⚖️ <span>Ideal Body Weight</span> Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+
+  <div class="card">
+    <h2>📋 Your Details</h2>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Gender</label>
+        <select id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Age (years)</label>
+        <input type="number" id="age" value="30" min="18" max="120">
+      </div>
+      <div class="input-group full">
+        <label>Height</label>
+        <div class="row-group">
+          <input type="number" id="heightFeet" value="5" min="3" max="8" step="1" placeholder="ft">
+          <span class="suf">ft</span>
+          <input type="number" id="heightInches" value="9" min="0" max="11" step="1" placeholder="in">
+          <span class="suf">in</span>
+        </div>
+      </div>
+    </div>
+    <button id="calcBtn">🔄 Calculate Ideal Weight</button>
+  </div>
+
+  <div class="card">
+    <h2>📊 Formula Comparison</h2>
+    <div class="formula-grid" id="formulaGrid">
+      <div class="formula-card">
+        <div class="name">Robinson</div>
+        <div class="year">1983</div>
+        <div class="value accent" id="robinsonKg">—</div>
+        <div class="unit" id="robinsonLb"></div>
+      </div>
+      <div class="formula-card">
+        <div class="name">Miller</div>
+        <div class="year">1983</div>
+        <div class="value accent" id="millerKg">—</div>
+        <div class="unit" id="millerLb"></div>
+      </div>
+      <div class="formula-card">
+        <div class="name">Devine</div>
+        <div class="year">1974</div>
+        <div class="value accent" id="devineKg">—</div>
+        <div class="unit" id="devineLb"></div>
+      </div>
+      <div class="formula-card">
+        <div class="name">Hamwi</div>
+        <div class="year">1964</div>
+        <div class="value accent" id="hamwiKg">—</div>
+        <div class="unit" id="hamwiLb"></div>
+      </div>
+    </div>
+
+    <div class="range-box">
+      <div class="label">Ideal Weight Range</div>
+      <div class="value" id="rangeValue">—</div>
+      <div class="unit">across all formulas (lowest – highest)</div>
+      <div class="sub" id="rangeLb"></div>
+    </div>
+
+    <div class="convert-toggle">
+      <a id="toggleUnit">Show in pounds (lbs)</a>
+    </div>
+  </div>
+
+  <footer>Free Ideal Body Weight Calculator — Compare 4 clinical formulas</footer>
+</div>
+
+<script>
+(function() {
+  const genderEl = document.getElementById('gender');
+  const ageEl = document.getElementById('age');
+  const ftEl = document.getElementById('heightFeet');
+  const inEl = document.getElementById('heightInches');
+  const calcBtn = document.getElementById('calcBtn');
+
+  const robKg = document.getElementById('robinsonKg');
+  const milKg = document.getElementById('millerKg');
+  const devKg = document.getElementById('devineKg');
+  const hamKg = document.getElementById('hamwiKg');
+  const robLb = document.getElementById('robinsonLb');
+  const milLb = document.getElementById('millerLb');
+  const devLb = document.getElementById('devineLb');
+  const hamLb = document.getElementById('hamwiLb');
+  const rangeVal = document.getElementById('rangeValue');
+  const rangeLb = document.getElementById('rangeLb');
+  const toggleBtn = document.getElementById('toggleUnit');
+
+  let showLbs = false;
+
+  function kgToLb(kg) { return kg * 2.20462; }
+
+  function getInchesOver5ft(feet, inches) {
+    const totalInches = feet * 12 + inches;
+    return Math.max(0, totalInches - 60); // 5ft = 60 inches
+  }
+
+  function calcAll() {
+    const gender = genderEl.value;
+    const feet = parseInt(ftEl.value) || 5;
+    const inches = parseInt(inEl.value) || 0;
+    const excess = getInchesOver5ft(feet, inches);
+
+    let robinson, miller, devine, hamwi;
+
+    if (gender === 'male') {
+      // Robinson (1983): 52 kg + 1.9 kg per inch over 5ft
+      robinson = 52 + 1.9 * excess;
+      // Miller (1983): 56.2 kg + 1.41 kg per inch over 5ft
+      miller = 56.2 + 1.41 * excess;
+      // Devine (1974): 50 kg + 2.3 kg per inch over 5ft
+      devine = 50 + 2.3 * excess;
+      // Hamwi (1964): 48 kg + 2.7 kg per inch over 5ft
+      hamwi = 48 + 2.7 * excess;
+    } else {
+      // Robinson (1983): 49 kg + 1.7 kg per inch over 5ft
+      robinson = 49 + 1.7 * excess;
+      // Miller (1983): 53.1 kg + 1.36 kg per inch over 5ft
+      miller = 53.1 + 1.36 * excess;
+      // Devine (1974): 45.5 kg + 2.3 kg per inch over 5ft
+      devine = 45.5 + 2.3 * excess;
+      // Hamwi (1964): 45.5 kg + 2.2 kg per inch over 5ft
+      hamwi = 45.5 + 2.2 * excess;
+    }
+
+    const results = [robinson, miller, devine, hamwi];
+    const min = Math.min(...results);
+    const max = Math.max(...results);
+
+    function fmtKg(kg) {
+      if (kg < 0) return 'N/A';
+      const kgVal = Math.round(kg * 10) / 10;
+      const lbVal = Math.round(kgToLb(kg) * 10) / 10;
+      if (showLbs) {
+        return lbVal + ' lbs';
+      }
+      return kgVal + ' kg';
+    }
+
+    function fmtVal(kg) {
+      if (kg < 0) return '—';
+      const v = Math.round(kg * 10) / 10;
+      const lb = Math.round(kgToLb(kg) * 10) / 10;
+      if (showLbs) return lb;
+      return v;
+    }
+
+    function fmtSub(kg) {
+      if (kg < 0) return '';
+      const lb = Math.round(kgToLb(kg) * 10) / 10;
+      if (showLbs) return lb + ' kg';
+      return lb + ' lbs';
+    }
+
+    robKg.textContent = fmtVal(robinson);
+    robLb.textContent = fmtSub(robinson);
+    milKg.textContent = fmtVal(miller);
+    milLb.textContent = fmtSub(miller);
+    devKg.textContent = fmtVal(devine);
+    devLb.textContent = fmtSub(devine);
+    hamKg.textContent = fmtVal(hamwi);
+    hamLb.textContent = fmtSub(hamwi);
+
+    if (min >= 0 && max >= 0) {
+      if (showLbs) {
+        rangeVal.textContent = Math.round(kgToLb(min) * 10) / 10 + ' – ' + Math.round(kgToLb(max) * 10) / 10 + ' lbs';
+        rangeLb.textContent = Math.round(min * 10) / 10 + ' – ' + Math.round(max * 10) / 10 + ' kg';
+      } else {
+        rangeVal.textContent = Math.round(min * 10) / 10 + ' – ' + Math.round(max * 10) / 10 + ' kg';
+        rangeLb.textContent = Math.round(kgToLb(min) * 10) / 10 + ' – ' + Math.round(kgToLb(max) * 10) / 10 + ' lbs';
+      }
+    } else {
+      rangeVal.textContent = '—';
+      rangeLb.textContent = '';
+    }
+  }
+
+  toggleBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    showLbs = !showLbs;
+    toggleBtn.textContent = showLbs ? 'Show in kilograms (kg)' : 'Show in pounds (lbs)';
+    calcAll();
+  });
+
+  calcBtn.addEventListener('click', calcAll);
+  calcAll();
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

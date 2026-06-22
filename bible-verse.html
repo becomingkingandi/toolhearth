@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bible Verse of the Day — Random Scripture</title>
+<meta name="description" content="Read random Bible verses with book, chapter, and verse references. Search by book, chapter, and verse. Free scripture tool.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:#0f0a14;color:#e0e0e0;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.container{max-width:640px;width:100%;padding:20px 0}
+h1{text-align:center;margin-bottom:24px;font-size:1.8rem;background:linear-gradient(135deg,#d4a574,#b8865a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+h1::before{content:'📖';-webkit-text-fill-color:initial}
+.search-box{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.search-box input{flex:1;min-width:120px;padding:10px 14px;border:2px solid #3a2a1a;border-radius:10px;background:#1a1218;color:#e0e0e0;font-size:.95rem;outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:#d4a574}
+.search-box button{padding:10px 18px;border:none;border-radius:10px;font-size:.95rem;cursor:pointer;font-weight:600;transition:opacity .2s;color:#fff}
+.btn-primary{background:linear-gradient(135deg,#d4a574,#b8865a)}
+.btn-secondary{background:#2a1a20;color:#e0e0e0}
+.btn-secondary:hover{background:#3a2a30}
+.btn-primary:hover,.btn-secondary:hover{opacity:.9}
+.btn-group{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.card{background:#1a1218;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none}
+.card.active{display:block}
+.reference{font-size:1.3rem;margin-bottom:16px;color:#d4a574;font-weight:600}
+.verse-text{font-size:1.15rem;line-height:1.8;margin-bottom:24px;color:#e8ddd0;font-style:italic}
+.copy-btn{padding:8px 16px;border:1px solid #3a2a1a;border-radius:8px;background:transparent;color:#d4a574;cursor:pointer;font-size:.85rem;transition:all .2s}
+.copy-btn:hover{background:#d4a574;color:#1a1218}
+.spinner{display:none;width:40px;height:40px;border:4px solid #3a2a1a;border-top:4px solid #d4a574;border-radius:50%;animation:spin .8s linear infinite;margin:30px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status{text-align:center;margin:12px 0;color:#8a7a6a;font-size:.9rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Bible Verse of the Day \u2014 Random Scripture",
+  "description": "Read random Bible verses with book, chapter, and verse references. Search by book, chapter, and verse. Free scripture tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Bible Verse</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="btn-group">
+<button class="btn-primary" id="randomBtn">Random Verse</button>
+</div>
+<div class="search-box">
+<input type="text" id="bookInput" placeholder="Book (e.g. John)" />
+<input type="number" id="chapterInput" placeholder="Chapter" min="1" />
+<input type="number" id="verseInput" placeholder="Verse" min="1" />
+<button class="btn-secondary" id="searchBtn">Search</button>
+</div>
+<div class="spinner" id="spinner"></div>
+<div class="status" id="status">Click "Random Verse" to begin!</div>
+<div class="card" id="card">
+<div class="reference" id="reference"></div>
+<div class="verse-text" id="verseText"></div>
+<button class="copy-btn" id="copyBtn">📋 Copy Verse</button>
+</div>
+</div>
+<script>
+const spinner=document.getElementById('spinner'),statusEl=document.getElementById('status'),
+card=document.getElementById('card'),reference=document.getElementById('reference'),
+verseText=document.getElementById('verseText'),copyBtn=document.getElementById('copyBtn'),
+randomBtn=document.getElementById('randomBtn'),searchBtn=document.getElementById('searchBtn'),
+bookInput=document.getElementById('bookInput'),chapterInput=document.getElementById('chapterInput'),
+verseInput=document.getElementById('verseInput');
+
+function showStatus(m){statusEl.textContent=m;card.classList.remove('active')}
+
+function getRandomBook(){
+  const books=['Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth','1 Samuel','2 Samuel','1 Kings','2 Kings','1 Chronicles','2 Chronicles','Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song of Solomon','Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians','2 Corinthians','Galatians','Ephesians','Philippians','Colossians','1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy','Titus','Philemon','Hebrews','James','1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation'];
+  return books[Math.floor(Math.random()*books.length)]
+}
+
+async function fetchVerse(ref){
+  showStatus('Loading...');spinner.style.display='block';
+  try{
+    const r=await fetch('https://bible-api.com/'+encodeURIComponent(ref));
+    if(!r.ok){const e=await r.json();throw new Error(e.error||'Not found')}
+    const d=await r.json();
+    reference.textContent=`${d.reference}`;
+    verseText.textContent=d.text||d.verses.map(v=>v.text).join(' ');
+    card.classList.add('active');statusEl.textContent='';spinner.style.display='none'
+  }catch(e){
+    showStatus('Error: '+e.message);spinner.style.display='none'
+  }
+}
+
+async function fetchRandom(){
+  const book=getRandomBook();
+  const ch=Math.floor(Math.random()*20)+1;
+  const v=Math.floor(Math.random()*20)+1;
+  await fetchVerse(`${book}+${ch}:${v}`)
+}
+
+randomBtn.addEventListener('click',fetchRandom);
+searchBtn.addEventListener('click',()=>{
+  const b=bookInput.value.trim(),c=chapterInput.value.trim(),v=verseInput.value.trim();
+  if(!b){showStatus('Enter a book name');return}
+  let ref=b;
+  if(c)ref+=`+${c}`;
+  if(v)ref+=`:${v}`;
+  fetchVerse(ref);
+});
+bookInput.addEventListener('keydown',e=>{if(e.key==='Enter')searchBtn.click()});
+
+copyBtn.addEventListener('click',async()=>{
+  const txt=`${reference.textContent}\n${verseText.textContent}`;
+  try{await navigator.clipboard.writeText(txt);copyBtn.textContent='✅ Copied!';setTimeout(()=>copyBtn.textContent='📋 Copy Verse',2000)}
+  catch{copyBtn.textContent='❌ Failed';setTimeout(()=>copyBtn.textContent='📋 Copy Verse',2000)}
+});
+
+fetchRandom();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

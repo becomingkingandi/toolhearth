@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ovulation Calculator — Fertility Window & Ovulation Date</title>
+<meta name="description" content="Calculate your ovulation date and fertile window based on your menstrual cycle. Shows a calendar view of fertile days and period dates.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:520px;width:100%;background:#1a1a2e;border-radius:16px;padding:24px;margin-top:20px}
+h1{font-size:22px;text-align:center;color:#ffffff;margin-bottom:8px}
+.subtitle{text-align:center;color:#888;font-size:14px;margin-bottom:20px}
+.input-group{margin-bottom:14px}
+label{display:block;font-size:13px;font-weight:600;color:#aaa;margin-bottom:4px}
+input[type="date"],input[type="number"]{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#16162b;color:#e0e0e0;font-size:15px;outline:none}
+input[type="date"]:focus,input[type="number"]:focus{border-color:#4ecdc4}
+input[type="number"]{-moz-appearance:textfield}
+input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
+.row{display:flex;gap:12px}
+.row .input-group{flex:1}
+button{width:100%;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#4ecdc4,#44b3ab);color:#fff;margin-top:8px;transition:opacity .2s}
+button:hover{opacity:.9}
+.results{display:none;margin-top:20px;background:#16162b;border-radius:12px;padding:20px}
+.results.show{display:block}
+.result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#888;font-size:14px}
+.result-value{color:#fff;font-size:14px;font-weight:600;text-align:right}
+.result-value.fertile{color:#4ecdc4}
+.result-value.period{color:#ff6b6b}
+.calendar{margin-top:16px}
+.calendar h3{font-size:14px;color:#aaa;margin-bottom:10px;text-align:center}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.calendar-header{text-align:center;font-size:11px;font-weight:600;color:#666;padding:6px 0;text-transform:uppercase}
+.calendar-day{text-align:center;padding:8px 0;font-size:13px;border-radius:6px;background:#1e1e32;color:#888}
+.calendar-day.period{background:#ff6b6b33;color:#ff6b6b;font-weight:600;border:1px solid #ff6b6b55}
+.calendar-day.fertile{background:#4ecdc433;color:#4ecdc4;font-weight:600;border:1px solid #4ecdc455}
+.calendar-day.ovulation{background:#4ecdc4;color:#000;font-weight:700;border:1px solid #4ecdc4}
+.calendar-day.today{outline:2px solid #fff;outline-offset:-2px}
+.calendar-day.empty{background:transparent}
+.legend{display:flex;justify-content:center;gap:20px;margin-top:12px;font-size:12px;color:#888}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:12px;height:12px;border-radius:4px}
+.legend-dot.period{background:#ff6b6b55;border:1px solid #ff6b6b55}
+.legend-dot.fertile{background:#4ecdc433;border:1px solid #4ecdc455}
+.legend-dot.ovulation{background:#4ecdc4}
+.error{color:#ff6b6b;font-size:13px;margin-top:6px;display:none}
+@media(max-width:480px){.container{padding:16px}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Ovulation Calculator \u2014 Fertility Window & Ovulation Date",
+  "description": "Calculate your ovulation date and fertile window based on your menstrual cycle. Shows a calendar view of fertile days and period dates.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🌱 Ovulation & Fertility Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Find your fertile window and track your cycle</p>
+
+<div class="input-group">
+<label for="lmpDate">First day of last menstrual period</label>
+<input type="date" id="lmpDate">
+</div>
+
+<div class="row">
+<div class="input-group">
+<label for="cycleLength">Cycle length (days)</label>
+<input type="number" id="cycleLength" value="28" min="20" max="45">
+</div>
+<div class="input-group">
+<label for="periodLength">Period length (days)</label>
+<input type="number" id="periodLength" value="5" min="1" max="10">
+</div>
+</div>
+
+<div class="error" id="errorMsg">Please fill in all fields correctly.</div>
+
+<button onclick="calculate()">Calculate</button>
+
+<div class="results" id="results">
+<div class="result-row"><span class="result-label">📅 Ovulation Date</span><span class="result-value fertile" id="ovulationDate">—</span></div>
+<div class="result-row"><span class="result-label">🌺 Fertile Window</span><span class="result-value fertile" id="fertileWindow">—</span></div>
+<div class="result-row"><span class="result-label">🩸 Next Period</span><span class="result-value period" id="nextPeriod">—</span></div>
+<div class="result-row"><span class="result-label">💫 Conception Window</span><span class="result-value fertile" id="conceptionWindow">—</span></div>
+<div class="result-row"><span class="result-label">📊 Cycle Day Today</span><span class="result-value" id="cycleDayToday">—</span></div>
+
+<div class="calendar">
+<h3>📆 Current Cycle Calendar</h3>
+<div class="legend">
+<div class="legend-item"><span class="legend-dot period"></span> Period</div>
+<div class="legend-item"><span class="legend-dot fertile"></span> Fertile</div>
+<div class="legend-item"><span class="legend-dot ovulation"></span> Ovulation</div>
+</div>
+<div class="calendar-grid" id="calendarGrid"></div>
+</div>
+</div>
+</div>
+
+<script>
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const HEADERS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+function calculate() {
+const lmpInput = document.getElementById('lmpDate');
+const cycleInput = document.getElementById('cycleLength');
+const periodInput = document.getElementById('periodLength');
+const errorEl = document.getElementById('errorMsg');
+errorEl.style.display = 'none';
+
+if (!lmpInput.value || !cycleInput.value || !periodInput.value) {
+errorEl.style.display = 'block';
+return;
+}
+
+const lmp = new Date(lmpInput.value + 'T12:00:00');
+const cycleLen = parseInt(cycleInput.value);
+const periodLen = parseInt(periodInput.value);
+
+if (isNaN(lmp.getTime()) || isNaN(cycleLen) || isNaN(periodLen) || cycleLen < 20 || cycleLen > 45 || periodLen < 1 || periodLen > 10) {
+errorEl.style.display = 'block';
+return;
+}
+
+const today = new Date();
+today.setHours(12,0,0,0);
+
+const ovulationDay = 14;
+const ovulationDate = addDays(lmp, ovulationDay - 1);
+const fertileStart = addDays(lmp, ovulationDay - 5);
+const fertileEnd = addDays(lmp, ovulationDay);
+const nextPeriod = addDays(lmp, cycleLen);
+const conceptionEnd = addDays(lmp, ovulationDay + 1);
+
+document.getElementById('ovulationDate').textContent = formatDate(ovulationDate) + ' (Day ' + ovulationDay + ')';
+document.getElementById('fertileWindow').textContent = formatDate(fertileStart) + ' – ' + formatDate(fertileEnd);
+document.getElementById('nextPeriod').textContent = formatDate(nextPeriod);
+document.getElementById('conceptionWindow').textContent = formatDate(fertileStart) + ' – ' + formatDate(conceptionEnd);
+
+const diffDays = Math.floor((today - lmp) / (1000*60*60*24)) + 1;
+const cycleDay = diffDays > 0 ? diffDays : 1;
+document.getElementById('cycleDayToday').textContent = 'Day ' + cycleDay + ' of ' + cycleLen;
+
+buildCalendar(lmp, cycleLen, periodLen, ovulationDay, today);
+document.getElementById('results').classList.add('show');
+}
+
+function buildCalendar(lmp, cycleLen, periodLen, ovulationDay, today) {
+const grid = document.getElementById('calendarGrid');
+grid.innerHTML = '';
+
+HEADERS.forEach(h => {
+const el = document.createElement('div');
+el.className = 'calendar-header';
+el.textContent = h;
+grid.appendChild(el);
+});
+
+const startDate = new Date(lmp);
+startDate.setDate(startDate.getDate() - startDate.getDay());
+
+const endDate = new Date(lmp);
+endDate.setDate(endDate.getDate() + Math.max(cycleLen, 35) + (6 - endDate.getDay()));
+
+const totalDays = Math.floor((endDate - startDate) / (1000*60*60*24)) + 1;
+
+for (let i = 0; i < startDate.getDay(); i++) {
+const el = document.createElement('div');
+el.className = 'calendar-day empty';
+grid.appendChild(el);
+}
+
+for (let d = 0; d < totalDays; d++) {
+const date = addDays(startDate, d);
+const el = document.createElement('div');
+el.className = 'calendar-day';
+
+const dayOfCycle = Math.floor((date - lmp) / (1000*60*60*24)) + 1;
+
+if (dayOfCycle >= 1 && dayOfCycle <= periodLen) {
+el.classList.add('period');
+}
+
+if (dayOfCycle >= ovulationDay - 5 && dayOfCycle <= ovulationDay) {
+el.classList.add('fertile');
+}
+
+if (dayOfCycle === ovulationDay) {
+el.classList.remove('fertile');
+el.classList.add('ovulation');
+}
+
+if (date.toDateString() === today.toDateString()) {
+el.classList.add('today');
+}
+
+const label = date.getDate();
+const daySpan = document.createElement('span');
+daySpan.textContent = label;
+el.appendChild(daySpan);
+
+if (dayOfCycle >= 1 && dayOfCycle <= cycleLen) {
+const dot = document.createElement('div');
+dot.style.cssText = 'font-size:8px;color:#555;margin-top:1px';
+if (dayOfCycle === ovulationDay) dot.textContent = '⚡';
+else if (dayOfCycle >= ovulationDay - 5 && dayOfCycle <= ovulationDay) dot.textContent = '•';
+else if (dayOfCycle >= 1 && dayOfCycle <= periodLen) dot.textContent = '—';
+el.appendChild(dot);
+}
+
+grid.appendChild(el);
+}
+}
+
+function addDays(date, days) {
+const r = new Date(date);
+r.setDate(r.getDate() + days);
+return r;
+}
+
+function formatDate(date) {
+const d = new Date(date);
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

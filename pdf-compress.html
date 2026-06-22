@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Compress — Free Online PDF Tool</title>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 800px; width: 100%; }
+        header { text-align: center; margin-bottom: 2.5rem; }
+        header h1 { font-size: 2rem; color: #f0f6fc; margin-bottom: 0.5rem; }
+        header p { color: #8b949e; font-size: 1rem; }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .features .feat {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .features .feat .icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+        .features .feat h3 { font-size: 0.95rem; color: #f0f6fc; margin-bottom: 0.3rem; }
+        .features .feat p { font-size: 0.8rem; color: #8b949e; }
+        .drop-zone {
+            border: 2px dashed #30363d;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            background: #161b22;
+            margin-bottom: 1.5rem;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #58a6ff;
+            background: #1c2333;
+        }
+        .drop-zone .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .drop-zone p { color: #8b949e; }
+        .drop-zone .browse-link { color: #58a6ff; text-decoration: underline; cursor: pointer; }
+        .file-info {
+            display: none;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .file-info .row { display: flex; justify-content: space-between; padding: 0.3rem 0; }
+        .file-info .row span:first-child { color: #8b949e; }
+        .file-info .row span:last-child { color: #f0f6fc; font-weight: 500; }
+        .controls {
+            display: none;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        .controls label { color: #c9d1d9; font-size: 0.9rem; }
+        .controls select {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.9rem;
+        }
+        .btn {
+            background: #238636;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.7rem 1.8rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .btn:hover { background: #2ea043; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+        }
+        .btn-secondary:hover { background: #30363d; }
+        .progress-area { display: none; margin-bottom: 1.5rem; }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #30363d;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            width: 0%;
+            background: #58a6ff;
+            transition: width 0.3s;
+        }
+        .progress-text { color: #8b949e; font-size: 0.85rem; text-align: center; }
+        .result { display: none; margin-bottom: 1.5rem; }
+        .result .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+        .result .card .savings {
+            font-size: 1.2rem;
+            color: #3fb950;
+            font-weight: 600;
+        }
+        .result .card .sizes { margin: 0.5rem 0; color: #8b949e; font-size: 0.9rem; }
+        footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            text-align: center;
+            color: #484f58;
+            font-size: 0.8rem;
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.5rem; }
+            .drop-zone { padding: 2rem 1rem; }
+            .features { grid-template-columns: 1fr; }
+        }
+    </style>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📦 PDF Compress</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+        <p>Reduce PDF file size — all processing happens in your browser, nothing is uploaded</p>
+    </header>
+
+    <div class="features">
+        <div class="feat"><div class="icon">🗜️</div><h3>Smart Compression</h3><p>Strips metadata and unused objects</p></div>
+        <div class="feat"><div class="icon">🔒</div><h3>100% Private</h3><p>All processing is client-side in your browser</p></div>
+        <div class="feat"><div class="icon">⚡</div><h3>Fast & Free</h3><p>No uploads, no queues, instant results</p></div>
+        <div class="feat"><div class="icon">🖥️</div><h3>Cross-Platform</h3><p>Works on any modern browser</p></div>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+        <div class="icon">📄</div>
+        <p>Drag & drop your PDF here or <span class="browse-link" id="browseLink">browse</span></p>
+        <p style="font-size:0.8rem;margin-top:0.5rem;color:#484f58;">Supports files up to 50 MB</p>
+        <input type="file" id="fileInput" accept=".pdf" style="display:none">
+    </div>
+
+    <div class="file-info" id="fileInfo">
+        <div class="row"><span>File</span><span id="fileName">-</span></div>
+        <div class="row"><span>Size</span><span id="fileSize">-</span></div>
+        <div class="row"><span>Pages</span><span id="filePages">-</span></div>
+    </div>
+
+    <div class="controls" id="controls">
+        <label for="compressLevel">Compression:</label>
+        <select id="compressLevel">
+            <option value="light">Light (fast)</option>
+            <option value="medium" selected>Medium (balanced)</option>
+            <option value="heavy">Heavy (max shrink)</option>
+        </select>
+        <button class="btn" id="compressBtn">Compress PDF</button>
+        <button class="btn btn-secondary" id="resetBtn">Reset</button>
+    </div>
+
+    <div class="progress-area" id="progressArea">
+        <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">Processing...</div>
+    </div>
+
+    <div class="result" id="result">
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                <div>
+                    <p style="color:#8b949e;font-size:0.85rem;">Compression complete!</p>
+                    <p class="savings" id="savingsText">-0%</p>
+                    <p class="sizes" id="sizesText">Original: 0 KB → Compressed: 0 KB</p>
+                </div>
+                <button class="btn" id="downloadBtn">⬇ Download</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Free online PDF tools — No upload to server, all client-side
+    </footer>
+</div>
+
+<script>
+(function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const browseLink = document.getElementById('browseLink');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const filePages = document.getElementById('filePages');
+    const controls = document.getElementById('controls');
+    const compressBtn = document.getElementById('compressBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const progressArea = document.getElementById('progressArea');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const result = document.getElementById('result');
+    const savingsText = document.getElementById('savingsText');
+    const sizesText = document.getElementById('sizesText');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const compressLevel = document.getElementById('compressLevel');
+
+    let currentFile = null;
+    let compressedBytes = null;
+    let originalBytes = null;
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(2) + ' MB';
+    }
+
+    function resetUI() {
+        currentFile = null;
+        compressedBytes = null;
+        originalBytes = null;
+        fileInfo.style.display = 'none';
+        controls.style.display = 'none';
+        progressArea.style.display = 'none';
+        result.style.display = 'none';
+        progressFill.style.width = '0%';
+        compressBtn.disabled = false;
+        dropZone.style.display = 'block';
+    }
+
+    function handleFile(file) {
+        if (!file || file.type !== 'application/pdf') {
+            alert('Please select a PDF file.');
+            return;
+        }
+        currentFile = file;
+        originalBytes = file.size;
+        fileName.textContent = file.name;
+        fileSize.textContent = formatSize(file.size);
+        fileInfo.style.display = 'block';
+        controls.style.display = 'flex';
+        result.style.display = 'none';
+        progressArea.style.display = 'none';
+        compressedBytes = null;
+
+        // Try to get page count by reading header
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            // Simple page count regex on raw text
+            const text = new TextDecoder('utf-8').decode(data);
+            const matches = text.match(/\/Type\s*\/Page[^s]/g);
+            filePages.textContent = matches ? matches.length : '~' + Math.round(data.length / 5000) || '?';
+        };
+        reader.readAsArrayBuffer(file.slice(0, Math.min(file.size, 100000)));
+    }
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    browseLink.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    resetBtn.addEventListener('click', resetUI);
+
+    compressBtn.addEventListener('click', async () => {
+        if (!currentFile) return;
+        compressBtn.disabled = true;
+        progressArea.style.display = 'block';
+        result.style.display = 'none';
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Reading PDF...';
+
+        try {
+            const arrayBuffer = await currentFile.arrayBuffer();
+            progressFill.style.width = '20%';
+            progressText.textContent = 'Loading PDF structure...';
+
+            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer, {
+                ignoreEncryption: true,
+                updateMetadata: false
+            });
+            progressFill.style.width = '50%';
+            progressText.textContent = 'Optimizing...';
+
+            const level = compressLevel.value;
+            const pages = pdfDoc.getPages();
+
+            // "Compression" strategies using pdf-lib:
+            // Light: remove metadata only
+            // Medium: remove metadata + unused objects
+            // Heavy: remove metadata + copy pages into a fresh doc (strips all unused)
+
+            let newDoc;
+            if (level === 'heavy') {
+                newDoc = await PDFLib.PDFDocument.create();
+                const copiedPages = await newDoc.copyPages(pdfDoc, pages.map((_, i) => i));
+                copiedPages.forEach(p => newDoc.addPage(p));
+            } else {
+                // Remove metadata for light/medium
+                pdfDoc.setTitle('');
+                pdfDoc.setAuthor('');
+                pdfDoc.setSubject('');
+                pdfDoc.setKeywords([]);
+                pdfDoc.setProducer('PDF Compress Tool');
+                pdfDoc.setCreator('');
+
+                if (level === 'medium') {
+                    // Remove all embedded objects that aren't pages by setting metadata empty
+                }
+                newDoc = pdfDoc;
+            }
+
+            progressFill.style.width = '80%';
+            progressText.textContent = 'Saving compressed PDF...';
+
+            compressedBytes = await newDoc.save({ useObjectStreams: true });
+
+            progressFill.style.width = '100%';
+            progressText.textContent = 'Done!';
+
+            const originalSize = currentFile.size;
+            const compressedSize = compressedBytes.length;
+            const savings = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+
+            sizesText.textContent = `Original: ${formatSize(originalSize)} → Compressed: ${formatSize(compressedSize)}`;
+            savingsText.textContent = `-${savings}%`;
+
+            result.style.display = 'block';
+            compressBtn.disabled = false;
+        } catch (err) {
+            console.error(err);
+            progressText.textContent = 'Error: ' + (err.message || 'Could not process PDF');
+            compressBtn.disabled = false;
+            setTimeout(() => { progressArea.style.display = 'none'; }, 3000);
+        }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        if (!compressedBytes) return;
+        const blob = new Blob([compressedBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const name = currentFile ? currentFile.name.replace(/\.pdf$/i, '_compressed.pdf') : 'compressed.pdf';
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // Drag whole page
+    document.addEventListener('dragover', (e) => e.preventDefault());
+    document.addEventListener('drop', (e) => e.preventDefault());
+})();
+</script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

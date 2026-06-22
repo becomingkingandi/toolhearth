@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Clock — Current Time in Cities Worldwide</title>
+<meta name="description" content="See the current time in 10 major world cities simultaneously. Add custom timezones. Auto-updates every second.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:1.8rem;margin:20px 0;color:#fff;letter-spacing:.5px}
+.clock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;width:100%;max-width:1100px;margin-bottom:24px}
+.clock-card{background:#1a1a2e;border-radius:12px;padding:20px;border:1px solid #2a2a40;transition:border-color .2s}
+.clock-card:hover{border-color:#6c63ff}
+.city-name{font-size:1.1rem;font-weight:600;color:#fff;margin-bottom:4px}
+.city-date{font-size:.8rem;color:#888;margin-bottom:10px}
+.city-time{font-size:2rem;font-weight:700;color:#6c63ff;font-variant-numeric:tabular-nums;letter-spacing:2px}
+.city-offset{font-size:.75rem;color:#666;margin-top:6px}
+.add-form{display:flex;gap:10px;width:100%;max-width:500px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+.add-form input{padding:10px 14px;border-radius:8px;border:1px solid #333;background:#1a1a2e;color:#e0e0e0;font-size:.9rem;flex:1;min-width:160px}
+.add-form input:focus{outline:none;border-color:#6c63ff}
+.add-form button{padding:10px 20px;border-radius:8px;border:none;background:#6c63ff;color:#fff;font-size:.9rem;cursor:pointer;transition:background .2s}
+.add-form button:hover{background:#5a52e0}
+.note{font-size:.78rem;color:#666;margin-bottom:20px}
+.remove-btn{background:none;border:1px solid #444;color:#888;border-radius:6px;padding:2px 10px;font-size:.75rem;cursor:pointer;float:right;transition:all .2s}
+.remove-btn:hover{border-color:#ff4757;color:#ff4757}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "World Clock \u2014 Current Time in Cities Worldwide",
+  "description": "See the current time in 10 major world cities simultaneously. Add custom timezones. Auto-updates every second.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<h1>🌍 World Clock</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="add-form">
+<input type="text" id="customTz" placeholder="e.g. America/Chicago, Asia/Seoul" list="tzlist">
+<datalist id="tzlist"></datalist>
+<button onclick="addCustomTimezone()">Add Timezone</button>
+</div>
+<div class="note">Use IANA timezone names — or just type a city name and we'll try to resolve it.</div>
+<div class="clock-grid" id="clockGrid"></div>
+
+<script>
+const DEFAULT_CITIES = [
+  {label:'New York',tz:'America/New_York'},
+  {label:'London',tz:'Europe/London'},
+  {label:'Tokyo',tz:'Asia/Tokyo'},
+  {label:'Sydney',tz:'Australia/Sydney'},
+  {label:'Dubai',tz:'Asia/Dubai'},
+  {label:'Paris',tz:'Europe/Paris'},
+  {label:'Singapore',tz:'Asia/Singapore'},
+  {label:'Los Angeles',tz:'America/Los_Angeles'},
+  {label:'Berlin',tz:'Europe/Berlin'},
+  {label:'Mumbai',tz:'Asia/Kolkata'}
+];
+
+const TZ_ALIASES = {
+  'chicago':'America/Chicago','denver':'America/Denver','phoenix':'America/Phoenix',
+  'houston':'America/Chicago','miami':'America/New_York','seattle':'America/Los_Angeles',
+  'toronto':'America/Toronto','vancouver':'America/Vancouver','mexico city':'America/Mexico_City',
+  'sao paulo':'America/Sao_Paulo','buenos aires':'America/Argentina/Buenos_Aires',
+  'lagos':'Africa/Lagos','cairo':'Africa/Cairo','cape town':'Africa/Johannesburg',
+  'nairobi':'Africa/Nairobi','casablanca':'Africa/Casablanca',
+  'beijing':'Asia/Shanghai','seoul':'Asia/Seoul','bangkok':'Asia/Bangkok',
+  'hong kong':'Asia/Hong_Kong','kuala lumpur':'Asia/Kuala_Lumpur','jakarta':'Asia/Jakarta',
+  'manila':'Asia/Manila','dhaka':'Asia/Dhaka','karachi':'Asia/Karachi',
+  'kolkata':'Asia/Kolkata','delhi':'Asia/Kolkata','chennai':'Asia/Kolkata',
+  'istanbul':'Europe/Istanbul','moscow':'Europe/Moscow','madrid':'Europe/Madrid',
+  'rome':'Europe/Rome','amsterdam':'Europe/Amsterdam','stockholm':'Europe/Stockholm',
+  'oslo':'Europe/Oslo','zurich':'Europe/Zurich','dublin':'Europe/Dublin',
+  'auckland':'Pacific/Auckland','honolulu':'Pacific/Honolulu','anchorage':'America/Anchorage'
+};
+
+const formatter = new Intl.DateTimeFormat('en-US', { timeStyle:'medium', hour12:false });
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  weekday:'short', year:'numeric', month:'short', day:'numeric'
+});
+
+function getTimezoneInfo(tz) {
+  const now = new Date();
+  const opts = { timeZone:tz, timeZoneName:'shortOffset' };
+  let offset;
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(now);
+    const tzName = parts.find(p => p.type === 'timeZoneName');
+    offset = tzName ? tzName.value : '';
+  } catch { offset = ''; }
+  return { offset };
+}
+
+function updateClock(entry) {
+  const now = new Date();
+  let timeStr, dateStr;
+  try {
+    timeStr = formatter.formatToParts(now).map(p => p.value).join('');
+    dateStr = dateFormatter.format(now);
+  } catch {
+    timeStr = '—';
+    dateStr = '—';
+  }
+  return { time: timeStr, date: dateStr };
+}
+
+function renderClocks() {
+  const stored = JSON.parse(localStorage.getItem('wc_cities') || '[]');
+  const cities = stored.length ? stored : DEFAULT_CITIES;
+  const grid = document.getElementById('clockGrid');
+  grid.innerHTML = '';
+  cities.forEach((c, i) => {
+    const info = getTimezoneInfo(c.tz);
+    const clock = updateClock(c.tz);
+    const card = document.createElement('div');
+    card.className = 'clock-card';
+    card.id = 'card-'+i;
+    card.innerHTML = `
+      <button class="remove-btn" data-idx="${i}">✕</button>
+      <div class="city-name">${c.label}</div>
+      <div class="city-date">${clock.date}</div>
+      <div class="city-time" id="time-${i}">${clock.time}</div>
+      <div class="city-offset">${info.offset}</div>
+    `;
+    card.querySelector('.remove-btn').onclick = () => removeCity(i);
+    grid.appendChild(card);
+  });
+}
+
+function tickClocks() {
+  const stored = JSON.parse(localStorage.getItem('wc_cities') || '[]');
+  const cities = stored.length ? stored : DEFAULT_CITIES;
+  cities.forEach((c, i) => {
+    const el = document.getElementById('time-'+i);
+    if (!el) return;
+    const now = new Date();
+    try {
+      const t = new Intl.DateTimeFormat('en-US', {
+        timeZone:c.tz, timeStyle:'medium', hour12:false
+      }).format(now);
+      el.textContent = t;
+    } catch {}
+    const dateEl = el.parentElement.querySelector('.city-date');
+    if (dateEl) {
+      try {
+        dateEl.textContent = new Intl.DateTimeFormat('en-US', {
+          timeZone:c.tz, weekday:'short', year:'numeric', month:'short', day:'numeric'
+        }).format(now);
+      } catch {}
+    }
+    const offEl = el.parentElement.querySelector('.city-offset');
+    if (offEl) {
+      try {
+        const parts = new Intl.DateTimeFormat('en-US', {
+          timeZone:c.tz, timeZoneName:'shortOffset'
+        }).formatToParts(now);
+        const tzName = parts.find(p => p.type === 'timeZoneName');
+        offEl.textContent = tzName ? tzName.value : '';
+      } catch {}
+    }
+  });
+}
+
+function addCustomTimezone() {
+  const input = document.getElementById('customTz');
+  let val = input.value.trim();
+  if (!val) return;
+  const stored = JSON.parse(localStorage.getItem('wc_cities') || '[]');
+  const base = stored.length ? stored : [...DEFAULT_CITIES];
+  // Check if it looks like a city name (no slash)
+  let tz = val;
+  if (!val.includes('/')) {
+    const key = val.toLowerCase().trim();
+    if (TZ_ALIASES[key]) {
+      tz = TZ_ALIASES[key];
+    } else {
+      // Try as city name -> capitalize first letter, guess IANA
+      const cap = val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+      const continents = ['America','Europe','Asia','Africa','Australia','Pacific','Indian','Atlantic'];
+      // Just use as-is, Intl will throw if invalid
+    }
+  }
+  const label = val.includes('/') ? val.split('/').pop().replace(/_/g,' ') : val;
+  // Validate
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone:tz }).format(new Date());
+  } catch {
+    alert('Invalid timezone: "'+val+'". Use IANA format like "America/Chicago" or "Asia/Seoul".');
+    return;
+  }
+  if (base.some(c => c.tz === tz)) { alert('Timezone already shown.'); return; }
+  base.push({ label, tz });
+  localStorage.setItem('wc_cities', JSON.stringify(base));
+  renderClocks();
+  input.value = '';
+}
+
+function removeCity(idx) {
+  const stored = JSON.parse(localStorage.getItem('wc_cities') || '[]');
+  if (stored.length <= 1) return;
+  stored.splice(idx, 1);
+  localStorage.setItem('wc_cities', JSON.stringify(stored));
+  renderClocks();
+}
+
+// Init
+renderClocks();
+setInterval(tickClocks, 1000);
+
+// Populate datalist with common IANA zones for autocomplete
+const COMMON_TZS = [
+  'America/New_York','America/Chicago','America/Denver','America/Los_Angeles',
+  'America/Toronto','America/Vancouver','America/Mexico_City','America/Sao_Paulo',
+  'America/Argentina/Buenos_Aires','America/Anchorage','America/Phoenix',
+  'Europe/London','Europe/Paris','Europe/Berlin','Europe/Madrid','Europe/Rome',
+  'Europe/Amsterdam','Europe/Stockholm','Europe/Moscow','Europe/Istanbul','Europe/Dublin',
+  'Asia/Tokyo','Asia/Shanghai','Asia/Seoul','Asia/Singapore','Asia/Dubai',
+  'Asia/Kolkata','Asia/Bangkok','Asia/Hong_Kong','Asia/Karachi','Asia/Jakarta','Asia/Manila',
+  'Australia/Sydney','Australia/Melbourne','Australia/Perth',
+  'Africa/Cairo','Africa/Johannesburg','Africa/Lagos','Africa/Nairobi',
+  'Pacific/Auckland','Pacific/Honolulu','Pacific/Fiji'
+];
+const dl = document.getElementById('tzlist');
+COMMON_TZS.forEach(t => { const o = document.createElement('option'); o.value = t; dl.appendChild(o); });
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/mime-types" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">MIME Type Reference — Complete Content-Type Lookup</a>
+      <a href="/country-lookup" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Country Lookup — Find Country Information & Flags</a>
+      <a href="/html-entity-reference" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">HTML Entity Reference — Complete Character Entities</a>
+      <a href="/seo-meta-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">SEO Meta Tag Generator — Generate & Preview Meta Tags</a>
+      <a href="/browser-info" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Browser Info — See Your Browser & Device Details</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

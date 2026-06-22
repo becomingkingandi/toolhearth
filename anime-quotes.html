@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anime Quotes — Famous Quotes from Anime Characters</title>
+<meta name="description" content="Browse random anime quotes with character and series information. Free anime quote generator for fans.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:#0f0a1a;color:#e0e0e0;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.container{max-width:600px;width:100%;padding:20px 0}
+h1{text-align:center;margin-bottom:24px;font-size:1.8rem;background:linear-gradient(135deg,#c084fc,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+h1::before{content:'🎌';-webkit-text-fill-color:initial}
+.card{background:#1a1028;border-radius:16px;padding:32px;box-shadow:0 8px 32px rgba(0,0,0,.5);text-align:center;min-height:260px;display:flex;flex-direction:column;justify-content:center}
+.quote-icon{font-size:2.5rem;color:#c084fc;margin-bottom:12px}
+.quote-text{font-size:1.25rem;line-height:1.7;margin-bottom:24px;color:#e8d8ff;font-style:italic}
+.character{font-size:1rem;color:#c084fc;font-weight:600}
+.anime{font-size:.9rem;color:#8888aa;margin-top:4px}
+.btn-group{display:flex;gap:10px;margin-top:28px;justify-content:center;flex-wrap:wrap}
+.btn{padding:12px 24px;border:none;border-radius:10px;font-size:1rem;cursor:pointer;font-weight:600;transition:opacity .2s;color:#fff}
+.btn-primary{background:linear-gradient(135deg,#c084fc,#a855f7)}
+.btn-secondary{background:#2a1a3a;color:#d8c8e8}
+.btn-secondary:hover{background:#3a2a4a}
+.btn:hover{opacity:.9}
+.spinner{display:none;width:40px;height:40px;border:4px solid #2a1a3a;border-top:4px solid #c084fc;border-radius:50%;animation:spin .8s linear infinite;margin:30px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status{text-align:center;margin:12px 0;color:#7a6a8a;font-size:.9rem}
+.copy-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 24px;border-radius:10px;font-size:.9rem;opacity:0;transition:opacity .3s;pointer-events:none}
+.copy-toast.show{opacity:1}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Anime Quotes \u2014 Famous Quotes from Anime Characters",
+  "description": "Browse random anime quotes with character and series information. Free anime quote generator for fans.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Anime Quotes</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="spinner" id="spinner"></div>
+<div class="status" id="status">Click "New Quote"!</div>
+<div class="card" id="card">
+<div class="quote-icon">💬</div>
+<div class="quote-text" id="quoteText"></div>
+<div class="character" id="character"></div>
+<div class="anime" id="anime"></div>
+<div class="btn-group">
+<button class="btn btn-primary" id="newBtn">New Quote</button>
+<button class="btn btn-secondary" id="copyBtn">📋 Copy</button>
+</div>
+</div>
+<div class="copy-toast" id="toast">Copied!</div>
+</div>
+<script>
+const spinner=document.getElementById('spinner'),statusEl=document.getElementById('status'),
+card=document.getElementById('card'),quoteText=document.getElementById('quoteText'),
+character=document.getElementById('character'),anime=document.getElementById('anime'),
+newBtn=document.getElementById('newBtn'),copyBtn=document.getElementById('copyBtn'),
+toast=document.getElementById('toast');
+
+function showStatus(m){statusEl.textContent=m;quoteText.textContent='';character.textContent='';anime.textContent=''}
+
+async function fetchQuote(){
+  showStatus('Loading...');spinner.style.display='block';
+  try{
+    const r=await fetch('https://animechan.xyz/api/random');
+    if(!r.ok)throw new Error('API error');
+    const d=await r.json();
+    quoteText.textContent='"'+d.quote+'"';
+    character.textContent=d.character||'Unknown';
+    anime.textContent=d.anime||'Unknown';
+    statusEl.textContent='';spinner.style.display='none'
+  }catch(e){
+    showStatus('Error loading quote.');spinner.style.display='none'
+  }
+}
+
+function showToast(){toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2000)}
+
+copyBtn.addEventListener('click',async()=>{
+  const txt=`"${quoteText.textContent}"\n— ${character.textContent}, ${anime.textContent}`;
+  try{await navigator.clipboard.writeText(txt);showToast()}
+  catch{alert('Copy failed')}
+});
+
+newBtn.addEventListener('click',fetchQuote);
+fetchQuote();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

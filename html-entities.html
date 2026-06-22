@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HTML Entity Encoder & Decoder — Encode Special Characters</title>
+<meta name="description" content="Encode or decode HTML entities online. Convert &lt; &gt; &amp; and more with a quick reference table of common entities.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;padding:16px}
+.container{max-width:800px;margin:0 auto;width:100%;flex:1}
+h1{font-size:1.5rem;margin-bottom:8px;color:#f0f6fc}
+p.sub{color:#8b949e;margin-bottom:20px;font-size:0.9rem}
+textarea{width:100%;min-height:180px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;color:#c9d1d9;font-size:1rem;font-family:inherit;resize:vertical;outline:none;transition:border-color .2s}
+textarea:focus{border-color:#58a6ff}
+.btn-group{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.btn{padding:8px 16px;border:1px solid #30363d;border-radius:6px;background:#21262d;color:#c9d1d9;cursor:pointer;font-size:0.85rem;transition:all .15s;user-select:none}
+.btn:hover{background:#30363d;border-color:#8b949e}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:#238636;border-color:#2ea043;color:#fff}
+.btn.primary:hover{background:#2ea043}
+#result{margin-top:16px;position:relative}
+#result-box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;min-height:60px;word-break:break-word;padding-right:50px}
+#result-box.empty{color:#8b949e;display:flex;align-items:center;justify-content:center;padding-right:12px}
+.copy-btn{position:absolute;top:8px;right:8px;padding:4px 10px;font-size:0.75rem;background:#21262d;border:1px solid #30363d;border-radius:4px;color:#8b949e;cursor:pointer;transition:all .15s}
+.copy-btn:hover{background:#30363d;color:#c9d1d9}
+.copy-btn.copied{background:#238636;border-color:#2ea043;color:#fff}
+h2{font-size:1.1rem;color:#f0f6fc;margin:24px 0 12px}
+table{width:100%;border-collapse:collapse;background:#161b22;border:1px solid #30363d;border-radius:8px;overflow:hidden;font-size:0.85rem}
+th{background:#21262d;color:#8b949e;padding:10px 12px;text-align:left;font-weight:600;text-transform:uppercase;letter-spacing:.5px;font-size:0.75rem}
+td{padding:8px 12px;border-top:1px solid #21262d}
+td.code{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;color:#58a6ff}
+td.char{font-size:1.2rem;text-align:center;color:#f0f6fc}
+footer{margin-top:auto;padding:20px 0;text-align:center;color:#8b949e;font-size:0.8rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "HTML Entity Encoder & Decoder \u2014 Encode Special Characters",
+  "description": "Encode or decode HTML entities online. Convert &lt; &gt; &amp; and more with a quick reference table of common entities.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>HTML Entity Encoder / Decoder</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Encode or decode HTML special characters</p>
+<textarea id="input" placeholder="Paste text to encode or decode..."></textarea>
+<div class="btn-group">
+<button class="btn primary" onclick="encode()">🔒 Encode</button>
+<button class="btn" onclick="decode()">🔓 Decode</button>
+</div>
+<div id="result">
+<div id="result-box" class="empty">Result will appear here</div>
+<button class="copy-btn" onclick="copyResult()">Copy</button>
+</div>
+<h2>Common HTML Entities — Quick Reference</h2>
+<table>
+<thead><tr><th>Character</th><th>Description</th><th>Entity Name</th><th>Entity Number</th></tr></thead>
+<tbody>
+<tr><td class="char">&lt;</td><td>Less than</td><td class="code">&amp;lt;</td><td class="code">&amp;#60;</td></tr>
+<tr><td class="char">&gt;</td><td>Greater than</td><td class="code">&amp;gt;</td><td class="code">&amp;#62;</td></tr>
+<tr><td class="char">&amp;</td><td>Ampersand</td><td class="code">&amp;amp;</td><td class="code">&amp;#38;</td></tr>
+<tr><td class="char">&quot;</td><td>Double quote</td><td class="code">&amp;quot;</td><td class="code">&amp;#34;</td></tr>
+<tr><td class="char">&apos;</td><td>Single quote / Apostrophe</td><td class="code">&amp;apos;</td><td class="code">&amp;#39;</td></tr>
+<tr><td class="char">&nbsp;</td><td>Non-breaking space</td><td class="code">&amp;nbsp;</td><td class="code">&amp;#160;</td></tr>
+<tr><td class="char">&copy;</td><td>Copyright</td><td class="code">&amp;copy;</td><td class="code">&amp;#169;</td></tr>
+<tr><td class="char">&reg;</td><td>Registered trademark</td><td class="code">&amp;reg;</td><td class="code">&amp;#174;</td></tr>
+<tr><td class="char">&trade;</td><td>Trademark</td><td class="code">&amp;trade;</td><td class="code">&amp;#8482;</td></tr>
+<tr><td class="char">&euro;</td><td>Euro</td><td class="code">&amp;euro;</td><td class="code">&amp;#8364;</td></tr>
+<tr><td class="char">&pound;</td><td>Pound sterling</td><td class="code">&amp;pound;</td><td class="code">&amp;#163;</td></tr>
+<tr><td class="char">&yen;</td><td>Yen</td><td class="code">&amp;yen;</td><td class="code">&amp;#165;</td></tr>
+<tr><td class="char">&deg;</td><td>Degree</td><td class="code">&amp;deg;</td><td class="code">&amp;#176;</td></tr>
+<tr><td class="char">&plusmn;</td><td>Plus-minus</td><td class="code">&amp;plusmn;</td><td class="code">&amp;#177;</td></tr>
+<tr><td class="char">&times;</td><td>Multiplication</td><td class="code">&amp;times;</td><td class="code">&amp;#215;</td></tr>
+<tr><td class="char">&divide;</td><td>Division</td><td class="code">&amp;divide;</td><td class="code">&amp;#247;</td></tr>
+</tbody>
+</table>
+</div>
+<footer>HTML Entity Encoder / Decoder &mdash; Free Online Tool</footer>
+<script>
+function encode(){
+  const input=document.getElementById('input').value;
+  const box=document.getElementById('result-box');
+  if(!input.trim()){box.className='empty';box.textContent='Please enter some text';return}
+  const encoded=input.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+  box.className='';
+  box.textContent=encoded;
+}
+function decode(){
+  const input=document.getElementById('input').value;
+  const box=document.getElementById('result-box');
+  if(!input.trim()){box.className='empty';box.textContent='Please enter some text';return}
+  const ta=document.createElement('textarea');
+  ta.innerHTML=input;
+  box.className='';
+  box.textContent=ta.value;
+}
+function copyResult(){
+  const text=document.getElementById('result-box').textContent;
+  const btn=document.querySelector('.copy-btn');
+  if(!text||text==='Please enter some text'||text==='Result will appear here')return;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!';btn.className='copy-btn copied';
+    setTimeout(()=>{btn.textContent='Copy';btn.className='copy-btn'},1500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='Copied!';btn.className='copy-btn copied';
+    setTimeout(()=>{btn.textContent='Copy';btn.className='copy-btn'},1500);
+  });
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

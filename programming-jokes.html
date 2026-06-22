@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programming Jokes — Developer Humor & Tech Jokes</title>
+<meta name="description" content="Get random programming jokes and developer humor. Single and two-part jokes for coders. Free tech joke generator.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:#0d1a0d;color:#e0e0e0;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.container{max-width:600px;width:100%;padding:20px 0}
+h1{text-align:center;margin-bottom:24px;font-size:1.8rem;background:linear-gradient(135deg,#4ade80,#22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+h1::before{content:'😂';-webkit-text-fill-color:initial}
+.toggle-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}
+.toggle-label{font-size:.9rem;color:#86efac}
+.switch{position:relative;display:inline-block;width:48px;height:26px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#1a3a1a;transition:.3s;border-radius:26px}
+.slider:before{position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:#86efac;transition:.3s;border-radius:50%}
+input:checked+.slider{background:#4ade80}
+input:checked+.slider:before{transform:translateX(22px);background:#0d1a0d}
+.card{background:#0f2a0f;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,.5);min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.joke-setup{font-size:1.2rem;margin-bottom:16px;line-height:1.5;color:#bbf7d0}
+.joke-delivery{font-size:1.1rem;color:#86efac;font-style:italic;margin-bottom:16px;padding:12px;background:#0f1f0f;border-radius:10px;display:none}
+.joke-single{font-size:1.2rem;line-height:1.6;margin-bottom:20px;color:#bbf7d0}
+.btn-group{display:flex;gap:10px;margin-top:24px;justify-content:center;flex-wrap:wrap}
+.btn{padding:12px 24px;border:none;border-radius:10px;font-size:1rem;cursor:pointer;font-weight:600;transition:opacity .2s;color:#fff}
+.btn-primary{background:linear-gradient(135deg,#4ade80,#22c55e)}
+.btn-secondary{background:#1a3a1a;color:#bbf7d0}
+.btn-secondary:hover{background:#2a4a2a}
+.btn:hover{opacity:.9}
+.spinner{display:none;width:40px;height:40px;border:4px solid #1a3a1a;border-top:4px solid #4ade80;border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status{text-align:center;margin:12px 0;color:#6a9a7a;font-size:.9rem}
+.category-tag{display:inline-block;padding:4px 12px;background:#1a3a1a;border-radius:20px;font-size:.75rem;color:#86efac;margin-bottom:12px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Programming Jokes \u2014 Developer Humor & Tech Jokes",
+  "description": "Get random programming jokes and developer humor. Single and two-part jokes for coders. Free tech joke generator.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Programming Jokes</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="toggle-wrap">
+<span class="toggle-label">NSFW</span>
+<label class="switch">
+<input type="checkbox" id="nsfwToggle" />
+<span class="slider"></span>
+</label>
+</div>
+<div class="spinner" id="spinner"></div>
+<div class="status" id="status">Click "New Joke"!</div>
+<div class="card" id="card">
+<div class="category-tag" id="category"></div>
+<div id="jokeArea"></div>
+<div class="btn-group">
+<button class="btn btn-primary" id="newBtn">New Joke</button>
+<button class="btn btn-secondary" id="copyBtn">📋 Copy</button>
+</div>
+</div>
+</div>
+<script>
+const spinner=document.getElementById('spinner'),statusEl=document.getElementById('status'),
+card=document.getElementById('card'),jokeArea=document.getElementById('jokeArea'),
+category=document.getElementById('category'),newBtn=document.getElementById('newBtn'),
+copyBtn=document.getElementById('copyBtn'),nsfwToggle=document.getElementById('nsfwToggle');
+
+let currentJoke='';
+
+function showStatus(m){statusEl.textContent=m;jokeArea.innerHTML='';category.textContent=''}
+
+async function fetchJoke(){
+  showStatus('Loading...');spinner.style.display='block';
+  const safeMode=nsfwToggle.checked?'':'&safe-mode';
+  try{
+    const r=await fetch(`https://v2.jokeapi.dev/joke/Programming?safe-mode${safeMode}`);
+    const d=await r.json();
+    if(d.error){showStatus('No safe jokes found. Toggle NSFW?');spinner.style.display='none';return}
+    renderJoke(d);
+  }catch(e){showStatus('Error loading joke.');spinner.style.display='none'}
+}
+
+function renderJoke(d){
+  category.textContent=(d.category||'Programming')+(d.flags?.nsfw?' 🔞':'');
+  jokeArea.innerHTML='';
+  if(d.type==='single'){
+    const p=document.createElement('div');p.className='joke-single';p.textContent=d.joke;jokeArea.appendChild(p);
+    currentJoke=d.joke;
+  }else{
+    const setup=document.createElement('div');setup.className='joke-setup';setup.textContent=d.setup;jokeArea.appendChild(setup);
+    const delivery=document.createElement('div');delivery.className='joke-delivery';delivery.textContent=d.delivery;delivery.style.display='block';jokeArea.appendChild(delivery);
+    currentJoke=`${d.setup}\n${d.delivery}`;
+  }
+  statusEl.textContent='';spinner.style.display='none'
+}
+
+newBtn.addEventListener('click',fetchJoke);
+copyBtn.addEventListener('click',async()=>{
+  if(!currentJoke){return}
+  try{await navigator.clipboard.writeText(currentJoke);copyBtn.textContent='✅ Copied!';setTimeout(()=>copyBtn.textContent='📋 Copy',2000)}
+  catch{copyBtn.textContent='❌ Failed';setTimeout(()=>copyBtn.textContent='📋 Copy',2000)}
+});
+nsfwToggle.addEventListener('change',fetchJoke);
+
+fetchJoke();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

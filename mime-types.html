@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIME Type Reference — Complete Content-Type Lookup</title>
+<meta name="description" content="Browse and search 100+ MIME types by extension or content type. Category filters for image, video, audio, text, and application.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;padding:20px;display:flex;flex-direction:column;align-items:center}
+h1{font-size:1.8rem;margin:20px 0;color:#fff}
+.container{width:100%;max-width:900px}
+.search-wrap{margin-bottom:16px}
+.search-wrap input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid #333;background:#1a1a2e;color:#e0e0e0;font-size:1rem;outline:none;transition:border .2s}
+.search-wrap input:focus{border-color:#6c63ff}
+.search-wrap input::placeholder{color:#555}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 18px;border-radius:20px;background:#1a1a2e;border:1px solid #2a2a40;color:#888;font-size:.85rem;cursor:pointer;transition:all .2s}
+.tab:hover{color:#e0e0e0}
+.tab.active{background:#6c63ff;border-color:#6c63ff;color:#fff}
+.count{font-size:.8rem;color:#666;margin-bottom:10px;text-align:right}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #2a2a40}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead{background:#1a1a2e}
+th{padding:12px 16px;text-align:left;font-weight:600;color:#888;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #2a2a40;position:sticky;top:0;background:#1a1a2e}
+td{padding:10px 16px;border-bottom:1px solid #1a1a2e;vertical-align:middle}
+tr:hover td{background:#20203a}
+tr:last-child td{border-bottom:none}
+.ext{font-weight:600;color:#fff;font-family:monospace}
+.mime{font-family:monospace;color:#6c63ff;font-size:.82rem;word-break:break-all}
+.cat-badge{padding:3px 10px;border-radius:10px;font-size:.72rem;font-weight:500;text-transform:lowercase}
+.cat-image{background:#1a2a3a;color:#4fc3f7}
+.cat-video{background:#2a1a3a;color:#ce93d8}
+.cat-audio{background:#2a3a1a;color:#81c784}
+.cat-text{background:#3a2a1a;color:#ffb74d}
+.cat-application{background:#3a1a1a;color:#ef9a9a}
+.cat-multipart{background:#1a3a3a;color:#80cbc4}
+.copy-btn{background:none;border:1px solid #333;color:#888;padding:4px 10px;border-radius:5px;font-size:.72rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.copy-btn:hover{border-color:#6c63ff;color:#6c63ff}
+.copy-btn.copied{background:#6c63ff;color:#fff;border-color:#6c63ff}
+.no-results{text-align:center;padding:40px;color:#666}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "MIME Type Reference \u2014 Complete Content-Type Lookup",
+  "description": "Browse and search 100+ MIME types by extension or content type. Category filters for image, video, audio, text, and application.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<h1>📄 MIME Types Reference</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="container">
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Search by extension or MIME type..." oninput="filterTable()" autofocus>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-cat="all" onclick="setCategory('all')">All</button>
+    <button class="tab" data-cat="image" onclick="setCategory('image')">Image</button>
+    <button class="tab" data-cat="video" onclick="setCategory('video')">Video</button>
+    <button class="tab" data-cat="audio" onclick="setCategory('audio')">Audio</button>
+    <button class="tab" data-cat="text" onclick="setCategory('text')">Text</button>
+    <button class="tab" data-cat="application" onclick="setCategory('application')">Application</button>
+  </div>
+  <div class="count" id="countDisplay">Showing 103 entries</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Extension</th><th>MIME Type</th><th>Category</th><th></th></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const MIME_TYPES = [
+  {ext:"html", mime:"text/html", cat:"text"},
+  {ext:"css", mime:"text/css", cat:"text"},
+  {ext:"js", mime:"text/javascript", cat:"text"},
+  {ext:"json", mime:"application/json", cat:"application"},
+  {ext:"xml", mime:"application/xml", cat:"application"},
+  {ext:"csv", mime:"text/csv", cat:"text"},
+  {ext:"txt", mime:"text/plain", cat:"text"},
+  {ext:"md", mime:"text/markdown", cat:"text"},
+  {ext:"yaml", mime:"text/yaml", cat:"text"},
+  {ext:"yml", mime:"text/yaml", cat:"text"},
+  {ext:"toml", mime:"text/toml", cat:"text"},
+  {ext:"rtf", mime:"text/rtf", cat:"text"},
+  {ext:"pdf", mime:"application/pdf", cat:"application"},
+  {ext:"doc", mime:"application/msword", cat:"application"},
+  {ext:"docx", mime:"application/vnd.openxmlformats-officedocument.wordprocessingml.document", cat:"application"},
+  {ext:"xls", mime:"application/vnd.ms-excel", cat:"application"},
+  {ext:"xlsx", mime:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", cat:"application"},
+  {ext:"ppt", mime:"application/vnd.ms-powerpoint", cat:"application"},
+  {ext:"pptx", mime:"application/vnd.openxmlformats-officedocument.presentationml.presentation", cat:"application"},
+  {ext:"odt", mime:"application/vnd.oasis.opendocument.text", cat:"application"},
+  {ext:"ods", mime:"application/vnd.oasis.opendocument.spreadsheet", cat:"application"},
+  {ext:"odp", mime:"application/vnd.oasis.opendocument.presentation", cat:"application"},
+  {ext:"zip", mime:"application/zip", cat:"application"},
+  {ext:"tar", mime:"application/x-tar", cat:"application"},
+  {ext:"gz", mime:"application/gzip", cat:"application"},
+  {ext:"bz2", mime:"application/x-bzip2", cat:"application"},
+  {ext:"xz", mime:"application/x-xz", cat:"application"},
+  {ext:"7z", mime:"application/x-7z-compressed", cat:"application"},
+  {ext:"rar", mime:"application/vnd.rar", cat:"application"},
+  {ext:"exe", mime:"application/x-msdownload", cat:"application"},
+  {ext:"dll", mime:"application/x-msdownload", cat:"application"},
+  {ext:"msi", mime:"application/x-msi", cat:"application"},
+  {ext:"wasm", mime:"application/wasm", cat:"application"},
+  {ext:"apk", mime:"application/vnd.android.package-archive", cat:"application"},
+  {ext:"deb", mime:"application/vnd.debian.binary-package", cat:"application"},
+  {ext:"rpm", mime:"application/x-rpm", cat:"application"},
+  {ext:"iso", mime:"application/x-iso9660-image", cat:"application"},
+  {ext:"bin", mime:"application/octet-stream", cat:"application"},
+  {ext:"svg", mime:"image/svg+xml", cat:"image"},
+  {ext:"png", mime:"image/png", cat:"image"},
+  {ext:"jpg", mime:"image/jpeg", cat:"image"},
+  {ext:"jpeg", mime:"image/jpeg", cat:"image"},
+  {ext:"gif", mime:"image/gif", cat:"image"},
+  {ext:"webp", mime:"image/webp", cat:"image"},
+  {ext:"bmp", mime:"image/bmp", cat:"image"},
+  {ext:"ico", mime:"image/vnd.microsoft.icon", cat:"image"},
+  {ext:"tiff", mime:"image/tiff", cat:"image"},
+  {ext:"tif", mime:"image/tiff", cat:"image"},
+  {ext:"avif", mime:"image/avif", cat:"image"},
+  {ext:"heic", mime:"image/heic", cat:"image"},
+  {ext:"heif", mime:"image/heif", cat:"image"},
+  {ext:"psd", mime:"image/vnd.adobe.photoshop", cat:"image"},
+  {ext:"ai", mime:"application/postscript", cat:"application"},
+  {ext:"eps", mime:"application/postscript", cat:"application"},
+  {ext:"mp4", mime:"video/mp4", cat:"video"},
+  {ext:"webm", mime:"video/webm", cat:"video"},
+  {ext:"avi", mime:"video/x-msvideo", cat:"video"},
+  {ext:"mov", mime:"video/quicktime", cat:"video"},
+  {ext:"mkv", mime:"video/x-matroska", cat:"video"},
+  {ext:"flv", mime:"video/x-flv", cat:"video"},
+  {ext:"wmv", mime:"video/x-ms-wmv", cat:"video"},
+  {ext:"m4v", mime:"video/x-m4v", cat:"video"},
+  {ext:"3gp", mime:"video/3gpp", cat:"video"},
+  {ext:"ogg", mime:"video/ogg", cat:"video"},
+  {ext:"mpg", mime:"video/mpeg", cat:"video"},
+  {ext:"mpeg", mime:"video/mpeg", cat:"video"},
+  {ext:"ts", mime:"video/mp2t", cat:"video"},
+  {ext:"mp3", mime:"audio/mpeg", cat:"audio"},
+  {ext:"wav", mime:"audio/wav", cat:"audio"},
+  {ext:"aac", mime:"audio/aac", cat:"audio"},
+  {ext:"flac", mime:"audio/flac", cat:"audio"},
+  {ext:"opus", mime:"audio/opus", cat:"audio"},
+  {ext:"m4a", mime:"audio/mp4", cat:"audio"},
+  {ext:"wma", mime:"audio/x-ms-wma", cat:"audio"},
+  {ext:"aiff", mime:"audio/aiff", cat:"audio"},
+  {ext:"weba", mime:"audio/webm", cat:"audio"},
+  {ext:"midi", mime:"audio/midi", cat:"audio"},
+  {ext:"mid", mime:"audio/midi", cat:"audio"},
+  {ext:"oga", mime:"audio/ogg", cat:"audio"},
+  {ext:"spx", mime:"audio/speex", cat:"audio"},
+  {ext:"jsonld", mime:"application/ld+json", cat:"application"},
+  {ext:"woff", mime:"font/woff", cat:"application"},
+  {ext:"woff2", mime:"font/woff2", cat:"application"},
+  {ext:"ttf", mime:"font/ttf", cat:"application"},
+  {ext:"otf", mime:"font/otf", cat:"application"},
+  {ext:"eot", mime:"application/vnd.ms-fontobject", cat:"application"},
+  {ext:"sh", mime:"application/x-sh", cat:"application"},
+  {ext:"bat", mime:"application/x-msdos-program", cat:"application"},
+  {ext:"ps1", mime:"text/x-powershell", cat:"text"},
+  {ext:"sql", mime:"application/sql", cat:"application"},
+  {ext:"php", mime:"text/x-php", cat:"text"},
+  {ext:"py", mime:"text/x-python", cat:"text"},
+  {ext:"java", mime:"text/x-java-source", cat:"text"},
+  {ext:"c", mime:"text/x-c", cat:"text"},
+  {ext:"cpp", mime:"text/x-c++", cat:"text"},
+  {ext:"h", mime:"text/x-c", cat:"text"},
+  {ext:"go", mime:"text/x-go", cat:"text"},
+  {ext:"rs", mime:"text/x-rust", cat:"text"},
+  {ext:"swift", mime:"text/x-swift", cat:"text"},
+  {ext:"kt", mime:"text/x-kotlin", cat:"text"},
+  {ext:"ts", mime:"text/typescript", cat:"text"},
+  {ext:"tsx", mime:"text/typescript-jsx", cat:"text"},
+  {ext:"jsx", mime:"text/jsx", cat:"text"},
+];
+
+let currentCategory = 'all';
+
+function setCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.cat === cat);
+  });
+  filterTable();
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const body = document.getElementById('tableBody');
+  const countDisplay = document.getElementById('countDisplay');
+
+  const filtered = MIME_TYPES.filter(m => {
+    if (currentCategory !== 'all' && m.cat !== currentCategory) return false;
+    if (q) {
+      return m.ext.toLowerCase().includes(q) || m.mime.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  countDisplay.textContent = `Showing ${filtered.length} entr${filtered.length===1?'y':'ies'}`;
+  body.innerHTML = '';
+
+  if (filtered.length === 0) {
+    body.innerHTML = '<tr><td colspan="4"><div class="no-results">No MIME types match your search.</div></td></tr>';
+    return;
+  }
+
+  filtered.forEach(m => {
+    const tr = document.createElement('tr');
+    const catColors = {image:'cat-image',video:'cat-video',audio:'cat-audio',text:'cat-text',application:'cat-application',multipart:'cat-multipart'};
+    tr.innerHTML = `
+      <td><span class="ext">.${m.ext}</span></td>
+      <td><span class="mime">${m.mime}</span></td>
+      <td><span class="cat-badge ${catColors[m.cat]||'cat-application'}">${m.cat}</span></td>
+      <td><button class="copy-btn" data-mime="${m.mime}" onclick="copyMime(this)">Copy</button></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function copyMime(btn) {
+  const mime = btn.dataset.mime;
+  navigator.clipboard.writeText(mime).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 1500);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = mime;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+filterTable();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/country-lookup" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Country Lookup — Find Country Information & Flags</a>
+      <a href="/world-clock" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">World Clock — Current Time in Cities Worldwide</a>
+      <a href="/html-entity-reference" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">HTML Entity Reference — Complete Character Entities</a>
+      <a href="/seo-meta-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">SEO Meta Tag Generator — Generate & Preview Meta Tags</a>
+      <a href="/browser-info" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Browser Info — See Your Browser & Device Details</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

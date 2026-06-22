@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JWT Decoder — Decode JSON Web Tokens Online</title>
+<meta name="description" content="Decode and inspect JSON Web Tokens (JWT). See the header, payload, and signature components in a readable format.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:800px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;justify-content:center}
+h1{font-size:1.6rem;font-weight:600;margin-bottom:4px;color:#f0f6fc}
+p.sub{color:#8b949e;font-size:0.9rem;margin-bottom:20px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px}
+textarea{width:100%;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;color:#c9d1d9;font-size:0.82rem;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;resize:vertical;outline:none;min-height:80px;tab-size:2;word-break:break-all}
+textarea:focus{border-color:#58a6ff}
+label{display:block;font-size:0.85rem;font-weight:500;color:#8b949e;margin-bottom:4px;margin-top:14px}
+label:first-of-type{margin-top:0}
+.section-title{font-size:0.85rem;font-weight:600;color:#f0f6fc;margin-top:16px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #21262d}
+.result-box{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;font-size:0.82rem;color:#c9d1d9;white-space:pre-wrap;word-break:break-all;min-height:50px}
+.result-box .key{color:#7ee787}
+.result-box .string{color:#a5d6ff}
+.result-box .number{color:#79c0ff}
+.result-box .bool{color:#ffa657}
+.result-box .null{color:#8b949e}
+.result-box .delim{color:#484f58}
+.error-box{background:#3d1419;border:1px solid #f8514966;border-radius:6px;padding:8px 12px;margin-top:8px;display:none;font-size:0.82rem;color:#f85149;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;white-space:pre-wrap;word-break:break-all}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:500;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn-outline{background:transparent;border:1px solid #30363d;color:#c9d1d9}
+.btn-outline:hover{background:#1c2128}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:6px}
+.stat-card{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:10px;text-align:center}
+.stat-card .val{font-size:1.1rem;font-weight:600;color:#f0f6fc;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;word-break:break-all}
+.stat-card .lbl{font-size:0.75rem;color:#8b949e;margin-top:2px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "JWT Decoder \u2014 Decode JSON Web Tokens Online",
+  "description": "Decode and inspect JSON Web Tokens (JWT). See the header, payload, and signature components in a readable format.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🔐 JWT Decoder</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Paste a JWT token to decode its header and payload</p>
+<div class="card">
+<label for="jwtInput">JWT Token</label>
+<textarea id="jwtInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"></textarea>
+<div class="btn-group">
+<button class="btn" onclick="decode()">Decode</button>
+<button class="btn btn-outline" onclick="clearAll()">Clear</button>
+<button class="btn btn-outline" onclick="loadSample()">Sample Token</button>
+</div>
+<div class="error-box" id="errorBox"></div>
+<div id="results"></div>
+</div>
+</div>
+<script>
+function decode() {
+  const input = document.getElementById('jwtInput').value.trim();
+  const results = document.getElementById('results');
+  const errorBox = document.getElementById('errorBox');
+  errorBox.style.display = 'none';
+  results.innerHTML = '';
+  if (!input) { errorBox.textContent = 'Please paste a JWT token.'; errorBox.style.display = 'block'; return; }
+  const parts = input.split('.');
+  if (parts.length !== 3) { errorBox.textContent = 'Invalid JWT: token must have exactly 3 parts separated by dots.'; errorBox.style.display = 'block'; return; }
+  try {
+    const header = JSON.parse(atob(parts[0].replace(/-/g,'+').replace(/_/g,'/')));
+    const payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
+    renderJSON('Header', header);
+    renderJSON('Payload', payload);
+    renderMeta(input, header.alg, header.typ);
+  } catch(e) {
+    errorBox.textContent = 'Failed to decode: ' + e.message;
+    errorBox.style.display = 'block';
+  }
+}
+function renderJSON(title, obj) {
+  const el = document.getElementById('results');
+  el.innerHTML += '<div class="section-title">' + title + '</div><div class="result-box">' + syntaxHighlight(JSON.stringify(obj, null, 2)) + '</div>';
+}
+function syntaxHighlight(json) {
+  return json.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/("(\\u[a-fA-F0-9]{4}|\\[^u]|[^"\\])*")\s*:/g,'<span class="key">$1</span>:')
+    .replace(/"((\\u[a-fA-F0-9]{4}|\\[^u]|[^"\\])*)"/g,'<span class="string">"$1"</span>')
+    .replace(/\b(-?\d+\.?\d*)\b/g,'<span class="number">$1</span>')
+    .replace(/\b(true|false)\b/g,'<span class="bool">$1</span>')
+    .replace(/\bnull\b/g,'<span class="null">$1</span>');
+}
+function renderMeta(input, alg, typ) {
+  const el = document.getElementById('results');
+  const sig = input.split('.')[2];
+  const sigDisplay = sig.length > 40 ? sig.slice(0, 20) + '…' + sig.slice(-20) : sig;
+  el.innerHTML += '<div class="section-title">Token Info</div><div class="grid-3">' +
+    '<div class="stat-card"><div class="val">' + (alg || '—') + '</div><div class="lbl">Algorithm</div></div>' +
+    '<div class="stat-card"><div class="val">' + (typ || '—') + '</div><div class="lbl">Type</div></div>' +
+    '<div class="stat-card"><div class="val" style="font-size:0.8rem">' + sigDisplay + '</div><div class="lbl">Signature</div></div>' +
+    '</div>';
+}
+function clearAll() {
+  document.getElementById('jwtInput').value = '';
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('errorBox').style.display = 'none';
+}
+function loadSample() {
+  document.getElementById('jwtInput').value = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJhZG1pbiI6ZmFsc2UsImlzcyI6ImV4YW1wbGUuY29tIn0.MqayhE1Qm_0dNjX14zFGaQABliS1vy7I9GmTT0jDkng';
+  decode();
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/diff-checker" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Diff Checker — Compare Text Differences Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Online Stopwatch with Lap Times — Free</title>
+<meta name="description" content="Accurate online stopwatch with lap time tracking. Start, stop, record laps, and reset. Free timing tool.">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;justify-content:center;align-items:center}
+  .container{background:#1a1a2e;border-radius:24px;padding:32px;width:100%;max-width:420px;margin:16px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+  h1{text-align:center;font-size:1.3rem;color:#8888aa;margin-bottom:24px;font-weight:500;letter-spacing:2px;text-transform:uppercase}
+  .display{text-align:center;font-size:2.8rem;font-weight:700;font-variant-numeric:tabular-nums;color:#fff;padding:20px 0;letter-spacing:3px;background:#0f0f1a;border-radius:16px;margin-bottom:20px}
+  .display .ms{font-size:1.6rem;color:#4fc3f7}
+  .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .btn{padding:12px 20px;border:none;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;flex:1;min-width:70px}
+  .btn:active{transform:scale(.95)}
+  .btn-primary{background:#4fc3f7;color:#0f0f1a}
+  .btn-primary:hover{background:#39b0e4}
+  .btn-primary.running{background:#ffa726;color:#0f0f1a}
+  .btn-secondary{background:#2a2a45;color:#e0e0e0}
+  .btn-secondary:hover{background:#35355a}
+  .btn-secondary:disabled{opacity:.4;cursor:not-allowed}
+  .btn-info{background:#26a69a;color:#fff}
+  .btn-info:hover{background:#1f8a7e}
+  .btn-danger{background:#ef5350;color:#fff}
+  .btn-danger:hover{background:#e04040}
+  .lap-section{margin-top:20px}
+  .lap-header{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a2a45;font-size:.8rem;color:#666;text-transform:uppercase;letter-spacing:1px}
+  .lap-list{max-height:240px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#2a2a45 transparent}
+  .lap-list::-webkit-scrollbar{width:4px}
+  .lap-list::-webkit-scrollbar-thumb{background:#2a2a45;border-radius:4px}
+  .lap-row{display:flex;justify-content:space-between;padding:8px 0;font-size:.9rem;font-variant-numeric:tabular-nums;border-bottom:1px solid #1a1a2e}
+  .lap-row:last-child{border-bottom:none}
+  .lap-row .lap-num{color:#666}
+  .lap-row .lap-time{color:#e0e0e0}
+  .lap-row .lap-split{color:#4fc3f7}
+  .lap-row.best .lap-time{color:#26a69a;font-weight:600}
+  .lap-row.worst .lap-time{color:#ef5350;font-weight:600}
+  .no-laps{text-align:center;color:#555;padding:20px 0;font-size:.9rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Online Stopwatch with Lap Times \u2014 Free",
+  "description": "Accurate online stopwatch with lap time tracking. Start, stop, record laps, and reset. Free timing tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>⏱ Stopwatch</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="display" id="display">00:00:00<span class="ms">.000</span></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" id="startBtn">Start</button>
+    <button class="btn btn-info" id="lapBtn" disabled>Lap</button>
+    <button class="btn btn-danger" id="resetBtn">Reset</button>
+  </div>
+  <div class="lap-section">
+    <div class="lap-header">
+      <span>Lap</span>
+      <span>Time</span>
+      <span>Split</span>
+    </div>
+    <div class="lap-list" id="lapList">
+      <div class="no-laps">Tap Lap to record a split</div>
+    </div>
+  </div>
+</div>
+<script>
+  (function(){
+    const display = document.getElementById('display');
+    const startBtn = document.getElementById('startBtn');
+    const lapBtn = document.getElementById('lapBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const lapList = document.getElementById('lapList');
+
+    let startTime = 0;
+    let elapsed = 0;        // ms accumulated before last pause
+    let running = false;
+    let rafId = null;
+    let lastTick = 0;
+
+    let laps = [];          // {lapTime, split}
+    let lapStart = 0;
+
+    function formatTime(ms){
+      let totalMs = Math.floor(ms);
+      let h = Math.floor(totalMs / 3600000);
+      let m = Math.floor((totalMs % 3600000) / 60000);
+      let s = Math.floor((totalMs % 60000) / 1000);
+      let c = totalMs % 1000;
+      return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+
+        '<span class="ms">.'+String(c).padStart(3,'0')+'</span>';
+    }
+
+    function getCurrentElapsed(){
+      if(!running) return elapsed;
+      return elapsed + (performance.now() - startTime);
+    }
+
+    function tick(now){
+      if(!running) return;
+      display.innerHTML = formatTime(getCurrentElapsed());
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function start(){
+      if(running) return;
+      startTime = performance.now();
+      running = true;
+      lapBtn.disabled = false;
+      startBtn.textContent = 'Stop';
+      startBtn.className = 'btn btn-primary running';
+      if(laps.length===0) lapStart = 0;
+      else lapStart = getCurrentElapsed();
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function stop(){
+      if(!running) return;
+      running = false;
+      elapsed = getCurrentElapsed();
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+      startBtn.textContent = 'Resume';
+      startBtn.className = 'btn btn-primary';
+      display.innerHTML = formatTime(elapsed);
+    }
+
+    function reset(){
+      stop();
+      running = false;
+      elapsed = 0;
+      startTime = 0;
+      lapStart = 0;
+      laps = [];
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+      display.innerHTML = '00:00:00<span class="ms">.000</span>';
+      startBtn.textContent = 'Start';
+      startBtn.className = 'btn btn-primary';
+      lapBtn.disabled = true;
+      renderLaps();
+    }
+
+    function addLap(){
+      if(!running) return;
+      let now = getCurrentElapsed();
+      let lapTime = now - lapStart;
+      let split = now - (laps.length>0 ? laps[laps.length-1].cumulative : 0);
+      laps.push({lapTime, split, cumulative: now});
+      lapStart = now;
+      renderLaps();
+    }
+
+    function renderLaps(){
+      if(laps.length===0){
+        lapList.innerHTML = '<div class="no-laps">Tap Lap to record a split</div>';
+        return;
+      }
+      let best = Math.min(...laps.map(l=>l.lapTime));
+      let worst = Math.max(...laps.map(l=>l.lapTime));
+      let html = '';
+      laps.forEach((l,i)=>{
+        let cls = 'lap-row';
+        if(l.lapTime===best && laps.length>1) cls+=' best';
+        if(l.lapTime===worst && laps.length>1 && best!==worst) cls+=' worst';
+        html += '<div class="'+cls+'">'+
+          '<span class="lap-num">Lap '+(i+1)+'</span>'+
+          '<span class="lap-time">'+formatLapTime(l.lapTime)+'</span>'+
+          '<span class="lap-split">+'+formatLapTime(l.split)+'</span>'+
+        '</div>';
+      });
+      lapList.innerHTML = html;
+    }
+
+    function formatLapTime(ms){
+      let totalMs = Math.floor(ms);
+      let m = Math.floor(totalMs / 60000);
+      let s = Math.floor((totalMs % 60000) / 1000);
+      let c = totalMs % 1000;
+      return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+'.'+String(c).padStart(3,'0');
+    }
+
+    startBtn.addEventListener('click', function(){
+      if(running) stop();
+      else start();
+    });
+    lapBtn.addEventListener('click', addLap);
+    resetBtn.addEventListener('click', reset);
+  })();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+      <a href="/event-countdown" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Event Countdown — Count Down to Any Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

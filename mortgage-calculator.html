@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Calculator — Monthly Payment with Amortization</title>
+<meta name="description" content="Estimate your monthly mortgage payment including principal, interest, taxes, and insurance. Full amortization schedule included.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px;
+  }
+  .container {
+    max-width: 800px;
+    width: 100%;
+  }
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+  }
+  h1 span { color: #6c9bff; }
+  .card {
+    background: #1a1a2e;
+    border: 1px solid #2a2a44;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #c0c0e0;
+    margin-bottom: 16px;
+  }
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .input-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .input-group.full { grid-column: 1 / -1; }
+  .input-group label {
+    font-size: 0.8rem;
+    color: #8888aa;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .input-group input {
+    background: #12121f;
+    border: 1px solid #2e2e4a;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 1rem;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-group input:focus {
+    border-color: #6c9bff;
+    box-shadow: 0 0 0 2px rgba(108,155,255,0.15);
+  }
+  .input-group input::placeholder { color: #555577; }
+  .input-group .prefix-wrap {
+    position: relative;
+  }
+  .input-group .prefix-wrap .pre {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8888aa;
+    font-size: 0.95rem;
+    pointer-events: none;
+  }
+  .input-group .prefix-wrap .suf {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8888aa;
+    font-size: 0.95rem;
+    pointer-events: none;
+  }
+  .input-group .prefix-wrap input {
+    width: 100%;
+  }
+  .input-group .prefix-wrap input.prefix-pad { padding-left: 28px; }
+  .input-group .prefix-wrap input.suffix-pad { padding-right: 28px; }
+
+  button {
+    width: 100%;
+    background: linear-gradient(135deg, #4a7cf7, #6c9bff);
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+  button:hover { opacity: 0.9; }
+  button:active { transform: scale(0.98); }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .result-item {
+    background: #141428;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .result-item .label {
+    font-size: 0.75rem;
+    color: #8888aa;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+  .result-item .value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+  .result-item .value.accent { color: #6c9bff; }
+  .result-item .value.green { color: #4cd964; }
+
+  .breakdown-bar {
+    display: flex;
+    height: 44px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 14px;
+  }
+  .breakdown-bar .seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #fff;
+    transition: width 0.4s ease;
+    min-width: 0;
+  }
+  .breakdown-bar .seg.pi { background: #4a7cf7; }
+  .breakdown-bar .seg.tax { background: #ff9500; }
+  .breakdown-bar .seg.ins { background: #4cd964; }
+
+  .breakdown-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #8888aa;
+    margin-top: 8px;
+  }
+  .breakdown-labels span { display: flex; align-items: center; gap: 6px; }
+  .breakdown-labels .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .dot.pi { background: #4a7cf7; }
+  .dot.tax { background: #ff9500; }
+  .dot.ins { background: #4cd964; }
+
+  .chart-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .pie-chart {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pie-legend .item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+  }
+  .pie-legend .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  thead { position: sticky; top: 0; z-index: 1; }
+  th {
+    background: #12121f;
+    color: #8888aa;
+    font-weight: 600;
+    text-align: right;
+    padding: 8px 10px;
+    border-bottom: 1px solid #2a2a44;
+    white-space: nowrap;
+  }
+  th:first-child { text-align: left; }
+  td {
+    text-align: right;
+    padding: 7px 10px;
+    border-bottom: 1px solid #1f1f38;
+    color: #d0d0e0;
+  }
+  td:first-child { text-align: left; color: #8888aa; }
+  tr:hover td { background: #1a1a30; }
+  .table-footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.82rem;
+  }
+  .table-footer a {
+    color: #6c9bff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .table-footer a:hover { text-decoration: underline; }
+
+  footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #555577;
+    padding: 20px 0 10px;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 12px 10px; }
+    .card { padding: 16px; }
+    .input-grid { grid-template-columns: 1fr; }
+    .input-group.full { grid-column: 1; }
+    .result-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .result-item { padding: 10px 12px; }
+    .result-item .value { font-size: 1.1rem; }
+    h1 { font-size: 1.3rem; }
+    .chart-row { justify-content: center; }
+    .pie-chart { width: 100px; height: 100px; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Mortgage Calculator \u2014 Monthly Payment with Amortization",
+  "description": "Estimate your monthly mortgage payment including principal, interest, taxes, and insurance. Full amortization schedule included.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🏠 <span>Mortgage</span> Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+
+  <div class="card">
+    <h2>📋 Loan Details</h2>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Loan Amount ($)</label>
+        <div class="prefix-wrap"><span class="pre">$</span><input class="prefix-pad" type="number" id="loanAmount" value="400000" step="1000" min="0"></div>
+      </div>
+      <div class="input-group">
+        <label>Interest Rate (%)</label>
+        <div class="prefix-wrap"><input type="number" id="interestRate" value="6.5" step="0.1" min="0" max="30"><span class="suf">%</span></div>
+      </div>
+      <div class="input-group">
+        <label>Loan Term (years)</label>
+        <input type="number" id="loanTerm" value="30" min="1" max="50">
+      </div>
+      <div class="input-group">
+        <label>Down Payment ($)</label>
+        <div class="prefix-wrap"><span class="pre">$</span><input class="prefix-pad" type="number" id="downPayment" value="80000" step="1000" min="0"></div>
+      </div>
+      <div class="input-group">
+        <label>Property Tax ($/year)</label>
+        <div class="prefix-wrap"><span class="pre">$</span><input class="prefix-pad" type="number" id="propertyTax" value="3600" step="100" min="0"></div>
+      </div>
+      <div class="input-group">
+        <label>Insurance ($/year)</label>
+        <div class="prefix-wrap"><span class="pre">$</span><input class="prefix-pad" type="number" id="insurance" value="1200" step="100" min="0"></div>
+      </div>
+    </div>
+    <button id="calcBtn">📊 Calculate</button>
+  </div>
+
+  <div class="card">
+    <h2>💰 Monthly Breakdown</h2>
+    <div class="result-grid">
+      <div class="result-item"><div class="label">Principal &amp; Interest</div><div class="value accent" id="monthlyPI">$0.00</div></div>
+      <div class="result-item"><div class="label">Taxes</div><div class="value" id="monthlyTax">$0.00</div></div>
+      <div class="result-item"><div class="label">Insurance</div><div class="value" id="monthlyIns">$0.00</div></div>
+      <div class="result-item"><div class="label">Total Monthly</div><div class="value green" id="totalMonthly">$0.00</div></div>
+    </div>
+    <div class="breakdown-bar">
+      <div class="seg pi" id="barPI" style="width:0%">P&amp;I</div>
+      <div class="seg tax" id="barTax" style="width:0%">Tax</div>
+      <div class="seg ins" id="barIns" style="width:0%">Ins</div>
+    </div>
+    <div class="breakdown-labels">
+      <span><span class="dot pi"></span> P&amp;I</span>
+      <span><span class="dot tax"></span> Taxes</span>
+      <span><span class="dot ins"></span> Insurance</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📈 Loan Summary</h2>
+    <div class="result-grid">
+      <div class="result-item"><div class="label">Total Payment</div><div class="value" id="totalPayment">$0.00</div></div>
+      <div class="result-item"><div class="label">Total Interest</div><div class="value" id="totalInterest">$0.00</div></div>
+      <div class="result-item"><div class="label">Payoff Date</div><div class="value" id="payoffDate">—</div></div>
+      <div class="result-item"><div class="label">Loan Principal</div><div class="value" id="loanPrincipal">$0.00</div></div>
+    </div>
+    <div class="chart-row">
+      <div class="pie-chart" id="pieChart"></div>
+      <div class="pie-legend">
+        <div class="item"><span class="swatch" style="background:#4a7cf7"></span> Principal</div>
+        <div class="item"><span class="swatch" style="background:#ff3b30"></span> Interest</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📅 Amortization Schedule</h2>
+    <div class="table-wrap">
+      <table id="amortTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Payment</th>
+            <th>Principal</th>
+            <th>Interest</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody id="amortBody"></tbody>
+      </table>
+    </div>
+    <div class="table-footer" id="amortFooter">
+      <a id="amortToggle">Show all 360 payments →</a>
+    </div>
+  </div>
+
+  <footer>Free Mortgage Calculator — Estimate your monthly payments</footer>
+</div>
+
+<script>
+(function() {
+  const loanInput = document.getElementById('loanAmount');
+  const rateInput = document.getElementById('interestRate');
+  const termInput = document.getElementById('loanTerm');
+  const downInput = document.getElementById('downPayment');
+  const taxInput = document.getElementById('propertyTax');
+  const insInput = document.getElementById('insurance');
+  const calcBtn = document.getElementById('calcBtn');
+
+  const monthlyPIEl = document.getElementById('monthlyPI');
+  const monthlyTaxEl = document.getElementById('monthlyTax');
+  const monthlyInsEl = document.getElementById('monthlyIns');
+  const totalMonthlyEl = document.getElementById('totalMonthly');
+
+  const totalPaymentEl = document.getElementById('totalPayment');
+  const totalInterestEl = document.getElementById('totalInterest');
+  const payoffDateEl = document.getElementById('payoffDate');
+  const loanPrincipalEl = document.getElementById('loanPrincipal');
+
+  const barPI = document.getElementById('barPI');
+  const barTax = document.getElementById('barTax');
+  const barIns = document.getElementById('barIns');
+
+  const pieChart = document.getElementById('pieChart');
+  const amortBody = document.getElementById('amortBody');
+  const amortToggle = document.getElementById('amortToggle');
+
+  let fullSchedule = [];
+  let showAll = false;
+
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calc() {
+    const P = Math.max(0, parseFloat(loanInput.value) || 0);
+    const down = Math.max(0, parseFloat(downInput.value) || 0);
+    const principal = Math.max(0, P - down);
+    const annualRate = Math.max(0, parseFloat(rateInput.value) || 0) / 100;
+    const years = Math.max(1, parseInt(termInput.value) || 30);
+    const n = years * 12;
+    const monthlyRate = annualRate / 12;
+
+    const taxYear = Math.max(0, parseFloat(taxInput.value) || 0);
+    const insYear = Math.max(0, parseFloat(insInput.value) || 0);
+    const monthlyTaxAmt = taxYear / 12;
+    const monthlyInsAmt = insYear / 12;
+
+    let monthlyPIAmt = 0;
+    if (principal > 0 && annualRate > 0) {
+      const factor = Math.pow(1 + monthlyRate, n);
+      monthlyPIAmt = principal * monthlyRate * factor / (factor - 1);
+    } else if (principal > 0) {
+      monthlyPIAmt = principal / n;
+    }
+
+    const totalMonthlyAmt = monthlyPIAmt + monthlyTaxAmt + monthlyInsAmt;
+    const totalPaymentPI = monthlyPIAmt * n;
+    const totalInterestAmt = totalPaymentPI - principal;
+
+    // Build amortization schedule
+    fullSchedule = [];
+    let balance = principal;
+    let totalPrincipalPaid = 0;
+    let totalInterestPaid = 0;
+    for (let i = 1; i <= n; i++) {
+      const intPart = balance * monthlyRate;
+      const prinPart = monthlyPIAmt - intPart;
+      balance = Math.max(0, balance - prinPart);
+      fullSchedule.push({
+        num: i,
+        payment: monthlyPIAmt,
+        principal: prinPart,
+        interest: intPart,
+        balance: balance
+      });
+      if (i <= 12) {
+        totalPrincipalPaid += prinPart;
+        totalInterestPaid += intPart;
+      }
+    }
+
+    // Payoff date
+    const payoff = new Date();
+    payoff.setMonth(payoff.getMonth() + n);
+    const payoffStr = payoff.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+    // Display results
+    monthlyPIEl.textContent = fmt(monthlyPIAmt);
+    monthlyTaxEl.textContent = fmt(monthlyTaxAmt);
+    monthlyInsEl.textContent = fmt(monthlyInsAmt);
+    totalMonthlyEl.textContent = fmt(totalMonthlyAmt);
+
+    totalPaymentEl.textContent = fmt(totalPaymentPI);
+    totalInterestEl.textContent = fmt(totalInterestAmt);
+    payoffDateEl.textContent = payoffStr;
+    loanPrincipalEl.textContent = fmt(principal);
+
+    // Breakdown bar
+    const barTotal = monthlyPIAmt + monthlyTaxAmt + monthlyInsAmt;
+    if (barTotal > 0) {
+      barPI.style.width = (monthlyPIAmt / barTotal * 100) + '%';
+      barTax.style.width = (monthlyTaxAmt / barTotal * 100) + '%';
+      barIns.style.width = (monthlyInsAmt / barTotal * 100) + '%';
+    }
+
+    // Pie chart: principal vs total interest
+    const totalPaid = principal + totalInterestAmt;
+    if (totalPaid > 0) {
+      const pctPrincipal = (principal / totalPaid * 100);
+      const pctInterest = (totalInterestAmt / totalPaid * 100);
+      pieChart.style.background = 'conic-gradient(#4a7cf7 0% ' + pctPrincipal + '%, #ff3b30 ' + pctPrincipal + '% 100%)';
+    }
+
+    // Amortization table
+    renderAmort();
+    amortToggle.textContent = showAll ? 'Show first 12 months ←' : 'Show all ' + n + ' payments →';
+  }
+
+  function renderAmort() {
+    const n = fullSchedule.length;
+    const rows = showAll ? fullSchedule : fullSchedule.slice(0, 12);
+    amortBody.innerHTML = '';
+    for (const r of rows) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + r.num + '</td><td>' + fmt(r.payment) + '</td><td>' + fmt(r.principal) + '</td><td>' + fmt(r.interest) + '</td><td>' + fmt(r.balance) + '</td>';
+      amortBody.appendChild(tr);
+    }
+  }
+
+  amortToggle.addEventListener('click', function(e) {
+    e.preventDefault();
+    showAll = !showAll;
+    renderAmort();
+    const n = fullSchedule.length;
+    amortToggle.textContent = showAll ? 'Show first 12 months ←' : 'Show all ' + n + ' payments →';
+  });
+
+  calcBtn.addEventListener('click', calc);
+
+  // Auto-calc on Enter key
+  const inputs = [loanInput, rateInput, termInput, downInput, taxInput, insInput];
+  inputs.forEach(inp => {
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') calc();
+    });
+  });
+
+  calc();
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/salary-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Salary Calculator — Hourly to Annual Wage Converter</a>
+      <a href="/gpa-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GPA Calculator — Calculate Your Grade Point Average</a>
+      <a href="/grade-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Final Grade Calculator — What You Need on Your Final Exam</a>
+      <a href="/investment-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Investment Calculator — Project Investment Growth Over Time</a>
+      <a href="/savings-goal-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Savings Goal Calculator — Time to Reach Your Savings Target</a>
+      <a href="/budget-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Budget Calculator — Track Income, Expenses & Savings</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

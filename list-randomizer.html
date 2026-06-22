@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>List Randomizer — Shuffle & Randomly Pick Items</title>
+<meta name="description" content="Randomize any list, pick random items, or draw names. Enter items one per line and shuffle, pick one, or pick N.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;padding:16px}
+.container{max-width:800px;margin:0 auto;width:100%;flex:1}
+h1{font-size:1.5rem;margin-bottom:8px;color:#f0f6fc}
+p.sub{color:#8b949e;margin-bottom:20px;font-size:0.9rem}
+textarea{width:100%;min-height:200px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;color:#c9d1d9;font-size:1rem;font-family:inherit;resize:vertical;outline:none;transition:border-color .2s}
+textarea:focus{border-color:#58a6ff}
+.btn-group{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.btn{padding:8px 16px;border:1px solid #30363d;border-radius:6px;background:#21262d;color:#c9d1d9;cursor:pointer;font-size:0.85rem;transition:all .15s;user-select:none}
+.btn:hover{background:#30363d;border-color:#8b949e}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:#238636;border-color:#2ea043;color:#fff}
+.btn.primary:hover{background:#2ea043}
+.pick-n-row{display:flex;align-items:center;gap:8px;margin:16px 0}
+.pick-n-row input{width:70px;padding:8px;background:#161b22;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:1rem;text-align:center;outline:none}
+.pick-n-row input:focus{border-color:#58a6ff}
+.item-count{color:#8b949e;font-size:0.85rem;margin-bottom:8px}
+#results{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;min-height:60px;margin-top:16px}
+#results .empty{color:#8b949e;display:flex;align-items:center;justify-content:center;min-height:60px}
+.result-item{padding:6px 10px;margin:4px 0;background:#21262d;border-radius:4px;font-size:0.95rem;word-break:break-word}
+.result-item.highlight{background:#1f3a1f;border:1px solid #2ea043}
+footer{margin-top:auto;padding:20px 0;text-align:center;color:#8b949e;font-size:0.8rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "List Randomizer \u2014 Shuffle & Randomly Pick Items",
+  "description": "Randomize any list, pick random items, or draw names. Enter items one per line and shuffle, pick one, or pick N.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>List Randomizer</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Enter one item per line, then randomize or pick</p>
+<textarea id="input" placeholder="Enter one item per line&#10;e.g.:&#10;Apple&#10;Banana&#10;Cherry&#10;Durian" oninput="updateCount()"></textarea>
+<div id="itemCount" class="item-count">Items: 0</div>
+<div class="btn-group">
+<button class="btn primary" onclick="randomize()">🎲 Randomize</button>
+<button class="btn" onclick="pickOne()">🎯 Pick Random</button>
+</div>
+<div class="pick-n-row">
+<button class="btn" onclick="pickN()">🎯 Pick N:</button>
+<input type="number" id="pickNInput" value="3" min="1" max="100">
+</div>
+<div id="results"><div class="empty">Results will appear here</div></div>
+</div>
+<footer>List Randomizer &mdash; Free Online Tool</footer>
+<script>
+function getItems(){
+  return document.getElementById('input').value.split('\n').filter(s=>s.trim().length>0).map(s=>s.trim());
+}
+function updateCount(){
+  const items=getItems();
+  document.getElementById('itemCount').textContent='Items: '+items.length;
+}
+function randomize(){
+  const items=getItems();
+  const results=document.getElementById('results');
+  if(!items.length){results.innerHTML='<div class="empty">Please enter at least one item</div>';return}
+  const shuffled=[...items];
+  for(let i=shuffled.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+  }
+  results.innerHTML=shuffled.map((item,i)=>'<div class="result-item'+(i===0?' highlight':'')+'">'+(i+1)+'. '+escapeHtml(item)+'</div>').join('');
+}
+function pickOne(){
+  const items=getItems();
+  const results=document.getElementById('results');
+  if(!items.length){results.innerHTML='<div class="empty">Please enter at least one item</div>';return}
+  const pick=items[Math.floor(Math.random()*items.length)];
+  results.innerHTML='<div class="result-item highlight">🎯 '+escapeHtml(pick)+'</div>';
+}
+function pickN(){
+  const items=getItems();
+  const results=document.getElementById('results');
+  if(!items.length){results.innerHTML='<div class="empty">Please enter at least one item</div>';return}
+  let n=parseInt(document.getElementById('pickNInput').value)||1;
+  if(n>items.length)n=items.length;
+  if(n<1)n=1;
+  const shuffled=[...items];
+  for(let i=shuffled.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+  }
+  const picked=shuffled.slice(0,n);
+  results.innerHTML=picked.map((item,i)=>'<div class="result-item'+(i===0?' highlight':'')+'">'+(i+1)+'. '+escapeHtml(item)+'</div>').join('');
+}
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

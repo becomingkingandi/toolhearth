@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roman Numeral Converter — Arabic to Roman Numerals</title>
+<meta name="description" content="Convert between Arabic numbers and Roman numerals. Validates input and shows conversion history. Free Roman numeral tool.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:system-ui,-apple-system,sans-serif;padding:20px;min-height:100vh}
+.container{max-width:700px;margin:0 auto}
+h1{color:#58a6ff;margin-bottom:8px;font-size:1.5rem;text-align:center}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:20px;font-size:.9rem}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px;margin-bottom:16px}
+.mode-selector{display:flex;gap:4px;margin-bottom:20px;background:#21262d;border-radius:8px;padding:4px;max-width:360px;margin-left:auto;margin-right:auto}
+.mode-btn{flex:1;padding:8px 16px;border:none;background:transparent;color:#8b949e;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s}
+.mode-btn.active{background:#1f6feb;color:#fff}
+.input-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.input-row input{flex:1;min-width:180px;padding:12px 16px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:1.1rem;outline:none}
+.input-row input:focus{border-color:#58a6ff}
+.input-row input::placeholder{color:#484f58}
+.btn{background:#238636;color:#fff;border:none;padding:12px 24px;border-radius:6px;cursor:pointer;font-size:1rem;font-weight:600;transition:background .2s}
+.btn:hover{background:#2ea043}
+.result-display{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:20px;text-align:center;font-size:1.6rem;font-weight:700;min-height:60px;display:flex;align-items:center;justify-content:center;color:#f0883e}
+.result-display .placeholder{color:#8b949e;font-weight:400;font-size:1rem}
+.error{color:#f85149;font-size:.85rem;margin-top:4px;min-height:20px}
+.ref-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:12px}
+.ref-table th,.ref-table td{border:1px solid #30363d;padding:8px 12px;text-align:left}
+.ref-table th{background:#21262d;color:#8b949e;font-weight:600}
+.ref-table td{color:#c9d1d9}
+.ref-table tr:hover td{background:#1c2128}
+.ref-table td:first-child{font-family:serif;font-size:1.1rem}
+.toast{position:fixed;bottom:24px;right:24px;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;font-size:.85rem;opacity:0;transition:opacity .3s;z-index:100}
+.toast.show{opacity:1}
+.history-list{list-style:none;padding:0;margin-top:12px;max-height:160px;overflow-y:auto}
+.history-list li{padding:4px 8px;color:#8b949e;font-size:.82rem;display:flex;justify-content:space-between;border-bottom:1px solid #21262d}
+.history-list li span:first-child{font-family:serif;color:#58a6ff}
+.history-list li span:last-child{color:#f0883e}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Roman Numeral Converter \u2014 Arabic to Roman Numerals",
+  "description": "Convert between Arabic numbers and Roman numerals. Validates input and shows conversion history. Free Roman numeral tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🏛️ Roman Numeral Converter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Convert between Arabic numbers and Roman numerals</p>
+
+<div class="card">
+<div class="mode-selector">
+<button class="mode-btn active" data-mode="arabic-to-roman" onclick="setMode('arabic-to-roman')">Arabic → Roman</button>
+<button class="mode-btn" data-mode="roman-to-arabic" onclick="setMode('roman-to-arabic')">Roman → Arabic</button>
+</div>
+
+<div class="input-row">
+<input type="text" id="inputField" placeholder="e.g. 2024 or MMXXIV">
+<button class="btn" onclick="convert()">🔄 Convert</button>
+</div>
+<div class="error" id="errorMsg"></div>
+
+<div class="result-display" id="resultField"><span class="placeholder">Result will appear here...</span></div>
+
+<h3 style="color:#8b949e;font-size:.85rem;margin-top:16px">History</h3>
+<ul class="history-list" id="historyList"></ul>
+</div>
+
+<div class="card">
+<h2 style="color:#58a6ff;font-size:1rem;margin-bottom:12px">Reference Table</h2>
+<table class="ref-table">
+<thead><tr><th>Roman</th><th>Value</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>I</td><td>1</td><td>Base unit</td></tr>
+<tr><td>V</td><td>5</td><td>Half-ten</td></tr>
+<tr><td>X</td><td>10</td><td>Ten</td></tr>
+<tr><td>L</td><td>50</td><td>Half-hundred</td></tr>
+<tr><td>C</td><td>100</td><td>Centum</td></tr>
+<tr><td>D</td><td>500</td><td>Half-thousand</td></tr>
+<tr><td>M</td><td>1000</td><td>Mille</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+let currentMode = 'arabic-to-roman';
+let history = [];
+
+function setMode(mode) {
+currentMode = mode;
+document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+document.getElementById('inputField').placeholder = mode === 'arabic-to-roman' ? 'e.g. 2024' : 'e.g. MMXXIV';
+document.getElementById('resultField').innerHTML = '<span class="placeholder">Result will appear here...</span>';
+document.getElementById('errorMsg').textContent = '';
+}
+
+function arabicToRoman(num) {
+if (num < 1 || num > 3999) throw new Error('Number must be between 1 and 3999');
+const vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+const romans = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
+let result = '';
+for (let i = 0; i < vals.length; i++) {
+while (num >= vals[i]) {
+result += romans[i];
+num -= vals[i];
+}
+}
+return result;
+}
+
+function romanToArabic(roman) {
+const map = { 'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000 };
+const upper = roman.toUpperCase().trim();
+
+if (!/^[IVXLCDM]+$/.test(upper)) throw new Error('Invalid Roman numeral: only I, V, X, L, C, D, M allowed');
+
+let total = 0;
+for (let i = 0; i < upper.length; i++) {
+const cur = map[upper[i]];
+const next = map[upper[i + 1]] || 0;
+if (cur < next) {
+total -= cur;
+} else {
+total += cur;
+}
+}
+
+// Validate by converting back
+if (arabicToRoman(total) !== upper) {
+throw new Error('Invalid Roman numeral: "' + roman + '" is not a valid Roman numeral');
+}
+
+if (total < 1 || total > 3999) throw new Error('Result out of range (1-3999)');
+return total;
+}
+
+function convert() {
+const input = document.getElementById('inputField').value.trim();
+const errorMsg = document.getElementById('errorMsg');
+const resultField = document.getElementById('resultField');
+errorMsg.textContent = '';
+
+if (!input) {
+resultField.innerHTML = '<span class="placeholder">Please enter a value.</span>';
+return;
+}
+
+try {
+if (currentMode === 'arabic-to-roman') {
+const num = parseInt(input);
+if (isNaN(num)) throw new Error('Please enter a valid number');
+const roman = arabicToRoman(num);
+resultField.textContent = roman;
+addHistory(num + ' → ' + roman);
+} else {
+const num = romanToArabic(input);
+resultField.textContent = num;
+addHistory(input.toUpperCase() + ' → ' + num);
+}
+} catch(e) {
+errorMsg.textContent = e.message;
+resultField.innerHTML = '<span class="placeholder">Error</span>';
+}
+}
+
+function addHistory(entry) {
+history.unshift(entry);
+if (history.length > 10) history.pop();
+const list = document.getElementById('historyList');
+list.innerHTML = history.map(h => {
+const parts = h.split(' → ');
+return `<li><span>${parts[0]}</span><span>→ ${parts[1]}</span></li>`;
+}).join('');
+}
+
+document.getElementById('inputField').addEventListener('keydown', e => {
+if (e.key === 'Enter') convert();
+});
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/unit-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Unit Converter — Length, Mass, Volume, Temperature & More</a>
+      <a href="/currency-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Currency Converter — Live Exchange Rates (USD, EUR, GBP, JPY)</a>
+      <a href="/inches-to-feet" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Inches to Feet Converter — Convert Inches to Feet+Inches</a>
+      <a href="/km-to-miles" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Kilometers to Miles Converter — KM to MI</a>
+      <a href="/mm-to-inches" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Millimeters to Inches Converter — MM to IN</a>
+      <a href="/timezone-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Time Zone Converter — Convert Time Between Timezones</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

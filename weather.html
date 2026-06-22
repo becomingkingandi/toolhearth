@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather Now — Current Temperature & Conditions</title>
+<meta name="description" content="Get your current local weather based on your location. Shows temperature, wind speed, and conditions using free weather data.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:540px;width:100%;margin:0 auto;padding:20px 0;flex:1;display:flex;flex-direction:column}
+h1{text-align:center;font-size:1.8rem;margin-bottom:8px;color:#58a6ff}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:32px;font-size:0.95rem}
+.btn{background:#238636;color:#fff;border:none;border-radius:8px;padding:12px 24px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{background:#2ea043}
+.btn:active{transform:scale(.97)}
+.btn-secondary{background:#21262d;color:#c9d1d9;border:1px solid #30363d}
+.btn-secondary:hover{background:#30363d}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:32px;margin-bottom:20px;text-align:center}
+.weather-main{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:16px}
+.weather-icon{font-size:3.5rem}
+.weather-temp{font-size:3rem;font-weight:700;color:#f0f6fc}
+.weather-temp sup{font-size:1.5rem;top:-.5em}
+.weather-desc{font-size:1.1rem;color:#8b949e;margin-bottom:20px}
+.weather-details{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-item{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:16px;text-align:center}
+.detail-label{font-size:.8rem;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.detail-value{font-size:1.3rem;font-weight:600;color:#f0f6fc}
+.location-name{font-size:1.1rem;color:#58a6ff;margin-bottom:8px}
+.last-updated{font-size:.8rem;color:#8b949e;margin-top:16px}
+.location-controls{display:flex;gap:12px;margin-bottom:24px;justify-content:center;flex-wrap:wrap}
+.spinner{display:none;width:36px;height:36px;border:4px solid #30363d;border-top-color:#58a6ff;border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
+.spinner.active{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{display:none;color:#f85149;background:#2d1215;border:1px solid #5c1a1e;border-radius:8px;padding:16px;margin-bottom:16px;text-align:center}
+.error-msg.active{display:block}
+.status-msg{display:none;color:#8b949e;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px;text-align:center}
+.status-msg.active{display:block}
+.footer{text-align:center;padding:20px;color:#8b949e;font-size:.85rem;border-top:1px solid #21262d;margin-top:40px}
+.footer a{color:#58a6ff;text-decoration:none}
+@media(max-width:480px){h1{font-size:1.4rem}.weather-temp{font-size:2.2rem}.weather-icon{font-size:2.8rem}.card{padding:20px}.weather-details{grid-template-columns:1fr 1fr;gap:8px}.detail-item{padding:12px}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Weather Now \u2014 Current Temperature & Conditions",
+  "description": "Get your current local weather based on your location. Shows temperature, wind speed, and conditions using free weather data.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>&#127326; Weather Now</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Real-time weather at your location</p>
+
+<div class="location-controls">
+  <button class="btn" id="refreshBtn" onclick="getWeather()">&#128260; Refresh</button>
+</div>
+
+<div class="card">
+  <div class="status-msg" id="statusMsg">&#127758; Getting your location...</div>
+  <div class="spinner" id="spinner"></div>
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div id="weatherDisplay" style="display:none">
+    <div class="location-name" id="locationName"></div>
+    <div class="weather-main">
+      <span class="weather-icon" id="weatherIcon">&#9728;</span>
+      <span class="weather-temp" id="weatherTemp">--<sup>&deg;C</sup></span>
+    </div>
+    <div class="weather-desc" id="weatherDesc"></div>
+    <div class="weather-details">
+      <div class="detail-item">
+        <div class="detail-label">Wind Speed</div>
+        <div class="detail-value" id="windSpeed">-- km/h</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Coordinates</div>
+        <div class="detail-value" id="coords">--</div>
+      </div>
+    </div>
+    <div class="last-updated" id="lastUpdated"></div>
+  </div>
+</div>
+</div>
+
+<div class="footer">
+  Powered by <a href="https://open-meteo.com" target="_blank">Open-Meteo</a> &amp; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> &mdash; Free API Site
+</div>
+
+<script>
+const WMO_CODES = {
+  0:['Clear sky','&#9728;'],
+  1:['Mainly clear','&#127780;'],
+  2:['Partly cloudy','&#127781;'],
+  3:['Overcast','&#9729;'],
+  45:['Foggy','&#127787;'],
+  48:['Depositing rime fog','&#127787;'],
+  51:['Light drizzle','&#127783;'],
+  53:['Moderate drizzle','&#127783;'],
+  55:['Dense drizzle','&#127783;'],
+  56:['Light freezing drizzle','&#127783;'],
+  57:['Dense freezing drizzle','&#127783;'],
+  61:['Slight rain','&#127782;'],
+  63:['Moderate rain','&#127782;'],
+  65:['Heavy rain','&#127782;'],
+  66:['Light freezing rain','&#127782;'],
+  67:['Heavy freezing rain','&#127782;'],
+  71:['Slight snow','&#127784;'],
+  73:['Moderate snow','&#127784;'],
+  75:['Heavy snow','&#127784;'],
+  77:['Snow grains','&#127784;'],
+  80:['Slight rain showers','&#127783;'],
+  81:['Moderate rain showers','&#127783;'],
+  82:['Violent rain showers','&#127783;'],
+  85:['Slight snow showers','&#127784;'],
+  86:['Heavy snow showers','&#127784;'],
+  95:['Thunderstorm','&#9928;'],
+  96:['Thunderstorm with slight hail','&#9928;'],
+  99:['Thunderstorm with heavy hail','&#9928;']
+};
+
+let lat = null;
+let lon = null;
+
+function getWeather() {
+  const statusMsg = document.getElementById('statusMsg');
+  const errorMsg = document.getElementById('errorMsg');
+  const spinner = document.getElementById('spinner');
+  const weatherDisplay = document.getElementById('weatherDisplay');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  refreshBtn.disabled = true;
+  spinner.classList.add('active');
+  weatherDisplay.style.display = 'none';
+  errorMsg.classList.remove('active');
+  statusMsg.classList.remove('active');
+
+  if (navigator.geolocation) {
+    statusMsg.textContent = '&#127758; Getting your location...';
+    statusMsg.classList.add('active');
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        lat = position.coords.latitude.toFixed(4);
+        lon = position.coords.longitude.toFixed(4);
+        statusMsg.classList.remove('active');
+        fetchWeather(lat, lon);
+      },
+      err => {
+        spinner.classList.remove('active');
+        statusMsg.classList.remove('active');
+        refreshBtn.disabled = false;
+        let msg = 'Location access denied. ';
+        if (err.code === 1) {
+          msg += 'Please enable location access in your browser settings.';
+        } else if (err.code === 2) {
+          msg += 'Position unavailable. Try again.';
+        } else {
+          msg += 'Request timed out. Try again.';
+        }
+        errorMsg.textContent = msg;
+        errorMsg.classList.add('active');
+      },
+      { enableHighAccuracy: false, timeout: 10000 }
+    );
+  } else {
+    spinner.classList.remove('active');
+    refreshBtn.disabled = false;
+    errorMsg.textContent = 'Geolocation is not supported by your browser.';
+    errorMsg.classList.add('active');
+  }
+}
+
+async function fetchWeather(lat, lon) {
+  const spinner = document.getElementById('spinner');
+  const errorMsg = document.getElementById('errorMsg');
+  const weatherDisplay = document.getElementById('weatherDisplay');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const data = await resp.json();
+    const cw = data.current_weather;
+
+    const wmo = WMO_CODES[cw.weathercode] || ['Unknown', '&#9877;'];
+    const city = `${lat}, ${lon}`;
+
+    document.getElementById('locationName').textContent = city;
+    document.getElementById('weatherTemp').innerHTML = `${Math.round(cw.temperature)}<sup>&deg;C</sup>`;
+    document.getElementById('weatherIcon').innerHTML = wmo[1];
+    document.getElementById('weatherDesc').textContent = wmo[0];
+    document.getElementById('windSpeed').textContent = `${cw.windspeed} km/h`;
+    document.getElementById('coords').textContent = `${lat}&deg;N, ${lon}&deg;E`;
+
+    const now = new Date();
+    document.getElementById('lastUpdated').textContent = `Last updated: ${now.toLocaleTimeString()}`;
+
+    weatherDisplay.style.display = 'block';
+  } catch (err) {
+    errorMsg.textContent = 'Failed to fetch weather data. Please try again.';
+    errorMsg.classList.add('active');
+  } finally {
+    spinner.classList.remove('active');
+    refreshBtn.disabled = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', getWeather);
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+      <a href="/github-profile" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GitHub Profile Viewer — Look Up Any GitHub User</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

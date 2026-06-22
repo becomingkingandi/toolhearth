@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator.net Style — 24 Free Online Calculators</title>
+<meta name="description" content="24 free online calculators across math, health, finance, conversion, and misc categories. BMI, loan, compound interest, and more.">>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  .container{max-width:820px;margin:0 auto;padding:20px 16px;width:100%;flex:1}
+  h1{font-size:28px;font-weight:700;margin-bottom:4px;color:#f0f6fc}
+  .subtitle{color:#8b949e;font-size:14px;margin-bottom:24px}
+  /* Tabs */
+  .tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+  .tab{background:#161b22;color:#8b949e;border:1px solid #30363d;padding:10px 18px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:all .15s;user-select:none}
+  .tab:hover{background:#1c2128;color:#e6edf3}
+  .tab.active{background:#238636;color:#fff;border-color:#238636;box-shadow:0 0 0 2px rgba(35,134,54,.3)}
+  /* Calculator Cards */
+  .calc-card{background:#161b22;border:1px solid #30363d;border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+  .calc-card.expanded{border-color:#30363d}
+  .calc-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s}
+  .calc-header:hover{background:#1c2128}
+  .calc-title{font-size:15px;font-weight:600;color:#e6edf3}
+  .calc-arrow{color:#8b949e;font-size:13px;transition:transform .2s;flex-shrink:0;margin-left:12px}
+  .calc-card.expanded .calc-arrow{transform:rotate(180deg)}
+  .calc-body{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .25s ease}
+  .calc-card.expanded .calc-body{max-height:800px;padding:0 18px 18px}
+  /* Inputs */
+  .form-group{margin-bottom:12px}
+  .form-group:last-child{margin-bottom:0}
+  label{display:block;font-size:13px;color:#8b949e;margin-bottom:4px;font-weight:500}
+  input[type="number"],input[type="text"],select{width:100%;padding:9px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#e6edf3;font-size:14px;outline:none;transition:border-color .15s}
+  input:focus,select:focus{border-color:#238636}
+  select{appearance:auto;cursor:pointer}
+  input::placeholder{color:#484f58}
+  .btn-calc{background:#238636;color:#fff;border:none;padding:9px 20px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;width:100%;margin-top:4px}
+  .btn-calc:hover{background:#2ea043}
+  .btn-calc:active{background:#1e7a30}
+  .result-box{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px 14px;margin-top:10px;font-size:14px;min-height:20px;display:none}
+  .result-box.show{display:block}
+  .result-box .result-label{color:#8b949e;font-size:12px;margin-bottom:2px}
+  .result-box .result-value{color:#f0f6fc;font-weight:600;font-size:16px}
+  .result-box .result-detail{color:#8b949e;font-size:13px;margin-top:2px}
+  .badge{display:inline-block;background:#1f6feb22;color:#58a6ff;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+  /* Two-col for form groups */
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  hr{border:none;border-top:1px solid #21262d;margin:16px 0}
+  .footer{text-align:center;padding:28px 16px 20px;color:#484f58;font-size:13px;border-top:1px solid #21262d;margin-top:auto}
+  .footer a{color:#58a6ff;text-decoration:none}
+  .footer a:hover{text-decoration:underline}
+  @media(max-width:600px){
+    h1{font-size:24px}
+    .container{padding:14px 12px}
+    .tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+    .tab{white-space:nowrap;padding:8px 14px;font-size:13px}
+    .row,.row-3{grid-template-columns:1fr}
+    .calc-header{padding:12px 14px}
+    .calc-body{padding:0 14px}
+    .calc-card.expanded .calc-body{padding:0 14px 14px}
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Calculator.net Style \u2014 24 Free Online Calculators",
+  "description": "24 free online calculators across math, health, finance, conversion, and misc categories. BMI, loan, compound interest, and more.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🧮 Boring Calculators</h1>
+  <p class="subtitle">20+ free online calculators — accurate, no ads, no fluff. All run client-side.</p>
+
+  <div class="tabs">
+    <div class="tab active" data-cat="math">Math</div>
+    <div class="tab" data-cat="health">Health</div>
+    <div class="tab" data-cat="finance">Finance</div>
+    <div class="tab" data-cat="conversion">Conversion</div>
+    <div class="tab" data-cat="misc">Misc</div>
+  </div>
+
+  <div id="calculators"></div>
+</div>
+
+<div class="footer">
+  <a href="https://calculator.net" target="_blank" rel="noopener">calculator.net</a> &middot; bored at work &middot; all calculations client-side JavaScript<br>
+  <span style="font-size:12px">No data ever leaves your device. <span id="year"></span></span>
+</div>
+
+<script>
+const yearSpan = document.getElementById('year');
+yearSpan.textContent = new Date().getFullYear();
+
+const CALCULATORS = [
+  // ── MATH ──
+  { cat:'math', title:'Basic Calculator', inputs:[
+    { id:'basic_expr', label:'Expression', type:'text', placeholder:'e.g. 2 + 2 * 3' }
+  ], calc:(i)=>{
+    const expr = i.basic_expr.trim();
+    if(!expr) return { value:'—', detail:'Enter an expression' };
+    try {
+      const sanitized = expr.replace(/[^0-9+\-*/.()%^ ]/g,'').replace(/\^/g,'**');
+      const result = Function('"use strict"; return (' + sanitized + ')')();
+      if(!isFinite(result)) throw new Error('Not a number');
+      return { value:Number.isInteger(result) ? result.toString() : result.toFixed(8).replace(/\.?0+$/,''), detail:expr + ' =' };
+    } catch(e){ return { value:'Error', detail:'Invalid expression' }; }
+  }},
+  { cat:'math', title:'Percentage Calculator', inputs:[
+    { id:'pct_val', label:'Value', type:'number' },
+    { id:'pct_pct', label:'Percentage (%)', type:'number' }
+  ], calc:(i)=>{
+    const v=+i.pct_val, p=+i.pct_pct;
+    if(!v&&v!==0||!p&&p!==0&&p!==0) return {value:'—',detail:'Enter numbers'};
+    const r=v*p/100;
+    return {value:r.toLocaleString(undefined,{maximumFractionDigits:4}), detail:p+'% of '+v};
+  }},
+  { cat:'math', title:'Tip Calculator', inputs:[
+    { id:'tip_bill', label:'Bill Amount ($)', type:'number' },
+    { id:'tip_pct', label:'Tip (%)', type:'number', default:15 },
+    { id:'tip_split', label:'Split (people)', type:'number', default:1 }
+  ], calc:(i)=>{
+    const bill=+i.tip_bill,pct=+i.tip_pct,split=+i.tip_split||1;
+    if(!bill&&bill!==0) return{value:'—',detail:'Enter bill amount'};
+    const tip=bill*pct/100,total=bill+tip,each=total/split;
+    return{value:'$'+each.toFixed(2),detail:'$'+bill+' + $'+tip.toFixed(2)+' tip = $'+total.toFixed(2)+(split>1?' &middot; $'+each.toFixed(2)+'/person':'')};
+  }},
+  { cat:'math', title:'Discount Calculator', inputs:[
+    { id:'disc_orig', label:'Original Price ($)', type:'number' },
+    { id:'disc_pct', label:'Discount (%)', type:'number' },
+  ], calc:(i)=>{
+    const o=+i.disc_orig,d=+i.disc_pct;
+    if(!o&&o!==0) return{value:'—',detail:'Enter original price'};
+    const save=o*d/100,pay=o-save;
+    return{value:'$'+pay.toFixed(2),detail:'Save $'+save.toFixed(2)+' &middot; You pay $'+pay.toFixed(2)};
+  }},
+  { cat:'math', title:'Sales Tax Calculator', inputs:[
+    { id:'tax_price', label:'Price Before Tax ($)', type:'number' },
+    { id:'tax_rate', label:'Tax Rate (%)', type:'number', default:8.875 },
+  ], calc:(i)=>{
+    const p=+i.tax_price,r=+i.tax_rate;
+    if(!p&&p!==0) return{value:'—',detail:'Enter price'};
+    const tax=p*r/100,total=p+tax;
+    return{value:'$'+total.toFixed(2),detail:'Tax: $'+tax.toFixed(2)+' &middot; Total: $'+total.toFixed(2)};
+  }},
+
+  // ── HEALTH ──
+  { cat:'health', title:'BMI Calculator', inputs:[
+    { id:'bmi_ht_ft', label:'Height — Feet', type:'number', default:5 },
+    { id:'bmi_ht_in', label:'Height — Inches', type:'number', default:9 },
+    { id:'bmi_wt', label:'Weight (lbs)', type:'number', default:160 },
+  ], calc:(i)=>{
+    const h=+(i.bmi_ht_ft)*12+ +(i.bmi_ht_in),w=+i.bmi_wt;
+    if(!h||!w) return{value:'—',detail:'Enter height and weight'};
+    const bmi=(w/(h*h))*703;
+    let cat='';
+    if(bmi<18.5) cat='Underweight';
+    else if(bmi<25) cat='Normal weight';
+    else if(bmi<30) cat='Overweight';
+    else if(bmi<35) cat='Class I Obese';
+    else if(bmi<40) cat='Class II Obese';
+    else cat='Class III Obese';
+    return{value:bmi.toFixed(1),detail:'BMI: '+bmi.toFixed(1)+' — '+cat};
+  }},
+  { cat:'health', title:'BMR Calculator (Mifflin-St Jeor)', inputs:[
+    { id:'bmr_sex', label:'Sex', type:'select', opts:['Male','Female'] },
+    { id:'bmr_age', label:'Age', type:'number', default:30 },
+    { id:'bmr_ht', label:'Height (cm)', type:'number', default:175 },
+    { id:'bmr_wt', label:'Weight (kg)', type:'number', default:70 },
+  ], calc:(i)=>{
+    const age=+i.bmr_age,ht=+i.bmr_ht,wt=+i.bmr_wt;
+    if(!age||!ht||!wt) return{value:'—',detail:'Enter all fields'};
+    let bmr;
+    if(i.bmr_sex==='Female') bmr=10*wt+6.25*ht-5*age-161;
+    else bmr=10*wt+6.25*ht-5*age+5;
+    return{value:Math.round(bmr)+' kcal/day',detail:'Basal metabolic rate (Mifflin-St Jeor equation)'};
+  }},
+  { cat:'health', title:'Daily Calorie Needs', inputs:[
+    { id:'cal_bmr', label:'Your BMR (kcal/day)', type:'number', default:1700 },
+    { id:'cal_activity', label:'Activity Level', type:'select', opts:['Sedentary (little/no exercise)','Light (1-3 days/wk)','Moderate (3-5 days/wk)','Active (6-7 days/wk)','Very Active (2x/day)'] },
+  ], calc:(i)=>{
+    const bmr=+i.cal_bmr;
+    if(!bmr) return{value:'—',detail:'Enter your BMR'};
+    const mult=[1.2,1.375,1.55,1.725,1.9];
+    const idx=Math.min(i.cal_activity,4);
+    const cal=Math.round(bmr*mult[idx]);
+    const labels=['Sedentary','Light','Moderate','Active','Very Active'];
+    return{value:cal.toLocaleString()+' kcal/day',detail:'To maintain weight at '+labels[idx]+' activity'};
+  }},
+  { cat:'health', title:'Body Fat (US Navy)', inputs:[
+    { id:'bf_sex', label:'Sex', type:'select', opts:['Male','Female'] },
+    { id:'bf_ht', label:'Height (inches)', type:'number', default:69 },
+    { id:'bf_neck', label:'Neck (inches)', type:'number', default:15.5 },
+    { id:'bf_waist', label:'Waist (inches)', type:'number', default:34 },
+    { id:'bf_hip', label:'Hip (inches) — Female only', type:'number', default:38 },
+  ], calc:(i)=>{
+    const ht=+i.bf_ht,neck=+i.bf_neck,waist=+i.bf_waist,hip=+i.bf_hip;
+    if(!ht||!neck||!waist) return{value:'—',detail:'Enter height, neck, waist'};
+    let bf;
+    if(i.bf_sex==='Female'){
+      if(!hip) return{value:'—',detail:'Enter hip measurement'};
+      bf=495/(1.29579-0.35004*Math.log10(waist+hip-neck)+0.22100*Math.log10(ht))-450;
+    } else {
+      bf=495/(1.0324-0.19077*Math.log10(waist-neck)+0.15456*Math.log10(ht))-450;
+    }
+    bf=Math.max(2,Math.min(bf,70));
+    const cat=bf<6?'Essential Fat (2-6%)':bf<14?'Athletic (6-13%)':bf<18?'Fitness (14-17%)':bf<25?'Acceptable (18-24%)':'Obese (>25%)';
+    return{value:bf.toFixed(1)+'%',detail:'Body fat — '+cat};
+  }},
+  { cat:'health', title:'Pregnancy Due Date', inputs:[
+    { id:'due_lmp', label:'First Day of Last Menstrual Period', type:'text', placeholder:'MM/DD/YYYY' },
+    { id:'due_cycle', label:'Cycle Length (days)', type:'number', default:28 },
+  ], calc:(i)=>{
+    if(!i.due_lmp) return{value:'—',detail:'Enter the date of your last period'};
+    const parts=i.due_lmp.split(/[/-]/);
+    if(parts.length!==3) return{value:'—',detail:'Use MM/DD/YYYY format'};
+    const d=new Date(+parts[2],+parts[0]-1,+parts[1]);
+    if(isNaN(d.getTime())) return{value:'—',detail:'Invalid date'};
+    const cycle=+i.due_cycle||28;
+    const adjust=cycle-28;
+    d.setDate(d.getDate()+280+adjust);
+    const today=new Date(),weeks=Math.floor((d-today)/604800000);
+    const w=weeks<0?0:weeks;
+    return{value:d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),detail:weeks>0?'About '+w+' weeks from now':'Past due date (check with your provider)'};
+  }},
+
+  // ── FINANCE ──
+  { cat:'finance', title:'Loan Calculator', inputs:[
+    { id:'loan_amt', label:'Loan Amount ($)', type:'number', default:30000 },
+    { id:'loan_rate', label:'Annual Interest Rate (%)', type:'number', default:6.5 },
+    { id:'loan_yrs', label:'Loan Term (years)', type:'number', default:5 },
+  ], calc:(i)=>{
+    const p=+i.loan_amt,r=+i.loan_rate/100/12,n=+i.loan_yrs*12;
+    if(!p||!r||!n) return{value:'—',detail:'Enter all values'};
+    const m=p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+    if(!isFinite(m)) return{value:'—',detail:'Check values'};
+    const total=m*n,int=total-p;
+    return{value:'$'+m.toFixed(2)+'/mo',detail:'$'+p.toLocaleString()+' @ '+i.loan_rate+'% for '+i.loan_yrs+'yrs &middot; Total interest: $'+Math.round(int).toLocaleString()};
+  }},
+  { cat:'finance', title:'Compound Interest Calculator', inputs:[
+    { id:'ci_principal', label:'Initial Investment ($)', type:'number', default:10000 },
+    { id:'ci_rate', label:'Annual Interest Rate (%)', type:'number', default:7 },
+    { id:'ci_years', label:'Years', type:'number', default:10 },
+    { id:'ci_compound', label:'Compounding', type:'select', opts:['Annually','Semi-annually','Quarterly','Monthly','Daily'] },
+    { id:'ci_add', label:'Monthly Addition ($)', type:'number', default:0 },
+  ], calc:(i)=>{
+    const p=+i.ci_principal,r=+i.ci_rate/100,t=+i.ci_years,add=+i.ci_add;
+    if(!p&&p!==0) return{value:'—',detail:'Enter initial investment'};
+    const n=[1,2,4,12,365][Math.min(i.ci_compound,4)];
+    let total=p*Math.pow(1+r/n,n*t);
+    if(add){
+      const addTotal=add*((Math.pow(1+r/n,n*t)-1)/(r/n));
+      total+=addTotal;
+    }
+    const contrib=p+add*n*t;
+    const earned=total-contrib;
+    return{value:'$'+Math.round(total).toLocaleString(),detail:'Invested: $'+Math.round(contrib).toLocaleString()+' &middot; Earnings: $'+Math.round(earned).toLocaleString()};
+  }},
+  { cat:'finance', title:'Savings Goal Calculator', inputs:[
+    { id:'sg_goal', label:'Goal Amount ($)', type:'number', default:50000 },
+    { id:'sg_rate', label:'Annual Return (%)', type:'number', default:6 },
+    { id:'sg_years', label:'Time (years)', type:'number', default:10 },
+  ], calc:(i)=>{
+    const goal=+i.sg_goal,r=+i.sg_rate/100/12,n=+i.sg_years*12;
+    if(!goal||!r||!n) return{value:'—',detail:'Enter all values'};
+    const pmt=goal*r/(Math.pow(1+r,n)-1);
+    const total=pmt*n;
+    if(!isFinite(pmt)) return{value:'—',detail:'Check values'};
+    return{value:'$'+Math.round(pmt).toLocaleString()+'/mo',detail:'Deposit $'+Math.round(pmt).toLocaleString()+'/mo to reach $'+goal.toLocaleString()+' in '+i.sg_years+'yrs'};
+  }},
+  { cat:'finance', title:'Credit Card Payoff', inputs:[
+    { id:'cc_bal', label:'Balance ($)', type:'number', default:5000 },
+    { id:'cc_rate', label:'APR (%)', type:'number', default:22 },
+    { id:'cc_pay', label:'Monthly Payment ($)', type:'number', default:200 },
+  ], calc:(i)=>{
+    const bal=+i.cc_bal,apr=+i.cc_rate/100/12,pay=+i.cc_pay;
+    if(!bal||!apr||!pay) return{value:'—',detail:'Enter all values'};
+    if(pay<=bal*apr) return{value:'∞',detail:'Payment too low — balance grows forever (minimum: $'+(Math.ceil(bal*apr*100)/100)+')'};
+    let b=bal,m=0,total=0;
+    while(b>0&&m<600){
+      b+=b*apr; if(b>bal*10) break;
+      const p=Math.min(pay,b); b-=p; total+=p; m++;
+    }
+    if(m>=600) return{value:'—',detail:'Would take too long — consider a higher payment'};
+    const int=total-bal;
+    return{value:m+' months ('+Math.round(m/12)+'yrs '+m%12+'mo)',detail:'Total paid: $'+Math.round(total).toLocaleString()+' &middot; Interest: $'+Math.round(int).toLocaleString()};
+  }},
+  { cat:'finance', title:'ROI Calculator', inputs:[
+    { id:'roi_gain', label:'Gain from Investment ($)', type:'number', default:15000 },
+    { id:'roi_cost', label:'Cost of Investment ($)', type:'number', default:10000 },
+    { id:'roi_years', label:'Years Held', type:'number', default:3 },
+  ], calc:(i)=>{
+    const g=+i.roi_gain,c=+i.roi_cost,y=+i.roi_years||1;
+    if(!c) return{value:'—',detail:'Enter cost of investment'};
+    const roi=((g-c)/c)*100;
+    const annual=((Math.pow(g/c,1/y)-1))*100;
+    return{value:roi.toFixed(2)+'%',detail:'ROI: '+roi.toFixed(2)+'% &middot; Annualized: '+annual.toFixed(2)+'%'};
+  }},
+
+  // ── CONVERSION ──
+  { cat:'conversion', title:'Age Calculator', inputs:[
+    { id:'age_dob', label:'Date of Birth', type:'text', placeholder:'MM/DD/YYYY' },
+  ], calc:(i)=>{
+    if(!i.age_dob) return{value:'—',detail:'Enter your date of birth'};
+    const parts=i.age_dob.split(/[/-]/);
+    if(parts.length!==3) return{value:'—',detail:'Use MM/DD/YYYY'};
+    const bd=new Date(+parts[2],+parts[0]-1,+parts[1]);
+    if(isNaN(bd.getTime())) return{value:'—',detail:'Invalid date'};
+    const now=new Date();
+    let y=now.getFullYear()-bd.getFullYear(),m=now.getMonth()-bd.getMonth(),d=now.getDate()-bd.getDate();
+    if(d<0){m--; d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+    if(m<0){y--; m+=12;}
+    const totalDays=Math.floor((now-bd)/86400000);
+    return{value:y+' years, '+m+' months, '+d+' days',detail:'Total: '+totalDays.toLocaleString()+' days old'};
+  }},
+  { cat:'conversion', title:'Date Difference', inputs:[
+    { id:'dd1', label:'Start Date', type:'text', placeholder:'MM/DD/YYYY' },
+    { id:'dd2', label:'End Date', type:'text', placeholder:'MM/DD/YYYY' },
+  ], calc:(i)=>{
+    if(!i.dd1||!i.dd2) return{value:'—',detail:'Enter both dates'};
+    const p1=i.dd1.split(/[/-]/),p2=i.dd2.split(/[/-]/);
+    if(p1.length!==3||p2.length!==3) return{value:'—',detail:'Use MM/DD/YYYY'};
+    const d1=new Date(+p1[2],+p1[0]-1,+p1[1]),d2=new Date(+p2[2],+p2[0]-1,+p2[1]);
+    if(isNaN(d1.getTime())||isNaN(d2.getTime())) return{value:'—',detail:'Invalid date'};
+    const diff=Math.abs(d2-d1),days=Math.floor(diff/86400000);
+    const yrs=Math.floor(days/365.25),rem=days%365.25,mo=Math.floor(rem/30.44),d=Math.round(rem%30.44);
+    return{value:days.toLocaleString()+' days',detail:'~'+yrs+' years, '+mo+' months, '+d+' days apart'};
+  }},
+  { cat:'conversion', title:'Time Duration', inputs:[
+    { id:'td_start', label:'Start Time (HH:MM AM/PM)', type:'text', placeholder:'9:00 AM' },
+    { id:'td_end', label:'End Time (HH:MM AM/PM)', type:'text', placeholder:'5:30 PM' },
+  ], calc:(i)=>{
+    if(!i.td_start||!i.td_end) return{value:'—',detail:'Enter both times'};
+    const parse=(s)=>{
+      s=s.trim().toUpperCase();
+      const fmt=s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/);
+      if(!fmt) return null;
+      let h=+fmt[1],m=+fmt[2],p=fmt[3];
+      if(p==='PM'&&h!==12) h+=12;
+      if(p==='AM'&&h===12) h=0;
+      return h*60+m;
+    };
+    const s=parse(i.td_start),e=parse(i.td_end);
+    if(s===null||e===null) return{value:'—',detail:'Use format like 9:00 AM or 14:30'};
+    if(e<=s) return{value:'—',detail:'End time must be after start time'};
+    const min=e-s,h=Math.floor(min/60),m=min%60;
+    return{value:h+'h '+m+'m',detail:'Start: '+i.td_start+' &middot; End: '+i.td_end+' &middot; '+min+' minutes total'};
+  }},
+  { cat:'conversion', title:'Length Converter', inputs:[
+    { id:'lc_val', label:'Value', type:'number', default:1 },
+    { id:'lc_from', label:'From', type:'select',
+      opts:['Meters','Kilometers','Miles','Feet','Inches','Centimeters','Millimeters','Yards'] },
+    { id:'lc_to', label:'To', type:'select',
+      opts:['Meters','Kilometers','Miles','Feet','Inches','Centimeters','Millimeters','Yards'] },
+  ], calc:(i)=>{
+    const v=+i.lc_val;
+    if(!v&&v!==0) return{value:'—',detail:'Enter a value'};
+    const toMeter=[1,1000,1609.344,0.3048,0.0254,0.01,0.001,0.9144];
+    const from=v*toMeter[i.lc_from];
+    const result=from/toMeter[i.lc_to];
+    return{value:result.toLocaleString(undefined,{maximumFractionDigits:6}),detail:i.lc_val+' '+i.lc_from+' = '+result.toFixed(4)+' '+i.lc_to};
+  }},
+  { cat:'conversion', title:'Weight Converter', inputs:[
+    { id:'wc_val', label:'Value', type:'number', default:1 },
+    { id:'wc_from', label:'From', type:'select',
+      opts:['Kilograms','Grams','Pounds','Ounces','Tons (metric)','Stones'] },
+    { id:'wc_to', label:'To', type:'select',
+      opts:['Kilograms','Grams','Pounds','Ounces','Tons (metric)','Stones'] },
+  ], calc:(i)=>{
+    const v=+i.wc_val;
+    if(!v&&v!==0) return{value:'—',detail:'Enter a value'};
+    const toKg=[1,0.001,0.453592,0.0283495,1000,6.35029];
+    const from=v*toKg[i.wc_from];
+    const result=from/toKg[i.wc_to];
+    return{value:result.toLocaleString(undefined,{maximumFractionDigits:6}),detail:i.wc_val+' '+i.wc_from+' = '+result.toFixed(4)+' '+i.wc_to};
+  }},
+
+  // ── MISC ──
+  { cat:'misc', title:'Random Number Generator', inputs:[
+    { id:'rng_min', label:'Min', type:'number', default:1 },
+    { id:'rng_max', label:'Max', type:'number', default:100 },
+    { id:'rng_count', label:'How Many?', type:'number', default:1 },
+  ], calc:(i)=>{
+    const min=Math.ceil(+i.rng_min),max=Math.floor(+i.rng_max),cnt=Math.min(Math.max(Math.floor(+i.rng_count)||1,1),100);
+    if(min>max) return{value:'—',detail:'Min must be ≤ Max'};
+    const nums=[];
+    for(let c=0;c<cnt;c++) nums.push(Math.floor(Math.random()*(max-min+1))+min);
+    return{value:cnt===1?nums[0].toString():nums.join(', '),detail:cnt===1?'Random number between '+min+' and '+max:cnt+' random numbers between '+min+' and '+max};
+  }},
+  { cat:'misc', title:'Password Strength Checker', inputs:[
+    { id:'pw_pass', label:'Password', type:'text', placeholder:'Type a password...' },
+  ], calc:(i)=>{
+    const p=i.pw_pass;
+    if(!p) return{value:'—',detail:'Enter a password'};
+    let score=0;
+    if(p.length>=8) score++; if(p.length>=12) score++;
+    if(/[a-z]/.test(p)&&/[A-Z]/.test(p)) score++;
+    if(/\d/.test(p)) score++;
+    if(/[^a-zA-Z0-9]/.test(p)) score++;
+    if(p.length>=16) score++;
+    const labels=['Extremely Weak','Very Weak','Weak','Fair','Strong','Very Strong','Unbreakable'];
+    const time=p.length<6?'seconds':score<=2?'minutes':score<=3?'hours':score<=4?'days (or weeks)':score<=5?'years':'centuries';
+    const star='★'.repeat(Math.max(1,Math.min(score+1,6)))+'☆'.repeat(Math.max(0,5-score));
+    return{value:labels[Math.min(score,6)]+' ('+p.length+' chars)',detail:'Score: '+star+' &middot; Estimated crack time: '+time};
+  }},
+  { cat:'misc', title:'Odds Calculator', inputs:[
+    { id:'odds_fav', label:'Outcomes In Your Favor', type:'number', default:1 },
+    { id:'odds_total', label:'Total Possible Outcomes', type:'number', default:2 },
+  ], calc:(i)=>{
+    const f=+i.odds_fav,t=+i.odds_total;
+    if(f<0||t<=0||f>t) return{value:'—',detail:'Check values (favorable ≤ total, total > 0)'};
+    const pct=(f/t)*100,against=t-f;
+    return{value:pct.toFixed(2)+'% chance',detail:f+':'+against+' odds &middot; 1 in '+(t/f).toFixed(1)+' chance'};
+  }},
+  { cat:'misc', title:'Fuel Cost Calculator', inputs:[
+    { id:'fuel_dist', label:'Distance (miles)', type:'number', default:300 },
+    { id:'fuel_mpg', label:'Fuel Efficiency (MPG)', type:'number', default:25 },
+    { id:'fuel_price', label:'Price per Gallon ($)', type:'number', default:3.50 },
+  ], calc:(i)=>{
+    const d=+i.fuel_dist,mpg=+i.fuel_mpg,pp=+i.fuel_price;
+    if(!d||!mpg||!pp) return{value:'—',detail:'Enter all values'};
+    const gal=d/mpg,cost=gal*pp;
+    return{value:'$'+cost.toFixed(2),detail:d+' mi @ '+mpg+' MPG &middot; '+gal.toFixed(1)+' gal × $'+pp.toFixed(2)+'/gal'};
+  }},
+];
+
+// ── RENDER ──
+const container = document.getElementById('calculators');
+let currentCategory = 'math';
+
+function renderCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+  const calcs = CALCULATORS.filter(c => c.cat === cat);
+  container.innerHTML = calcs.map((c, idx) => {
+    const inputsHtml = c.inputs.map(inp => {
+      const id = inp.id;
+      const val = inp.default !== undefined ? inp.default : '';
+      if(inp.type === 'select') {
+        const opts = inp.opts.map((o,i) => `<option value="${i}"${i===0?' selected':''}>${o}</option>`).join('');
+        return `<div class="form-group"><label>${inp.label}</label><select id="${id}">${opts}</select></div>`;
+      }
+      return `<div class="form-group"><label>${inp.label}</label><input type="${inp.type}" id="${id}" value="${val}" placeholder="${inp.placeholder||''}"></div>`;
+    }).join('\n      ');
+
+    return `<div class="calc-card" data-idx="${idx}">
+      <div class="calc-header" onclick="toggleCalc(this)">
+        <span class="calc-title">${c.title}</span>
+        <span class="calc-arrow">▼</span>
+      </div>
+      <div class="calc-body">
+        <div class="row">
+          ${inputsHtml}
+        </div>
+        <button class="btn-calc" onclick="runCalc(${idx})">Calculate</button>
+        <div class="result-box" id="result_${idx}"></div>
+      </div>
+    </div>`;
+  }).join('\n  ');
+}
+
+function toggleCalc(el) {
+  el.parentElement.classList.toggle('expanded');
+}
+
+function runCalc(idx) {
+  const c = CALCULATORS[idx];
+  const inputs = {};
+  c.inputs.forEach(inp => {
+    const el = document.getElementById(inp.id);
+    inputs[inp.id.replace(/^[a-z]+_/,'')] = el ? el.value : '';
+  });
+  // reconstruct with full id prefix
+  const fullInputs = {};
+  c.inputs.forEach(inp => {
+    const el = document.getElementById(inp.id);
+    fullInputs[inp.id] = el ? el.value : '';
+  });
+  const result = c.calc(fullInputs);
+  const box = document.getElementById('result_'+idx);
+  box.className = 'result-box show';
+  box.innerHTML = `<div class="result-label">${c.title}</div>
+    <div class="result-value">${result.value}</div>
+    ${result.detail ? '<div class="result-detail">'+result.detail+'</div>' : ''}`;
+  // ensure expanded
+  document.querySelector(`.calc-card[data-idx="${idx}"]`).classList.add('expanded');
+}
+
+// Tab clicks
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => renderCategory(tab.dataset.cat));
+});
+
+// Enter key triggers calculate
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter') {
+    const active = document.querySelector('.calc-card.expanded');
+    if(active) {
+      const btn = active.querySelector('.btn-calc');
+      if(btn) btn.click();
+    }
+  }
+});
+
+// Init
+renderCategory('math');
+</script>
+</body>
+</html>

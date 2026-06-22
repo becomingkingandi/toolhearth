@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inches to Feet Converter — Convert Inches to Feet+Inches</title>
+<meta name="description" content="Convert inches to feet and inches format. Real-time conversion with formula display. Free length converter.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  .container{max-width:480px;width:100%;margin:0 auto;padding:2rem 1.25rem;flex:1;display:flex;flex-direction:column;justify-content:center}
+  h1{font-size:1.5rem;font-weight:600;margin-bottom:.35rem;text-align:center}
+  .sub{text-align:center;color:#8b949e;font-size:.875rem;margin-bottom:2rem}
+  .converter{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:1.5rem}
+  .unit-group{margin-bottom:1.25rem}
+  .unit-group:last-of-type{margin-bottom:0}
+  label{display:block;font-size:.8rem;font-weight:500;color:#8b949e;margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em}
+  input{width:100%;padding:.75rem 1rem;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:1.125rem;outline:none;transition:border-color .15s}
+  input:focus{border-color:#58a6ff}
+  input::placeholder{color:#484f58}
+  .result{font-size:1.5rem;font-weight:600;color:#58a6ff;margin-top:.5rem;min-height:2rem}
+  .result .detail{font-size:.9rem;font-weight:400;color:#8b949e}
+  .swap-wrap{display:flex;justify-content:center;margin:.75rem 0}
+  .swap-btn{background:#21262d;border:1px solid #30363d;border-radius:8px;color:#e6edf3;padding:.5rem 1rem;font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;transition:background .15s}
+  .swap-btn:hover{background:#30363d}
+  .swap-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .formula{text-align:center;color:#8b949e;font-size:.8rem;margin-top:1.25rem;padding-top:1rem;border-top:1px solid #21262d}
+  .formula code{padding:.15em .45em;border-radius:4px;background:#21262d;font-size:.85em}
+  footer{text-align:center;padding:1rem;color:#484f58;font-size:.75rem;border-top:1px solid #21262d}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Inches to Feet Converter \u2014 Convert Inches to Feet+Inches",
+  "description": "Convert inches to feet and inches format. Real-time conversion with formula display. Free length converter.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>Inches ⇄ Feet</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p class="sub">Convert between inches and feet</p>
+
+  <div class="converter">
+    <div class="unit-group">
+      <label for="in">Inches</label>
+      <input type="number" id="in" placeholder="e.g. 14" step="any">
+      <div class="result" id="inResult"></div>
+    </div>
+
+    <div class="swap-wrap">
+      <button class="swap-btn" id="swapBtn" title="Swap units">
+        <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Swap
+      </button>
+    </div>
+
+    <div class="unit-group">
+      <label for="ft">Feet</label>
+      <input type="number" id="ft" placeholder="e.g. 1.5" step="any">
+      <div class="result" id="ftResult"></div>
+    </div>
+
+    <div class="formula" id="formula">
+      Formula: <code>1 in = 0.0833333 ft</code>
+    </div>
+  </div>
+</div>
+<footer>Cheat Sheet — Unit Converters</footer>
+
+<script>
+(function(){
+  const inEl = document.getElementById('in');
+  const ftEl = document.getElementById('ft');
+  const inResult = document.getElementById('inResult');
+  const ftResult = document.getElementById('ftResult');
+  const formula = document.getElementById('formula');
+  const swapBtn = document.getElementById('swapBtn');
+
+  let active = null; // 'in' or 'ft'
+
+  function inchesToFeetAndInches(inches) {
+    const val = parseFloat(inches);
+    if (isNaN(val) || val < 0) return null;
+    const totalFeet = Math.floor(val / 12);
+    const remainInches = val % 12;
+    const remainRounded = Math.round(remainInches * 1000) / 1000;
+    const totalRounded = Math.round(val / 12 * 1000) / 1000;
+    let parts = [];
+    if (totalFeet > 0) parts.push(`${totalFeet} ft`);
+    if (remainRounded > 0 || totalFeet === 0) parts.push(`${remainRounded} in`);
+    return { display: parts.join(' '), decimal: `(${totalRounded} ft)` };
+  }
+
+  function updateFromInches() {
+    const val = inEl.value;
+    if (val === '') {
+      ftEl.value = '';
+      inResult.textContent = '';
+      ftResult.textContent = '';
+      formula.innerHTML = 'Formula: <code>1 in = 0.0833333 ft</code>';
+      return;
+    }
+    active = 'in';
+    const inches = parseFloat(val);
+    if (isNaN(inches)) {
+      ftEl.value = '';
+      inResult.textContent = '';
+      ftResult.textContent = '';
+      return;
+    }
+    const feet = inches / 12;
+    ftEl.value = parseFloat(feet.toFixed(4)).toString();
+    const conv = inchesToFeetAndInches(inches);
+    if (conv) {
+      inResult.innerHTML = `${conv.display} <span class="detail">${conv.decimal}</span>`;
+    }
+    ftResult.textContent = `${parseFloat(feet.toFixed(4))} ft`;
+    formula.innerHTML = `Formula: <code>${inches} in ÷ 12 = ${parseFloat(feet.toFixed(6))} ft</code>`;
+  }
+
+  function updateFromFeet() {
+    const val = ftEl.value;
+    if (val === '') {
+      inEl.value = '';
+      inResult.textContent = '';
+      ftResult.textContent = '';
+      formula.innerHTML = 'Formula: <code>1 ft = 12 in</code>';
+      return;
+    }
+    active = 'ft';
+    const feet = parseFloat(val);
+    if (isNaN(feet)) {
+      inEl.value = '';
+      inResult.textContent = '';
+      ftResult.textContent = '';
+      return;
+    }
+    const inches = feet * 12;
+    inEl.value = parseFloat(inches.toFixed(4)).toString();
+    const conv = inchesToFeetAndInches(inches);
+    if (conv) {
+      inResult.innerHTML = `${conv.display} <span class="detail">${conv.decimal}</span>`;
+    }
+    ftResult.textContent = `${feet} ft`;
+    formula.innerHTML = `Formula: <code>${feet} ft × 12 = ${parseFloat(inches.toFixed(6))} in</code>`;
+  }
+
+  inEl.addEventListener('input', updateFromInches);
+  ftEl.addEventListener('input', updateFromFeet);
+
+  swapBtn.addEventListener('click', function() {
+    if (active === 'in' && inEl.value !== '') {
+      ftEl.focus();
+      ftEl.dispatchEvent(new Event('input'));
+    } else if (active === 'ft' && ftEl.value !== '') {
+      inEl.focus();
+      inEl.dispatchEvent(new Event('input'));
+    } else if (inEl.value !== '') {
+      ftEl.focus();
+      ftEl.dispatchEvent(new Event('input'));
+    } else if (ftEl.value !== '') {
+      inEl.focus();
+      inEl.dispatchEvent(new Event('input'));
+    }
+  });
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/unit-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Unit Converter — Length, Mass, Volume, Temperature & More</a>
+      <a href="/currency-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Currency Converter — Live Exchange Rates (USD, EUR, GBP, JPY)</a>
+      <a href="/km-to-miles" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Kilometers to Miles Converter — KM to MI</a>
+      <a href="/mm-to-inches" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Millimeters to Inches Converter — MM to IN</a>
+      <a href="/timezone-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Time Zone Converter — Convert Time Between Timezones</a>
+      <a href="/binary-translator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Binary Translator — Convert Text to Binary & Binary to Text</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

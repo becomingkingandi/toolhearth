@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Event Countdown — Count Down to Any Date</title>
+<meta name="description" content="Count down the days, hours, minutes, and seconds to any event. Save multiple events with custom names.">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+  .container{background:#1a1a2e;border-radius:24px;padding:32px;width:100%;max-width:600px;margin:0 auto;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+  h1{text-align:center;font-size:1.3rem;color:#8888aa;margin-bottom:24px;font-weight:500;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px}
+  .add-form{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+  .add-form input{flex:1;min-width:120px;background:#0f0f1a;border:2px solid #2a2a45;border-radius:12px;padding:10px 14px;font-size:.9rem;color:#fff;outline:none}
+  .add-form input:focus{border-color:#4fc3f7}
+  .add-form input::placeholder{color:#555}
+  .add-form .btn{padding:10px 20px;border:none;border-radius:12px;font-size:.9rem;font-weight:600;cursor:pointer;background:#4fc3f7;color:#0f0f1a;transition:all .2s}
+  .add-form .btn:active{transform:scale(.95)}
+  .add-form .btn:hover{background:#39b0e4}
+  .events{display:flex;flex-direction:column;gap:16px}
+  .event-card{background:#0f0f1a;border-radius:16px;padding:20px;position:relative}
+  .event-card.passed{opacity:.4}
+  .event-card.passed .digits{color:#ef5350}
+  .event-name{font-size:1.1rem;font-weight:600;color:#e0e0e0;margin-bottom:12px;padding-right:28px}
+  .event-date{font-size:.75rem;color:#555;margin-bottom:12px}
+  .flap-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .flap-unit{text-align:center}
+  .digits{display:flex;gap:2px}
+  .digit{display:inline-flex;align-items:center;justify-content:center;width:48px;height:64px;background:#1a1a2e;border-radius:8px;font-size:1.8rem;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .digit::before,.digit::after{content:'';position:absolute;left:0;right:0;height:50%;background:rgba(255,255,255,.03);pointer-events:none}
+  .digit::after{top:50%;border-top:1px solid rgba(255,255,255,.06)}
+  .flap-label{font-size:.7rem;color:#555;text-transform:uppercase;margin-top:4px;letter-spacing:1px}
+  .delete-btn{position:absolute;top:12px;right:12px;background:none;border:none;color:#555;font-size:1.2rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;line-height:1}
+  .delete-btn:hover{color:#ef5350;background:rgba(239,83,80,.1)}
+  .empty-state{text-align:center;padding:40px 0;color:#555}
+  .empty-state p{margin-top:8px;font-size:.9rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Event Countdown \u2014 Count Down to Any Date",
+  "description": "Count down the days, hours, minutes, and seconds to any event. Save multiple events with custom names.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>📅 Event Countdown</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="add-form">
+    <input type="text" id="eventName" placeholder="Event name" maxlength="60">
+    <input type="datetime-local" id="eventDate">
+    <button class="btn" id="addBtn">Add</button>
+  </div>
+  <div class="events" id="eventList">
+    <div class="empty-state" id="emptyState">
+      <span style="font-size:2rem">📆</span>
+      <p>Add an event to start counting down</p>
+    </div>
+  </div>
+</div>
+<script>
+  (function(){
+    const eventName = document.getElementById('eventName');
+    const eventDate = document.getElementById('eventDate');
+    const addBtn = document.getElementById('addBtn');
+    const eventList = document.getElementById('eventList');
+    const emptyState = document.getElementById('emptyState');
+    let events = [];
+    let timer = null;
+
+    // Load from localStorage
+    function loadEvents(){
+      try{
+        let data = localStorage.getItem('eventCountdowns');
+        if(data) events = JSON.parse(data);
+        else events = [];
+      }catch(e){events=[];}
+      // Validate dates
+      events = events.filter(e => e.date);
+      renderAll();
+    }
+
+    function saveEvents(){
+      try{
+        localStorage.setItem('eventCountdowns', JSON.stringify(events));
+      }catch(e){}
+    }
+
+    function addEvent(){
+      let name = eventName.value.trim();
+      let dateVal = eventDate.value;
+      if(!name){eventName.focus();return;}
+      if(!dateVal){eventDate.focus();return;}
+      let target = new Date(dateVal);
+      if(isNaN(target.getTime())){alert('Invalid date/time');return;}
+      events.push({name, date: target.toISOString()});
+      saveEvents();
+      eventName.value = '';
+      eventDate.value = '';
+      renderAll();
+    }
+
+    function deleteEvent(idx){
+      events.splice(idx, 1);
+      saveEvents();
+      renderAll();
+    }
+
+    function formatDigits(n, len=2){
+      return String(Math.max(0, Math.floor(n))).padStart(len, '0');
+    }
+
+    function renderAll(){
+      // empty state
+      if(events.length===0){
+        eventList.innerHTML = '<div class="empty-state" id="emptyState">'+
+          '<span style="font-size:2rem">📆</span>'+
+          '<p>Add an event to start counting down</p></div>';
+        return;
+      }
+      let now = Date.now();
+      let html = '';
+      events.forEach((ev, idx)=>{
+        let target = new Date(ev.date).getTime();
+        let diff = Math.max(0, target - now);
+        let passed = diff===0;
+        let days = Math.floor(diff / 86400000);
+        let hours = Math.floor((diff % 86400000) / 3600000);
+        let minutes = Math.floor((diff % 3600000) / 60000);
+        let seconds = Math.floor((diff % 60000) / 1000);
+        let dateStr = new Date(ev.date).toLocaleString();
+
+        html += '<div class="event-card'+(passed?' passed':'')+'">'+
+          '<button class="delete-btn" data-idx="'+idx+'" onclick="window.__deleteEvent('+idx+')">✕</button>'+
+          '<div class="event-name">'+escHtml(ev.name)+'</div>'+
+          '<div class="event-date">'+escHtml(dateStr)+'</div>'+
+          '<div class="flap-row">'+
+            '<div class="flap-unit">'+
+              '<div class="digits">'+
+                '<span class="digit">'+formatDigits(days,2)+'</span>'+
+              '</div>'+
+              '<div class="flap-label">Days</div>'+
+            '</div>'+
+            '<div class="flap-unit">'+
+              '<div class="digits">'+
+                '<span class="digit">'+formatDigits(hours,2)+'</span>'+
+              '</div>'+
+              '<div class="flap-label">Hours</div>'+
+            '</div>'+
+            '<div class="flap-unit">'+
+              '<div class="digits">'+
+                '<span class="digit">'+formatDigits(minutes,2)+'</span>'+
+              '</div>'+
+              '<div class="flap-label">Minutes</div>'+
+            '</div>'+
+            '<div class="flap-unit">'+
+              '<div class="digits">'+
+                '<span class="digit">'+formatDigits(seconds,2)+'</span>'+
+              '</div>'+
+              '<div class="flap-label">Seconds</div>'+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      });
+      eventList.innerHTML = html;
+    }
+
+    function escHtml(s){
+      let d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    window.__deleteEvent = function(idx){
+      if(confirm('Remove this event?')) deleteEvent(idx);
+    };
+
+    addBtn.addEventListener('click', addEvent);
+    eventDate.addEventListener('keydown', function(e){if(e.key==='Enter') addEvent();});
+    eventName.addEventListener('keydown', function(e){if(e.key==='Enter') eventDate.focus();});
+
+    // Auto-update every second
+    function tick(){
+      renderAll();
+    }
+    timer = setInterval(tick, 1000);
+
+    // Set default date to 1 hour from now
+    let def = new Date(Date.now() + 3600000);
+    let iso = def.getFullYear()+'-'+
+      String(def.getMonth()+1).padStart(2,'0')+'-'+
+      String(def.getDate()).padStart(2,'0')+'T'+
+      String(def.getHours()).padStart(2,'0')+':'+
+      String(def.getMinutes()).padStart(2,'0');
+    eventDate.value = iso;
+
+    loadEvents();
+  })();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

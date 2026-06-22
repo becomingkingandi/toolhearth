@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown Preview — Write Markdown, See HTML Rendered</title>
+<meta name="description" content="Write Markdown in real-time and see the rendered HTML output. Supports headings, code blocks, tables, lists, and more.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--orange:#d29922;--radius:8px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);padding:1.5rem;min-height:100vh}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;flex-wrap:wrap;gap:.5rem}
+  .top h1{font-size:1.3rem;font-weight:600}
+  .top a{color:var(--muted);text-decoration:none;font-size:.85rem}
+  .top a:hover{color:var(--accent)}
+  .actions{display:flex;gap:.5rem}
+  .actions button{padding:.4rem 1rem;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.82rem;cursor:pointer}
+  .actions button:hover{background:#1c2333;border-color:var(--accent)}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:1rem;height:calc(100vh - 150px)}
+  @media(max-width:800px){.panels{grid-template-columns:1fr;height:auto;min-height:50vh}}
+  .panel{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .panel-head{padding:.45rem .8rem;background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  textarea{flex:1;background:var(--bg);color:var(--text);border:none;outline:none;padding:.8rem;font-family:ui-monospace,'SF Mono','Fira Code',monospace;font-size:.85rem;line-height:1.55;resize:none}
+  textarea::placeholder{color:#484f58}
+  textarea:focus{background:#0a0e14}
+  #preview{flex:1;overflow:auto;padding:1rem 1.2rem;font-size:.92rem;line-height:1.65}
+  /* Rendered Markdown styles */
+  #preview h1,#preview h2,#preview h3,#preview h4{margin:1.2rem 0 .5rem;font-weight:600;line-height:1.3}
+  #preview h1{border-bottom:1px solid var(--border);padding-bottom:.3rem;font-size:1.6rem}
+  #preview h2{border-bottom:1px solid var(--border);padding-bottom:.2rem;font-size:1.3rem}
+  #preview h3{font-size:1.1rem}
+  #preview h4{font-size:1rem}
+  #preview p{margin:.5rem 0}
+  #preview ul,#preview ol{padding-left:1.5rem;margin:.4rem 0}
+  #preview li{margin:.15rem 0}
+  #preview code{background:rgba(88,166,255,.1);border-radius:4px;padding:1px 5px;font-family:ui-monospace,'SF Mono',monospace;font-size:.85em}
+  #preview pre{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:.8rem;overflow-x:auto;margin:.6rem 0}
+  #preview pre code{background:none;padding:0;border-radius:0;font-size:.82rem}
+  #preview blockquote{border-left:3px solid var(--accent);padding:.15rem .8rem;margin:.5rem 0;background:rgba(88,166,255,.04);border-radius:0 4px 4px 0}
+  #preview blockquote p{margin:.15rem 0}
+  #preview a{color:var(--accent);text-decoration:none}
+  #preview a:hover{text-decoration:underline}
+  #preview hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
+  #preview img{max-width:100%;border-radius:6px;margin:.5rem 0}
+  #preview strong{font-weight:600}
+  #preview em{font-style:italic}
+  #preview table{border-collapse:collapse;margin:.6rem 0;font-size:.85rem;width:100%}
+  #preview th,#preview td{border:1px solid var(--border);padding:.4rem .6rem;text-align:left}
+  #preview th{background:var(--surface);font-weight:600}
+  #preview tr:nth-child(even){background:rgba(255,255,255,.02)}
+  #preview del{text-decoration:line-through;color:var(--muted)}
+  #preview input[type=checkbox]{accent-color:var(--accent);margin-right:.4rem;transform:scale(.9)}
+  .info{display:flex;gap:1rem;flex-wrap:wrap;padding:.4rem .8rem;background:var(--surface);border-radius:var(--radius);font-size:.78rem;color:var(--muted);margin-top:.4rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Markdown Preview \u2014 Write Markdown, See HTML Rendered",
+  "description": "Write Markdown in real-time and see the rendered HTML output. Supports headings, code blocks, tables, lists, and more.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="top">
+  <h1><a href="index.html" style="color:var(--muted);text-decoration:none">←</a> 📝 Markdown Preview</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="actions">
+    <button onclick="loadSample()">Sample</button>
+    <button onclick="clearAll()">Clear</button>
+    <button onclick="copyHTML()">📋 Copy HTML</button>
+  </div>
+</div>
+<div class="panels">
+  <div class="panel">
+    <div class="panel-head">
+      <span>Markdown</span>
+      <span id="mdLen" style="color:var(--muted)">0 chars</span>
+    </div>
+    <textarea id="mdInput" placeholder="Type Markdown here…" spellcheck="false"></textarea>
+  </div>
+  <div class="panel">
+    <div class="panel-head">
+      <span>Preview</span>
+      <span id="wordCount" style="color:var(--muted)">0 words</span>
+    </div>
+    <div id="preview">⬅️ Start typing Markdown on the left</div>
+  </div>
+</div>
+<div class="info">
+  <span id="headerCount"># Headers: 0</span>
+  <span id="linkCount">🔗 Links: 0</span>
+  <span id="codeCount">` Code: 0</span>
+  <span id="listCount">📋 List items: 0</span>
+</div>
+
+<script>
+const mdInput = document.getElementById('mdInput');
+const preview = document.getElementById('preview');
+const mdLen = document.getElementById('mdLen');
+const wordCount = document.getElementById('wordCount');
+const headerCount = document.getElementById('headerCount');
+const linkCount = document.getElementById('linkCount');
+const codeCount = document.getElementById('codeCount');
+const listCount = document.getElementById('listCount');
+
+function render() {
+  const md = mdInput.value;
+  mdLen.textContent = `${md.length} chars`;
+  if (!md.trim()) {
+    preview.innerHTML = '⬅️ Start typing Markdown on the left';
+    wordCount.textContent = '0 words';
+    headerCount.textContent = '# Headers: 0';
+    linkCount.textContent = '🔗 Links: 0';
+    codeCount.textContent = '` Code: 0';
+    listCount.textContent = '📋 List items: 0';
+    return;
+  }
+
+  const html = parseMarkdown(md);
+  preview.innerHTML = html;
+
+  // Stats
+  const words = md.trim().split(/\s+/).length;
+  wordCount.textContent = `${words} words`;
+  headerCount.textContent = `# Headers: ${(md.match(/^#{1,6}\s/gm)||[]).length}`;
+  linkCount.textContent = `🔗 Links: ${(md.match(/\[([^\]]*)\]\(([^)]*)\)/g)||[]).length}`;
+  codeCount.textContent = '` Code: ' + ((md.match(/`[^`]+`/g)||[]).length + (md.match(/```[\s\S]*?```/g)||[]).length);
+  listCount.textContent = `📋 List items: ${(md.match(/^[\s]*[-*+]\s/gm)||[]).length + (md.match(/^\s*\d+\.\s/gm)||[]).length}`;
+}
+
+function parseMarkdown(md) {
+  // Normalize line endings
+  let text = md.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  // Escape HTML in the raw text first (we'll unescape inside code blocks and inline code later)
+  // Actually, let's process in stages.
+
+  // 1. Extract and protect fenced code blocks
+  const fencedBlocks = [];
+  let idx = 0;
+  text = text.replace(/```(\w*)\n([\s\S]*?)```/g, (m, lang, code) => {
+    const id = `%%FENCE${idx}%%`;
+    fencedBlocks.push({ id, lang, code });
+    idx++;
+    return id;
+  });
+
+  // 2. Extract inline code
+  text = text.replace(/`([^`]+)`/g, (m, code) => {
+    const id = `%%ICODE${idx}%%`;
+    fencedBlocks.push({ id, lang: 'inline', code });
+    idx++;
+    return id;
+  });
+
+  // 3. Escape any remaining HTML entities
+  text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // 4. Restore inline code (already escaped content needs to stay raw)
+  fencedBlocks.forEach(block => {
+    if (block.lang === 'inline') {
+      const raw = esc(block.code);
+      text = text.replace(block.id, `<code>${raw}</code>`);
+    }
+  });
+
+  // 5. Process horizontal rules (before converting line-level blocks)
+  text = text.replace(/^(\s*)([-*_])[ \t]*\2[ \t]*\2[ \t]*$/gm, '$1<hr>');
+
+  // 6. Process headings
+  text = text.replace(/^#{6}\s+(.+)$/gm, '<h6>$1</h6>');
+  text = text.replace(/^#{5}\s+(.+)$/gm, '<h5>$1</h5>');
+  text = text.replace(/^#{4}\s+(.+)$/gm, '<h4>$1</h4>');
+  text = text.replace(/^#{3}\s+(.+)$/gm, '<h3>$1</h3>');
+  text = text.replace(/^#{2}\s+(.+)$/gm, '<h2>$1</h2>');
+  text = text.replace(/^#{1}\s+(.+)$/gm, '<h1>$1</h1>');
+
+  // 7. Process images (before links, so images with links work)
+  text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+
+  // 8. Process links
+  text = text.replace(/\[([^\]]*)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+  // 9. Process inline formatting
+  text = text.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  text = text.replace(/___(.+?)___/g, '<strong><em>$1</em></strong>');
+  text = text.replace(/__(.+?)__/g, '<strong>$1</strong>');
+  text = text.replace(/_(.+?)_/g, '<em>$1</em>');
+  text = text.replace(/~~(.+?)~~/g, '<del>$1</del>');
+
+  // 10. Blockquotes
+  text = text.replace(/^&gt;\s+(.+)$/gm, (m, content) => {
+    // Replace > that got HTML-escaped
+    return `<blockquote><p>${content}</p></blockquote>`;
+  });
+  // Also handle >
+  text = text.replace(/^>\s+(.+)$/gm, (m, content) => {
+    return `<blockquote><p>${content}</p></blockquote>`;
+  });
+
+  // 11. Restore fenced code blocks
+  fencedBlocks.forEach(block => {
+    if (block.lang !== 'inline') {
+      const lang = block.lang ? ` class="lang-${esc(block.lang)}"` : '';
+      const code = esc(block.code);
+      text = text.replace(block.id, `<pre><code${lang}>${code}</code></pre>`);
+    }
+  });
+
+  // 12. Unordered lists
+  text = text.replace(/((?:^[\s]*[-*+]\s+.+\n?)+)/gm, (m) => {
+    const items = m.split('\n').filter(l => l.trim()).map(l => {
+      const content = l.replace(/^[\s]*[-*+]\s+/, '');
+      return `<li>${content}</li>`;
+    }).join('');
+    // Check for task list
+    if (m.includes('[ ]') || m.includes('[x]')) {
+      const taskItems = m.split('\n').filter(l => l.trim()).map(l => {
+        const content = l.replace(/^[\s]*[-*+]\s+/, '');
+        const checked = content.includes('[x]');
+        const textContent = content.replace(/\[[ x]\]\s*/, '');
+        const cb = `<input type="checkbox"${checked?' checked':''} disabled>`;
+        return `<li style="list-style:none">${cb}${textContent}</li>`;
+      }).join('');
+      return `<ul style="padding-left:1.2rem">${taskItems}</ul>`;
+    }
+    return `<ul>${items}</ul>`;
+  });
+
+  // 13. Ordered lists
+  text = text.replace(/((?:\d+\.\s+.+\n?)+)/gm, (m) => {
+    const items = m.split('\n').filter(l => l.trim()).map(l => {
+      const content = l.replace(/^\d+\.\s+/, '');
+      return `<li>${content}</li>`;
+    }).join('');
+    return `<ol>${items}</ol>`;
+  });
+
+  // 14. Tables
+  text = text.replace(/^\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)*)/gm, (m, headerRow, bodyRows) => {
+    const headers = headerRow.split('|').filter(h => h.trim()).map(h => `<th>${h.trim()}</th>`).join('');
+    const bodies = bodyRows.trim().split('\n').filter(r => r.trim()).map(row => {
+      const cells = row.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+    return `<table><thead><tr>${headers}</tr></thead><tbody>${bodies}</tbody></table>`;
+  });
+
+  // 15. Paragraphs — wrap remaining non-block-level lines
+  const blockTags = ['h1','h2','h3','h4','h5','h6','ul','ol','li','pre','blockquote','table','hr','th','td','tr','thead','tbody'];
+  const blockPattern = new RegExp(`^\\s*(<(${blockTags.join('|')})[\\s>])`, 'm');
+  
+  // Split by double newlines for paragraphs
+  const lines = text.split('\n\n');
+  text = lines.map(block => {
+    const trimmed = block.trim();
+    if (!trimmed) return '';
+    // Check if it starts with a block-level tag
+    if (/^<(h[1-6]|ul|ol|li|pre|blockquote|table|hr|tr|th|td)/.test(trimmed)) return trimmed;
+    // It's a paragraph
+    return `<p>${trimmed}</p>`;
+  }).join('\n');
+
+  // Clean up empty paragraphs
+  text = text.replace(/<p>\s*<\/p>/g, '');
+
+  // 16. Replace remaining line breaks within blocks
+  text = text.replace(/([^>\s])\n(?!\n)/g, '$1<br>');
+
+  return text;
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function loadSample() {
+  mdInput.value = `# Markdown Preview
+
+A **live** Markdown editor with *real-time* rendering.
+
+## Text Formatting
+
+This is **bold**, this is *italic*, ~~strikethrough~~, and \`inline code\`.
+
+## Lists
+
+### Unordered
+- First item
+- Second item
+  - Nested item
+- Third item
+
+### Ordered
+1. Step one
+2. Step two
+3. Step three
+
+### Task List
+- [x] Completed task
+- [ ] Pending task
+- [ ] Another todo
+
+## Code Blocks
+
+\`\`\`javascript
+function greet(name) {
+  return \`Hello, \${name}!\`;
+}
+console.log(greet("World"));
+\`\`\`
+
+## Blockquotes
+
+> This is a blockquote.
+> It can span multiple lines.
+
+## Links & Images
+
+[Visit GitHub](https://github.com)
+
+## Tables
+
+| Name    | Type   | Version |
+|---------|--------|---------|
+| JSON    | Tool   | 1.0     |
+| Base64  | Utility| 1.0     |
+| Regex   | Tester | 1.0     |
+
+---
+
+*Built with a lightweight Markdown parser*`;
+  render();
+}
+
+function clearAll() { mdInput.value = ''; render(); }
+
+function copyHTML() {
+  const html = preview.innerHTML;
+  navigator.clipboard.writeText(html).then(() => {
+    const btn = document.querySelector('.actions button:last-child');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  }).catch(() => {});
+}
+
+mdInput.addEventListener('input', render);
+render();
+loadSample();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

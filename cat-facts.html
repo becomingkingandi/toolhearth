@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cat Facts — Random Facts About Cats</title>
+<meta name="description" content="Discover interesting facts about cats. Random cat fact generator with copy feature. Free feline trivia tool.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+  .container { max-width: 640px; margin: 0 auto; padding: 20px; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; }
+  h1 { text-align: center; margin: 30px 0; font-size: 2rem; background: linear-gradient(135deg,#f78166,#bc8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .cat-image { width: 100%; max-width: 400px; border-radius: 12px; margin-bottom: 20px; display: block; }
+  .cat-image-placeholder { width: 100%; max-width: 400px; aspect-ratio: 4/3; background: #161b22; border: 1px solid #30363d; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem; margin-bottom: 20px; color: #484f58; }
+  .fact-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; width: 100%; margin-bottom: 20px; }
+  .fact-text { font-size: 1.15rem; line-height: 1.7; color: #f0f6fc; margin-bottom: 16px; min-height: 80px; }
+  .fact-meta { display: flex; justify-content: space-between; align-items: center; color: #8b949e; font-size: .85rem; }
+  .fact-meta .length { background: #0d1117; padding: 4px 12px; border-radius: 12px; border: 1px solid #21262d; }
+  .buttons { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
+  .buttons button { flex: 1; padding: 14px 20px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
+  .btn-new { background: #238636; color: #fff; }
+  .btn-new:hover { background: #2ea043; }
+  .btn-new:disabled { opacity: .6; cursor: not-allowed; }
+  .btn-copy { background: #21262d; color: #c9d1d9; border: 1px solid #30363d !important; }
+  .btn-copy:hover { background: #30363d; }
+  .btn-copy.copied { background: #1f6f31; border-color: #238636 !important; color: #fff; }
+  .loading { text-align: center; padding: 40px; display: none; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #30363d; border-top-color: #bc8cff; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg { background: #3a1c1c; border: 1px solid #f85149; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; width: 100%; }
+  .footer { text-align: center; padding: 24px; color: #484f58; font-size: .85rem; border-top: 1px solid #21262d; margin-top: 30px; width: 100%; }
+  .footer a { color: #58a6ff; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  @media (max-width: 500px) { .container { padding: 14px; } h1 { font-size: 1.5rem; } .buttons { flex-direction: column; } .fact-text { font-size: 1.05rem; } }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Cat Facts \u2014 Random Facts About Cats",
+  "description": "Discover interesting facts about cats. Random cat fact generator with copy feature. Free feline trivia tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🐱 Cat Facts</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="cat-image-placeholder" id="catPlaceholder">🐈</div>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>Getting a cat fact...</span>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="fact-card" id="factCard">
+    <div class="fact-text" id="factText">Click "New Fact" to see a random cat fact!</div>
+    <div class="fact-meta">
+      <span class="length">📏 Length: <strong id="factLength">0</strong> chars</span>
+      <span>🐈 <a href="https://catfact.ninja" target="_blank" style="color:#58a6ff;text-decoration:none;">catfact.ninja</a></span>
+    </div>
+  </div>
+  <div class="buttons">
+    <button class="btn-new" id="newFactBtn">🔄 New Fact</button>
+    <button class="btn-copy" id="copyBtn">📋 Copy</button>
+  </div>
+</div>
+<div class="footer">Powered by <a href="https://catfact.ninja" target="_blank">Cat Facts API</a> &middot; <a href="https://github.com/me-shemika/cheat-sheet" target="_blank">GitHub</a></div>
+<script>
+  const factText = document.getElementById('factText');
+  const factLength = document.getElementById('factLength');
+  const newFactBtn = document.getElementById('newFactBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const loading = document.getElementById('loading');
+  const errorMsg = document.getElementById('errorMsg');
+  const factCard = document.getElementById('factCard');
+  const catPlaceholder = document.getElementById('catPlaceholder');
+
+  newFactBtn.addEventListener('click', fetchFact);
+
+  async function fetchFact() {
+    loading.style.display = 'block';
+    errorMsg.style.display = 'none';
+    factCard.style.display = 'none';
+    catPlaceholder.style.display = 'none';
+    newFactBtn.disabled = true;
+    copyBtn.classList.remove('copied');
+    try {
+      const res = await fetch('https://catfact.ninja/fact');
+      if (!res.ok) throw new Error('Failed to fetch cat fact.');
+      const data = await res.json();
+      factText.textContent = data.fact;
+      factLength.textContent = data.length;
+      factCard.style.display = 'block';
+      catPlaceholder.style.display = 'flex';
+    } catch (err) {
+      errorMsg.textContent = err.message;
+      errorMsg.style.display = 'block';
+      factCard.style.display = 'block';
+      catPlaceholder.style.display = 'flex';
+    } finally {
+      loading.style.display = 'none';
+      newFactBtn.disabled = false;
+    }
+  }
+
+  copyBtn.addEventListener('click', async () => {
+    const text = factText.textContent;
+    if (!text || text === 'Click "New Fact" to see a random cat fact!') return;
+    try {
+      await navigator.clipboard.writeText(text);
+      copyBtn.textContent = '✅ Copied!';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = '📋 Copy';
+        copyBtn.classList.remove('copied');
+      }, 2000);
+    } catch {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      copyBtn.textContent = '✅ Copied!';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = '📋 Copy';
+        copyBtn.classList.remove('copied');
+      }, 2000);
+    }
+  });
+
+  // Load initial fact
+  fetchFact();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

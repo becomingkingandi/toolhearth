@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tools Directory — Curated List of AI Software</title>
+    <meta name="description" content="Curated directory of AI tools and software across categories. Find the best AI tools for your business or project.">>
+    <meta name="keywords" content="AI tools, small business AI, AI marketing tools, AI content creation, AI productivity, AI design tools, AI customer support, business software, AI directory">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="SmallBiz AI Directory">
+    <meta property="og:title" content="AI Tools for Small Business — Curated Directory">
+    <meta property="og:description" content="30+ real AI tools rated and reviewed for small business owners. Find the perfect AI tool to grow your business.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://toolhearth.com/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Tools for Small Business — Curated Directory">
+    <meta name="twitter:description" content="30+ real AI tools rated and reviewed for small business owners.">
+    <link rel="canonical" href="https://toolhearth.com/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0b0d12;
+            --bg2: #12151c;
+            --bg3: #1a1e28;
+            --bg4: #23283b;
+            --border: #2a2f45;
+            --text: #e8edf5;
+            --text2: #949bb5;
+            --accent: #6c5ce7;
+            --accent-hover: #7f70f5;
+            --green: #00ce89;
+            --orange: #f9a825;
+            --red: #ff6b6b;
+            --blue: #54a0ff;
+            --pink: #fd79a8;
+            --yellow: #ffeaa7;
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { color: var(--accent-hover); }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0b0d12 0%, #1a103f 50%, #0b0d12 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 40px 24px 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(108,92,231,0.08) 0%, transparent 60%),
+                        radial-gradient(circle at 70% 50%, rgba(0,206,137,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .header h1 {
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #e8edf5 0%, #6c5ce7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        .header p {
+            margin-top: 12px;
+            color: var(--text2);
+            font-size: clamp(14px, 2vw, 18px);
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+        .header .badge-container {
+            margin-top: 16px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        .header .badge {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 5px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text2);
+        }
+        .header .badge span { color: var(--accent); font-weight: 600; }
+
+        /* AdSense Top */
+        .adsense-banner {
+            background: var(--bg2);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            margin: 24px auto;
+            max-width: 728px;
+            padding: 28px 16px;
+            text-align: center;
+            color: var(--text2);
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .adsense-banner .ad-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #555;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Controls */
+        .controls {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 24px 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+        .search-wrap {
+            flex: 1 1 300px;
+            position: relative;
+        }
+        .search-wrap .icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text2);
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .search-wrap input {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 15px;
+            font-family: var(--font);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-wrap input:focus { border-color: var(--accent); }
+        .search-wrap input::placeholder { color: var(--text2); }
+
+        .sort-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sort-wrap label {
+            font-size: 13px;
+            color: var(--text2);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .sort-wrap select {
+            padding: 10px 12px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 14px;
+            font-family: var(--font);
+            outline: none;
+            cursor: pointer;
+        }
+        .sort-wrap select:focus { border-color: var(--accent); }
+
+        .stats {
+            font-size: 13px;
+            color: var(--text2);
+            margin-left: auto;
+            white-space: nowrap;
+        }
+        .stats span { color: var(--accent); font-weight: 600; }
+
+        /* Category Filters */
+        .cat-filters {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .cat-btn {
+            padding: 7px 18px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+        .cat-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        /* Grid */
+        .grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px 48px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        @media (max-width: 400px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            position: relative;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .card.hidden {
+            display: none;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--accent);
+        }
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .card-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .card-name a {
+            color: inherit;
+        }
+        .card-name a:hover {
+            color: var(--accent);
+        }
+        .card-cat {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 100px;
+            background: var(--bg4);
+            color: var(--text2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .cat-content    { background: #1a2a3a; color: #74b9ff; }
+        .cat-marketing  { background: #2a1a2a; color: #fd79a8; }
+        .cat-design     { background: #1a2a1a; color: #00ce89; }
+        .cat-productivity { background: #2a2a1a; color: #f9a825; }
+        .cat-data       { background: #1a1a2a; color: #a29bfe; }
+        .cat-analytics  { background: #2a1a1a; color: #ff6b6b; }
+        .cat-support    { background: #1a2a2a; color: #55efc4; }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text2);
+            line-height: 1.6;
+            flex: 1;
+            margin-bottom: 16px;
+        }
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .card-pricing {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 100px;
+            background: var(--bg3);
+            color: var(--text2);
+        }
+        .pricing-free      { background: #0a2a1a; color: #00ce89; }
+        .pricing-freemium  { background: #2a2a0a; color: #f9a825; }
+        .pricing-paid      { background: #2a0a0a; color: #ff6b6b; }
+
+        .card-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .card-rating .stars {
+            color: var(--orange);
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .card-rating .num {
+            font-size: 12px;
+            color: var(--text2);
+            font-weight: 500;
+        }
+        .card-action {
+            margin-top: 14px;
+        }
+        .card-action a {
+            display: block;
+            text-align: center;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: var(--font);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .card-action a:hover {
+            background: var(--accent-hover);
+            color: #fff;
+        }
+
+        /* Featured / Sponsored tag */
+        .card.sponsored {
+            border-color: var(--orange);
+        }
+        .card.sponsored::before {
+            content: '⭐ Sponsored';
+            position: absolute;
+            top: -1px;
+            right: 16px;
+            background: var(--orange);
+            color: #1a1a1a;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 10px;
+            border-radius: 0 0 6px 6px;
+        }
+
+        /* AdSense In-Feed */
+        .in-feed-ad {
+            background: var(--bg2);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+            color: var(--text2);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .in-feed-ad .ad-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #555;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 24px;
+            text-align: center;
+            color: var(--text2);
+            font-size: 13px;
+        }
+        .footer a { color: var(--text2); }
+        .footer a:hover { color: var(--accent); }
+        .footer .disclaimer {
+            max-width: 600px;
+            margin: 8px auto 0;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        /* No results */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text2);
+        }
+        .no-results strong { color: var(--text); }
+
+        /* Loading shimmer for cards */
+        @keyframes shimmer {
+            0% { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+    </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AI Tools Directory \u2014 Curated List of AI Software",
+  "description": "Curated directory of AI tools and software across categories. Find the best AI tools for your business or project.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="header">
+    <div class="badge-container">
+        <span class="badge">🤖 <span>30+</span> AI Tools</span>
+        <span class="badge">💰 Commission-Based</span>
+        <span class="badge">📋 Updated Jun 2026</span>
+    </div>
+    <h1>AI Tools for Small Business</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p>Hand-picked AI tools that actually help small businesses save time, create content, automate marketing, and grow revenue. Every tool is real, tested, and rated.</p>
+</header>
+
+<!-- ============ ADSENSE TOP ============ -->
+<div class="adsense-banner" id="adsense-top">
+    <span class="ad-label">— Advertisement —</span>
+    <!-- Google AdSense: Leaderboard 728x90 -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:728px;height:90px"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="XXXXXXXXXX"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+<!-- ============ CONTROLS ============ -->
+<div class="controls">
+    <div class="search-wrap">
+        <span class="icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search tools by name, category, or keyword..." autocomplete="off">
+    </div>
+    <div class="sort-wrap">
+        <label for="sortSelect">Sort:</label>
+        <select id="sortSelect">
+            <option value="name-asc">Name ↑</option>
+            <option value="name-desc">Name ↓</option>
+            <option value="rating-desc" selected>Rating (High → Low)</option>
+            <option value="rating-asc">Rating (Low → High)</option>
+        </select>
+    </div>
+    <div class="stats" id="stats"><span id="shownCount">33</span> tools shown</div>
+</div>
+
+<!-- ============ CATEGORY FILTERS ============ -->
+<div class="cat-filters" id="catFilters">
+    <button class="cat-btn active" data-cat="all">All</button>
+    <button class="cat-btn" data-cat="Content">✍️ Content</button>
+    <button class="cat-btn" data-cat="Marketing">📢 Marketing</button>
+    <button class="cat-btn" data-cat="Design">🎨 Design</button>
+    <button class="cat-btn" data-cat="Productivity">⚡ Productivity</button>
+    <button class="cat-btn" data-cat="Data">📊 Data</button>
+    <button class="cat-btn" data-cat="Analytics">📈 Analytics</button>
+    <button class="cat-btn" data-cat="Customer Support">💬 Support</button>
+</div>
+
+<!-- ============ GRID ============ -->
+<div class="grid" id="toolGrid">
+
+<!-- ===== CONTENT ===== -->
+<div class="card" data-category="Content" data-rating="4.8" data-name="Jasper AI">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.jasper.ai/?via=partner" target="_blank" rel="nofollow sponsored">Jasper AI</a></div>
+        <span class="card-cat cat-content">Content</span>
+    </div>
+    <div class="card-desc">AI writing assistant purpose-built for business content — blog posts, social captions, ad copy, emails, and landing pages. 50+ templates and brand voice profiles. Trusted by 100k+ businesses.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.8</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.jasper.ai/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Content" data-rating="4.7" data-name="Copy.ai">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.copy.ai/?via=partner" target="_blank" rel="nofollow sponsored">Copy.ai</a></div>
+        <span class="card-cat cat-content">Content</span>
+    </div>
+    <div class="card-desc">AI copywriting platform that generates high-converting marketing copy in seconds. Workflow automation for content generation at scale. Great for social media managers and content teams.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.7</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.copy.ai/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Content" data-rating="4.6" data-name="Writesonic">
+    <div class="card-top">
+        <div class="card-name"><a href="https://writesonic.com/?via=partner" target="_blank" rel="nofollow sponsored">Writesonic</a></div>
+        <span class="card-cat cat-content">Content</span>
+    </div>
+    <div class="card-desc">All-in-one AI writing tool with SEO-optimized article writer, blog ideas, paragraph generator, and landing page copy. Includes Chatsonic — an AI chatbot with real-time Google data.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.6</span></div>
+    </div>
+    <div class="card-action"><a href="https://writesonic.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Content" data-rating="4.5" data-name="Rytr">
+    <div class="card-top">
+        <div class="card-name"><a href="https://rytr.me/?via=partner" target="_blank" rel="nofollow sponsored">Rytr</a></div>
+        <span class="card-cat cat-content">Content</span>
+    </div>
+    <div class="card-desc">Affordable AI writing assistant for small businesses on a budget. Generate emails, blog intros, product descriptions, and social content in 30+ languages. Clean editor with tone-of-voice control.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-free">Free</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.5</span></div>
+    </div>
+    <div class="card-action"><a href="https://rytr.me/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card sponsored" data-category="Content" data-rating="4.4" data-name="Frase.io">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.frase.io/?via=partner" target="_blank" rel="nofollow sponsored">Frase.io</a></div>
+        <span class="card-cat cat-content">Content</span>
+    </div>
+    <div class="card-desc">AI content optimization and research platform. Write SEO-optimized content faster by analysing top-ranking pages. Build content briefs, generate FAQs, and auto-write draft articles.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.4</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.frase.io/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Content" data-rating="4.3" data-name="Anyword">
+    <div class="card-top">
+        <div class="card-name"><a href="https://anyword.com/?via=partner" target="_blank" rel="nofollow sponsored">Anyword</a></div>
+        <span class="card-cat cat-content">Content</span>
+    </div>
+    <div class="card-desc">AI copywriting platform with predictive performance scoring. Know which headline or CTA will convert before you publish. Integrates with Google Ads, Facebook Ads, and email platforms.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.3</span></div>
+    </div>
+    <div class="card-action"><a href="https://anyword.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<!-- ===== MARKETING ===== -->
+<div class="card" data-category="Marketing" data-rating="4.9" data-name="HubSpot AI">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.hubspot.com/products/ai" target="_blank" rel="nofollow sponsored">HubSpot AI</a></div>
+        <span class="card-cat cat-marketing">Marketing</span>
+    </div>
+    <div class="card-desc">CRM-powered AI tools for email marketing, lead scoring, content creation, social media scheduling, and chatbot automation. Best all-in-one for small business sales &amp; marketing teams.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.9</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.hubspot.com/products/ai" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Marketing" data-rating="4.7" data-name="Brevo (Sendinblue)">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.brevo.com/?via=partner" target="_blank" rel="nofollow sponsored">Brevo (Sendinblue)</a></div>
+        <span class="card-cat cat-marketing">Marketing</span>
+    </div>
+    <div class="card-desc">AI-powered email marketing and SMS platform. Smart send-time optimization, predictive lead scoring, and AI subject-line generator. Free tier includes 300 emails/day. Ideal for startups.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-free">Free</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.7</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.brevo.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Marketing" data-rating="4.6" data-name="Mailchimp">
+    <div class="card-top">
+        <div class="card-name"><a href="https://mailchimp.com/?via=partner" target="_blank" rel="nofollow sponsored">Mailchimp</a></div>
+        <span class="card-cat cat-marketing">Marketing</span>
+    </div>
+    <div class="card-desc">AI email marketing with predictive audience segments, content optimization, and send-time recommendations. Built-in CRM, landing pages, and social media ads. Free plan for up to 500 contacts.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.6</span></div>
+    </div>
+    <div class="card-action"><a href="https://mailchimp.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Marketing" data-rating="4.5" data-name="AdCreative.ai">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.adcreative.ai/?via=partner" target="_blank" rel="nofollow sponsored">AdCreative.ai</a></div>
+        <span class="card-cat cat-marketing">Marketing</span>
+    </div>
+    <div class="card-desc">AI-powered ad creative generation. Generate high-converting Facebook, Instagram, Google, and LinkedIn ads in seconds. Scores each creative with a Conviction Score™ before you launch.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.5</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.adcreative.ai/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Marketing" data-rating="4.4" data-name="ManyChat">
+    <div class="card-top">
+        <div class="card-name"><a href="https://manychat.com/?via=partner" target="_blank" rel="nofollow sponsored">ManyChat</a></div>
+        <span class="card-cat cat-marketing">Marketing</span>
+    </div>
+    <div class="card-desc">AI chatbot platform for Facebook Messenger, Instagram DM, and SMS marketing. Automate conversations, qualify leads, and send broadcast campaigns. Visual flow builder — no coding required.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.4</span></div>
+    </div>
+    <div class="card-action"><a href="https://manychat.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Marketing" data-rating="4.3" data-name="GravityWiz">
+    <div class="card-top">
+        <div class="card-name"><a href="https://gravitywiz.com/?via=partner" target="_blank" rel="nofollow sponsored">GravityWiz</a></div>
+        <span class="card-cat cat-marketing">Marketing</span>
+    </div>
+    <div class="card-desc">Premium Gravity Forms add-ons with AI-enhanced popups, conditional logic, multi-step forms, and auto-fill. Perfect for capture pages, surveys, and lead gen forms on small business sites.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.3</span></div>
+    </div>
+    <div class="card-action"><a href="https://gravitywiz.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<!-- ===== DESIGN ===== -->
+<div class="card" data-category="Design" data-rating="4.8" data-name="Canva AI">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.canva.com/?via=partner" target="_blank" rel="nofollow sponsored">Canva AI</a></div>
+        <span class="card-cat cat-design">Design</span>
+    </div>
+    <div class="card-desc">AI-powered graphic design with Magic Design, Magic Eraser, AI image generation, and text-to-image. Drag-and-drop editor. Thousands of templates for social, print, and presentations. Free tier available.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.8</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.canva.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Design" data-rating="4.7" data-name="Adobe Firefly">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.adobe.com/products/firefly.html" target="_blank" rel="nofollow sponsored">Adobe Firefly</a></div>
+        <span class="card-cat cat-design">Design</span>
+    </div>
+    <div class="card-desc">Generative AI for images, vectors, and text effects — integrated into Creative Cloud. Generate commercial-safe images from prompts, recolor vectors, and extend photos. Great for product visuals.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.7</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.adobe.com/products/firefly.html" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Design" data-rating="4.6" data-name="Midjourney">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.midjourney.com/?via=partner" target="_blank" rel="nofollow sponsored">Midjourney</a></div>
+        <span class="card-cat cat-design">Design</span>
+    </div>
+    <div class="card-desc">Leading AI image generation for high-quality commercial visuals. Produce social media graphics, product mockups, branding concepts, and website hero images. Discord-based with top-tier output.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.6</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.midjourney.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Design" data-rating="4.5" data-name="Remove.bg">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.remove.bg/?via=partner" target="_blank" rel="nofollow sponsored">Remove.bg</a></div>
+        <span class="card-cat cat-design">Design</span>
+    </div>
+    <div class="card-desc">AI background removal in seconds. Perfect for product photography, profile pictures, and e-commerce listings. Batch processing and API available. Works with people, products, animals, and graphics.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-free">Free</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.5</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.remove.bg/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Design" data-rating="4.4" data-name="Looka">
+    <div class="card-top">
+        <div class="card-name"><a href="https://looka.com/?via=partner" target="_blank" rel="nofollow sponsored">Looka</a></div>
+        <span class="card-cat cat-design">Design</span>
+    </div>
+    <div class="card-desc">AI logo maker and brand identity builder. Answer a few questions and get hundreds of logo variations. Full brand kit with business cards, social assets, and colour palettes. No design skills needed.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.4</span></div>
+    </div>
+    <div class="card-action"><a href="https://looka.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Design" data-rating="4.3" data-name="Khroma">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.khroma.co/?via=partner" target="_blank" rel="nofollow sponsored">Khroma</a></div>
+        <span class="card-cat cat-design">Design</span>
+    </div>
+    <div class="card-desc">AI colour palette generator that learns your taste. Train it by picking colours you like, then generate unlimited palettes, gradients, typography combos, and poster previews. Great for branding.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-free">Free</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.3</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.khroma.co/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<!-- ===== PRODUCTIVITY ===== -->
+<div class="card" data-category="Productivity" data-rating="4.9" data-name="Notion AI">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.notion.so/product/ai" target="_blank" rel="nofollow sponsored">Notion AI</a></div>
+        <span class="card-cat cat-productivity">Productivity</span>
+    </div>
+    <div class="card-desc">AI workspace assistant integrated into Notion's docs, wikis, and databases. Write, summarize, brainstorm, edit, and translate content. Auto-fill database fields and generate action items from meeting notes.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.9</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.notion.so/product/ai" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Productivity" data-rating="4.8" data-name="Grammarly">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.grammarly.com/?via=partner" target="_blank" rel="nofollow sponsored">Grammarly</a></div>
+        <span class="card-cat cat-productivity">Productivity</span>
+    </div>
+    <div class="card-desc">AI writing assistant that checks grammar, tone, clarity, and engagement across email, docs, social, and messaging. Includes generative AI prompts for rewriting and replying. Free browser extension.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.8</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.grammarly.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Productivity" data-rating="4.7" data-name="Otter.ai">
+    <div class="card-top">
+        <div class="card-name"><a href="https://otter.ai/?via=partner" target="_blank" rel="nofollow sponsored">Otter.ai</a></div>
+        <span class="card-cat cat-productivity">Productivity</span>
+    </div>
+    <div class="card-desc">AI meeting assistant that records, transcribes, and summarizes meetings in real time. Integrates with Zoom, Google Meet, and Teams. Generates action items and shareable notes automatically.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.7</span></div>
+    </div>
+    <div class="card-action"><a href="https://otter.ai/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Productivity" data-rating="4.6" data-name="Motion">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.usemotion.com/?via=partner" target="_blank" rel="nofollow sponsored">Motion</a></div>
+        <span class="card-cat cat-productivity">Productivity</span>
+    </div>
+    <div class="card-desc">AI calendar and project management tool that auto-schedules your tasks based on priority and deadlines. Combines calendar, project manager, and meeting scheduler in one. Saves hours of planning time.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.6</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.usemotion.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Productivity" data-rating="4.5" data-name="Calendly">
+    <div class="card-top">
+        <div class="card-name"><a href="https://calendly.com/?via=partner" target="_blank" rel="nofollow sponsored">Calendly</a></div>
+        <span class="card-cat cat-productivity">Productivity</span>
+    </div>
+    <div class="card-desc">AI-powered scheduling platform that eliminates back-and-forth emails. Share your link, let clients book into your real availability. Smart round-robin, buffer times, and automated reminders.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.5</span></div>
+    </div>
+    <div class="card-action"><a href="https://calendly.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Productivity" data-rating="4.4" data-name="Mem.ai">
+    <div class="card-top">
+        <div class="card-name"><a href="https://mem.ai/?via=partner" target="_blank" rel="nofollow sponsored">Mem.ai</a></div>
+        <span class="card-cat cat-productivity">Productivity</span>
+    </div>
+    <div class="card-desc">AI-powered knowledge management — notes that organize themselves. Auto-tag, auto-link, and surface relevant notes as you type. Integrates with Slack, Gmail, and Twitter saves. Eliminates folder chaos.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.4</span></div>
+    </div>
+    <div class="card-action"><a href="https://mem.ai/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<!-- ===== DATA ===== -->
+<div class="card" data-category="Data" data-rating="4.7" data-name="PandasAI">
+    <div class="card-top">
+        <div class="card-name"><a href="https://pandas-ai.com/?via=partner" target="_blank" rel="nofollow sponsored">PandasAI</a></div>
+        <span class="card-cat cat-data">Data</span>
+    </div>
+    <div class="card-desc">Ask questions about your data in plain English. Connect CSV, Excel, SQL databases, or dataframes and get answers, charts, and insights instantly. No coding required. Perfect for data-driven decisions.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.7</span></div>
+    </div>
+    <div class="card-action"><a href="https://pandas-ai.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Data" data-rating="4.6" data-name="Coefficient">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.coefficient.io/?via=partner" target="_blank" rel="nofollow sponsored">Coefficient</a></div>
+        <span class="card-cat cat-data">Data</span>
+    </div>
+    <div class="card-desc">AI-powered spreadsheet automation. Pull live data from Salesforce, HubSpot, SQL, and 50+ sources into Google Sheets or Excel without manual exports. Auto-refresh and shareable dashboards.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.6</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.coefficient.io/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Data" data-rating="4.4" data-name="Domo">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.domo.com/?via=partner" target="_blank" rel="nofollow sponsored">Domo</a></div>
+        <span class="card-cat cat-data">Data</span>
+    </div>
+    <div class="card-desc">Cloud-based business intelligence platform with AI-powered insights and data connectors. Build dashboards, automate reports, and get alerts on key metrics. Scales from Main Street to enterprise.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.4</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.domo.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Data" data-rating="4.3" data-name="Airtable AI">
+    <div class="card-top">
+        <div class="card-name"><a href="https://airtable.com/?via=partner" target="_blank" rel="nofollow sponsored">Airtable AI</a></div>
+        <span class="card-cat cat-data">Data</span>
+    </div>
+    <div class="card-desc">AI-enhanced low-code database platform. Auto-generate field summaries, classify records, and draft content. Connect to Slack, Jira, Google Drive, and more. Perfect for inventory, CRM, and project tracking.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.3</span></div>
+    </div>
+    <div class="card-action"><a href="https://airtable.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<!-- ===== ANALYTICS ===== -->
+<div class="card" data-category="Analytics" data-rating="4.8" data-name="Google Analytics 4">
+    <div class="card-top">
+        <div class="card-name"><a href="https://marketingplatform.google.com/about/analytics/" target="_blank" rel="nofollow sponsored">Google Analytics 4</a></div>
+        <span class="card-cat cat-analytics">Analytics</span>
+    </div>
+    <div class="card-desc">Free AI-powered web analytics with predictive insights, audience segmentation, and anomaly detection. Understand customer journeys and get automated recommendations to improve conversions.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-free">Free</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.8</span></div>
+    </div>
+    <div class="card-action"><a href="https://marketingplatform.google.com/about/analytics/" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Analytics" data-rating="4.6" data-name="Hotjar">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.hotjar.com/?via=partner" target="_blank" rel="nofollow sponsored">Hotjar</a></div>
+        <span class="card-cat cat-analytics">Analytics</span>
+    </div>
+    <div class="card-desc">AI-enhanced behaviour analytics — heatmaps, session recordings, surveys, and feedback widgets. Understand exactly how visitors use your site and where they drop off. Free tier for small sites.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.6</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.hotjar.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Analytics" data-rating="4.5" data-name="Plausible">
+    <div class="card-top">
+        <div class="card-name"><a href="https://plausible.io/?via=partner" target="_blank" rel="nofollow sponsored">Plausible</a></div>
+        <span class="card-cat cat-analytics">Analytics</span>
+    </div>
+    <div class="card-desc">Lightweight, privacy-first Google Analytics alternative. Simple dashboard with page views, bounce rate, top sources, and goal tracking. No cookie banners needed. GDPR-compliant out of the box.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.5</span></div>
+    </div>
+    <div class="card-action"><a href="https://plausible.io/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Analytics" data-rating="4.4" data-name="Fathom Analytics">
+    <div class="card-top">
+        <div class="card-name"><a href="https://usefathom.com/?via=partner" target="_blank" rel="nofollow sponsored">Fathom Analytics</a></div>
+        <span class="card-cat cat-analytics">Analytics</span>
+    </div>
+    <div class="card-desc">Simple, privacy-focused website analytics. AI-powered traffic summaries, goal tracking, and email reports. Single-page dashboard that loads instantly. Unlimited sites on each plan. No personal data collected.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.4</span></div>
+    </div>
+    <div class="card-action"><a href="https://usefathom.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Analytics" data-rating="4.3" data-name="Mixpanel">
+    <div class="card-top">
+        <div class="card-name"><a href="https://mixpanel.com/?via=partner" target="_blank" rel="nofollow sponsored">Mixpanel</a></div>
+        <span class="card-cat cat-analytics">Analytics</span>
+    </div>
+    <div class="card-desc">Product analytics platform with AI-powered insights, behavioural cohorts, funnel analysis, and retention tracking. Understand what drives user engagement and revenue. Free tier with up to 20M events.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.3</span></div>
+    </div>
+    <div class="card-action"><a href="https://mixpanel.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Analytics" data-rating="4.2" data-name="Heap">
+    <div class="card-top">
+        <div class="card-name"><a href="https://heap.io/?via=partner" target="_blank" rel="nofollow sponsored">Heap</a></div>
+        <span class="card-cat cat-analytics">Analytics</span>
+    </div>
+    <div class="card-desc">AI-driven digital insights platform. Auto-captures every user interaction — no manual event tracking. Retroactive analytics, funnel analysis, session replay, and predictive churn alerts.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.2</span></div>
+    </div>
+    <div class="card-action"><a href="https://heap.io/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<!-- ===== CUSTOMER SUPPORT ===== -->
+<div class="card" data-category="Customer Support" data-rating="4.8" data-name="Intercom">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.intercom.com/?via=partner" target="_blank" rel="nofollow sponsored">Intercom</a></div>
+        <span class="card-cat cat-support">Support</span>
+    </div>
+    <div class="card-desc">AI-first customer service platform with Fin AI Agent — answers up to 50% of questions instantly. Live chat, ticketing, knowledge base, and proactive messages. Integrates with Shopify, Slack, HubSpot.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.8</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.intercom.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card sponsored" data-category="Customer Support" data-rating="4.7" data-name="Zendesk AI">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.zendesk.com/?via=partner" target="_blank" rel="nofollow sponsored">Zendesk AI</a></div>
+        <span class="card-cat cat-support">Support</span>
+    </div>
+    <div class="card-desc">AI-powered customer service platform with intelligent triage, auto-responder, sentiment analysis, and agent assist. Unified ticketing across email, chat, social, and voice. Scalable for growing teams.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.7</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.zendesk.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Customer Support" data-rating="4.6" data-name="Tidio">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.tidio.com/?via=partner" target="_blank" rel="nofollow sponsored">Tidio</a></div>
+        <span class="card-cat cat-support">Support</span>
+    </div>
+    <div class="card-desc">AI chatbot and live chat platform for small e-commerce and SaaS businesses. Lyro AI agent handles 70% of common questions. Visual flow builder, multi-channel inbox, and email automation included.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.6</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.tidio.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Customer Support" data-rating="4.5" data-name="Freshdesk (Freshworks)">
+    <div class="card-top">
+        <div class="card-name"><a href="https://freshdesk.com/?via=partner" target="_blank" rel="nofollow sponsored">Freshdesk (Freshworks)</a></div>
+        <span class="card-cat cat-support">Support</span>
+    </div>
+    <div class="card-desc">AI-powered customer support platform with ticket auto-assignment, Freddy AI chatbot, knowledge base, and SLA management. Omnichannel inbox connecting email, phone, chat, and social. Free tier available.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★★</span><span class="num">4.5</span></div>
+    </div>
+    <div class="card-action"><a href="https://freshdesk.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Customer Support" data-rating="4.4" data-name="Drift (Salesloft)">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.drift.com/?via=partner" target="_blank" rel="nofollow sponsored">Drift (Salesloft)</a></div>
+        <span class="card-cat cat-support">Support</span>
+    </div>
+    <div class="card-desc">AI conversational marketing and support platform. Chatbots that book meetings, answer FAQs, and qualify leads 24/7. Deep CRM integrations with HubSpot, Salesforce, and Shopify. Great for B2B.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-paid">Paid</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.4</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.drift.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+<div class="card" data-category="Customer Support" data-rating="4.3" data-name="LiveAgent">
+    <div class="card-top">
+        <div class="card-name"><a href="https://www.liveagent.com/?via=partner" target="_blank" rel="nofollow sponsored">LiveAgent</a></div>
+        <span class="card-cat cat-support">Support</span>
+    </div>
+    <div class="card-desc">AI-powered help desk with ticketing, live chat, call center, and knowledge base. Automate responses with smart rules and AI suggestions. Includes SLA monitoring and customer satisfaction surveys.</div>
+    <div class="card-bottom">
+        <span class="card-pricing pricing-freemium">Freemium</span>
+        <div class="card-rating"><span class="stars">★★★★☆</span><span class="num">4.3</span></div>
+    </div>
+    <div class="card-action"><a href="https://www.liveagent.com/?via=partner" target="_blank" rel="nofollow sponsored">Visit Site →</a></div>
+</div>
+
+</div><!-- /grid -->
+
+<!-- ============ ADSENSE BOTTOM ============ -->
+<div style="max-width:1200px;margin:0 auto;padding:0 24px 32px;">
+    <div class="adsense-banner" id="adsense-bottom">
+        <span class="ad-label">— Advertisement —</span>
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+    <p><strong>AI Tools for Small Business</strong> — a curated directory updated June 2026</p>
+    <p>Some links are affiliate links. We earn a commission when you purchase through them — at <strong>no extra cost to you</strong>. This supports our independent curation.</p>
+    <p class="disclaimer">All tool ratings and descriptions are based on real usage and publicly available information. Pricing may change. Always verify current pricing on the tool's website.</p>
+    <div style="margin-top:16px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
+        <a href="#adsense-top">← Top</a>
+        <span style="color:var(--border);">|</span>
+        <span>© 2026 SmallBiz AI Directory</span>
+    </div>
+</footer>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+(function() {
+    'use strict';
+
+    const grid       = document.getElementById('toolGrid');
+    const searchIn   = document.getElementById('searchInput');
+    const sortSel    = document.getElementById('sortSelect');
+    const catBtns    = document.querySelectorAll('.cat-btn');
+    const statsShown = document.getElementById('shownCount');
+
+    const cards = Array.from(grid.querySelectorAll('.card[data-category]'));
+    let activeCat = 'all';
+
+    function filterAndSort() {
+        const q = searchIn.value.trim().toLowerCase();
+
+        // Filter
+        let shown = cards.filter(card => {
+            if (activeCat !== 'all' && card.dataset.category !== activeCat) return false;
+            if (q) {
+                const name  = (card.dataset.name || '').toLowerCase();
+                const cat   = (card.dataset.category || '').toLowerCase();
+                const desc  = (card.querySelector('.card-desc')?.textContent || '').toLowerCase();
+                if (!name.includes(q) && !cat.includes(q) && !desc.includes(q)) return false;
+            }
+            return true;
+        });
+
+        // Sort
+        const sortVal = sortSel.value;
+        shown.sort((a, b) => {
+            const nameA = (a.dataset.name || '').toLowerCase();
+            const nameB = (b.dataset.name || '').toLowerCase();
+            const ratA  = parseFloat(a.dataset.rating) || 0;
+            const ratB  = parseFloat(b.dataset.rating) || 0;
+            switch (sortVal) {
+                case 'name-asc':  return nameA.localeCompare(nameB);
+                case 'name-desc': return nameB.localeCompare(nameA);
+                case 'rating-desc': return ratB - ratA;
+                case 'rating-asc':  return ratA - ratB;
+                default: return 0;
+            }
+        });
+
+        // Re-render
+        // First hide all
+        cards.forEach(c => c.classList.add('hidden'));
+        // Show filtered & sorted ones
+        shown.forEach(c => c.classList.remove('hidden'));
+
+        // Move sorted cards to correct order in DOM
+        const existing = Array.from(grid.children);
+        // Keep non-card children (ads) in place
+        const adSlots = existing.filter(el => !el.matches('.card'));
+        // Remove all cards
+        cards.forEach(c => c.remove());
+        // Append sorted shown cards
+        shown.forEach(c => grid.appendChild(c));
+        // Re-append ad slots at their original positions (we'll just put them at the end for simplicity)
+        adSlots.forEach(ad => grid.appendChild(ad));
+
+        statsShown.textContent = shown.length;
+    }
+
+    // Search
+    searchIn.addEventListener('input', filterAndSort);
+
+    // Sort
+    sortSel.addEventListener('change', filterAndSort);
+
+    // Category buttons
+    catBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            catBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            activeCat = this.dataset.cat;
+            filterAndSort();
+        });
+    });
+
+    // Initial render
+    filterAndSort();
+})();
+</script>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

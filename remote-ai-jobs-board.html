@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remote AI Jobs — Work from anywhere in AI</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===== UTILITY ===== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+      padding: 80px 20px 60px;
+      text-align: center;
+      border-bottom: 1px solid #21262d;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% -20%, rgba(88,166,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #f0f6fc 0%, #79c0ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: #8b949e;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* ===== FILTERS ===== */
+    .filters {
+      background: #161b22;
+      padding: 24px 0;
+      border-bottom: 1px solid #21262d;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .filters .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .search-wrap {
+      flex: 1 1 280px;
+      position: relative;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-wrap input:focus { border-color: #58a6ff; }
+    .search-wrap input::placeholder { color: #484f58; }
+    .search-wrap .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #484f58;
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+    .salary-filter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .salary-filter label {
+      font-size: 0.85rem;
+      color: #8b949e;
+      white-space: nowrap;
+    }
+    .salary-filter select {
+      padding: 8px 12px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .salary-filter select:focus { border-color: #58a6ff; }
+
+    /* ===== CATEGORY TABS ===== */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 20px 0 0;
+    }
+    .tab-btn {
+      padding: 7px 18px;
+      border: 1px solid #30363d;
+      border-radius: 20px;
+      background: transparent;
+      color: #8b949e;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      border-color: #58a6ff;
+      color: #58a6ff;
+    }
+    .tab-btn.active {
+      background: #1f6feb;
+      border-color: #1f6feb;
+      color: #fff;
+    }
+
+    /* ===== RESULTS COUNT ===== */
+    .results-count {
+      font-size: 0.85rem;
+      color: #8b949e;
+      padding: 8px 0;
+      text-align: right;
+    }
+
+    /* ===== JOBS GRID ===== */
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 16px;
+      padding: 20px 0 40px;
+    }
+    .job-card {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .job-card:hover {
+      border-color: #30363d;
+      transform: translateY(-2px);
+    }
+    .job-card.hidden { display: none; }
+    .job-card .job-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f0f6fc;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .job-card .job-company {
+      font-size: 0.95rem;
+      color: #8b949e;
+      margin-bottom: 12px;
+    }
+    .job-card .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: #8b949e;
+      margin-bottom: 12px;
+    }
+    .job-card .job-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .job-card .job-meta .salary {
+      color: #3fb950;
+      font-weight: 600;
+    }
+    .job-card .job-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .job-card .job-tags .tag {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tag-engineering { background: rgba(88,166,255,0.15); color: #58a6ff; }
+    .tag-research    { background: rgba(163,113,247,0.15); color: #a371f7; }
+    .tag-product     { background: rgba(247,170,61,0.15); color: #f7aa3d; }
+    .tag-design      { background: rgba(246,120,170,0.15); color: #f678aa; }
+    .tag-data        { background: rgba(63,185,80,0.15); color: #3fb950; }
+
+    .job-card .job-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid #21262d;
+    }
+    .job-card .job-posted {
+      font-size: 0.8rem;
+      color: #484f58;
+    }
+    .apply-btn {
+      padding: 8px 20px;
+      background: #1f6feb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .apply-btn:hover {
+      background: #388bfd;
+    }
+
+    /* ===== NO RESULTS ===== */
+    .no-results {
+      text-align: center;
+      padding: 80px 20px;
+      color: #484f58;
+      grid-column: 1 / -1;
+    }
+    .no-results h3 {
+      font-size: 1.3rem;
+      color: #8b949e;
+      margin-bottom: 8px;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center;
+      padding: 32px 20px;
+      border-top: 1px solid #21262d;
+      color: #484f58;
+      font-size: 0.85rem;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero { padding: 60px 20px 40px; }
+      .filters .container { flex-direction: column; align-items: stretch; }
+      .salary-filter { flex-wrap: wrap; }
+      .jobs-grid { grid-template-columns: 1fr; }
+      .tab-btn { font-size: 0.8rem; padding: 6px 14px; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.6rem; }
+      .job-card { padding: 18px; }
+      .job-card .job-footer { flex-direction: column; gap: 12px; align-items: stretch; }
+      .apply-btn { text-align: center; }
+    }
+  </style>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <h1>Remote AI Jobs</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p>Work from anywhere in AI — curated roles in engineering, research, product, design &amp; data</p>
+  </section>
+
+  <!-- ===== FILTERS ===== -->
+  <section class="filters">
+    <div class="container">
+      <div class="search-wrap">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="searchInput" placeholder="Search jobs, companies, keywords…" oninput="filterJobs()">
+      </div>
+      <div class="salary-filter">
+        <label for="salarySelect">Min salary:</label>
+        <select id="salarySelect" onchange="filterJobs()">
+          <option value="0">Any</option>
+          <option value="80000">$80k+</option>
+          <option value="100000">$100k+</option>
+          <option value="130000">$130k+</option>
+          <option value="150000">$150k+</option>
+          <option value="180000">$180k+</option>
+          <option value="200000">$200k+</option>
+        </select>
+      </div>
+    </div>
+    <div class="container tabs">
+      <button class="tab-btn active" data-cat="all" onclick="switchTab('all', this)">All</button>
+      <button class="tab-btn" data-cat="Engineering" onclick="switchTab('Engineering', this)">Engineering</button>
+      <button class="tab-btn" data-cat="Research" onclick="switchTab('Research', this)">Research</button>
+      <button class="tab-btn" data-cat="Product" onclick="switchTab('Product', this)">Product</button>
+      <button class="tab-btn" data-cat="Design" onclick="switchTab('Design', this)">Design</button>
+      <button class="tab-btn" data-cat="Data" onclick="switchTab('Data', this)">Data</button>
+    </div>
+  </section>
+
+  <!-- ===== JOBS ===== -->
+  <main class="container">
+    <div class="results-count" id="resultsCount"></div>
+    <div class="jobs-grid" id="jobsGrid"></div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    Listings curated from top remote AI companies
+  </footer>
+
+  <script>
+    // ===== DATA =====
+    const jobs = [
+      { id:1,  title:'Machine Learning Engineer',   company:'Anthropic',        salaryMin:200000, salaryMax:350000, salary:'$200–350k', category:'Engineering', posted:'2 days ago',     logo:'🤖' },
+      { id:2,  title:'AI Engineer',                  company:'OpenAI',          salaryMin:180000, salaryMax:320000, salary:'$180–320k', category:'Engineering', posted:'5 days ago',     logo:'⚡' },
+      { id:3,  title:'ML Engineer',                  company:'Google DeepMind', salaryMin:160000, salaryMax:300000, salary:'$160–300k', category:'Engineering', posted:'1 week ago',    logo:'🧠' },
+      { id:4,  title:'Research Scientist',           company:'Meta AI',         salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Research',    posted:'3 days ago',    logo:'🔬' },
+      { id:5,  title:'AI Product Manager',           company:'Microsoft',       salaryMin:140000, salaryMax:250000, salary:'$140–250k', category:'Product',     posted:'1 week ago',    logo:'📊' },
+      { id:6,  title:'Data Scientist',               company:'Stripe',          salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Data',        posted:'4 days ago',    logo:'📈' },
+      { id:7,  title:'ML Ops Engineer',              company:'Spotify',         salaryMin:120000, salaryMax:200000, salary:'$120–200k', category:'Engineering', posted:'2 weeks ago',   logo:'🎵' },
+      { id:8,  title:'AI Research Engineer',          company:'NVIDIA',          salaryMin:160000, salaryMax:300000, salary:'$160–300k', category:'Research',    posted:'6 days ago',    logo:'🟢' },
+      { id:9,  title:'LLM Engineer',                 company:'Cohere',          salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Engineering', posted:'1 week ago',    logo:'📝' },
+      { id:10, title:'Computer Vision Engineer',     company:'Tesla',           salaryMin:140000, salaryMax:260000, salary:'$140–260k', category:'Engineering', posted:'3 days ago',    logo:'🚗' },
+      { id:11, title:'NLP Engineer',                 company:'Grammarly',       salaryMin:130000, salaryMax:240000, salary:'$130–240k', category:'Engineering', posted:'2 weeks ago',   logo:'✍️' },
+      { id:12, title:'AI Ethics Researcher',          company:'ACLU',            salaryMin:100000, salaryMax:180000, salary:'$100–180k', category:'Research',    posted:'1 month ago',   logo:'⚖️' },
+      { id:13, title:'Prompt Engineer',              company:'Various',         salaryMin:80000,  salaryMax:150000, salary:'$80–150k',  category:'Engineering', posted:'1 week ago',    logo:'💬' },
+      { id:14, title:'AI Product Designer',          company:'Figma',           salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Design',      posted:'5 days ago',    logo:'🎨' },
+      { id:15, title:'ML Infrastructure Engineer',    company:'Databricks',      salaryMin:150000, salaryMax:270000, salary:'$150–270k', category:'Engineering', posted:'2 weeks ago',   logo:'🏗️' },
+      { id:16, title:'Applied Scientist',            company:'Amazon',          salaryMin:140000, salaryMax:260000, salary:'$140–260k', category:'Research',    posted:'1 week ago',    logo:'📦' },
+      { id:17, title:'AI Writer / Editor',           company:'Jasper',          salaryMin:90000,  salaryMax:160000, salary:'$90–160k',  category:'Design',      posted:'3 weeks ago',   logo:'✏️' },
+      { id:18, title:'Deep Learning Engineer',       company:'Cruise',          salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Engineering', posted:'4 days ago',    logo:'🚀' },
+      { id:19, title:'AI Data Curator',              company:'Scale AI',        salaryMin:80000,  salaryMax:140000, salary:'$80–140k',  category:'Data',        posted:'2 weeks ago',   logo:'🏷️' },
+      { id:20, title:'Reinforcement Learning Eng.',   company:'DeepMind',        salaryMin:170000, salaryMax:320000, salary:'$170–320k', category:'Research',    posted:'1 week ago',    logo:'♟️' },
+      { id:21, title:'AI Solutions Architect',       company:'Google Cloud',    salaryMin:160000, salaryMax:280000, salary:'$160–280k', category:'Engineering', posted:'3 days ago',    logo:'☁️' },
+      { id:22, title:'Data Engineering Lead',        company:'Snowflake',       salaryMin:150000, salaryMax:260000, salary:'$150–260k', category:'Data',        posted:'1 week ago',    logo:'❄️' },
+      { id:23, title:'AI Product Strategist',        company:'Notion',          salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Product',     posted:'5 days ago',    logo:'📋' },
+    ];
+
+    // ===== STATE =====
+    let activeTab = 'all';
+    let salaryFloor = 0;
+    let searchQuery = '';
+
+    // ===== RENDER =====
+    function parseSalary(s) {
+      const m = s.match(/\$(\d+)/);
+      return m ? parseInt(m[1], 10) : 0;
+    }
+
+    function filterJobs() {
+      searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+      salaryFloor = parseInt(document.getElementById('salarySelect').value, 10);
+
+      const filtered = jobs.filter(job => {
+        // tab filter
+        if (activeTab !== 'all' && job.category !== activeTab) return false;
+        // salary filter (check min salary)
+        if (salaryFloor > 0 && job.salaryMin < salaryFloor) return false;
+        // search
+        if (searchQuery) {
+          const haystack = (job.title + ' ' + job.company + ' ' + job.category + ' ' + job.salary).toLowerCase();
+          if (!haystack.includes(searchQuery)) return false;
+        }
+        return true;
+      });
+
+      renderJobs(filtered);
+    }
+
+    function renderJobs(list) {
+      const grid = document.getElementById('jobsGrid');
+      const count = document.getElementById('resultsCount');
+
+      if (list.length === 0) {
+        count.textContent = '0 jobs found';
+        grid.innerHTML = '<div class="no-results"><h3>No jobs match your filters</h3><p>Try adjusting your search or salary range</p></div>';
+        return;
+      }
+
+      count.textContent = list.length + ' job' + (list.length !== 1 ? 's' : '') + ' found';
+      grid.innerHTML = list.map(job => `
+        <div class="job-card">
+          <div class="job-title">${job.logo || ''} ${job.title}</div>
+          <div class="job-company">${job.company} — Remote</div>
+          <div class="job-meta">
+            <span class="salary">💰 ${job.salary}</span>
+          </div>
+          <div class="job-tags">
+            <span class="tag tag-${job.category.toLowerCase()}">${job.category}</span>
+          </div>
+          <div class="job-footer">
+            <span class="job-posted">📅 ${job.posted}</span>
+            <button class="apply-btn" onclick="alert('Application link for ${job.title} at ${job.company}')">Apply Now</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function switchTab(cat, btn) {
+      activeTab = cat;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterJobs();
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', () => filterJobs());
+  </script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

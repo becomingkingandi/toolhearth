@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typography Tester — Preview Fonts & Text Styles</title>
+<meta name="description" content="Test and preview typography with adjustable font weight, size, line-height, letter-spacing, and alignment. Live text preview.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Poppins:wght@100..900&family=Plus+Jakarta+Sans:wght@200..800&family=Cabin:wght@400..700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0b0d14; color: #e4e6ef; min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+    .back { display: inline-flex; align-items: center; gap: 6px; color: #8b8fa4; text-decoration: none; font-size: 0.9rem; margin-bottom: 24px; }
+    .back:hover { color: #818cf8; }
+    h1 { font-size: 2rem; font-weight: 700; }
+    .sub { color: #8b8fa4; margin-bottom: 32px; }
+    .layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; }
+    .sidebar { background: #141824; border: 1px solid #1f2335; border-radius: 16px; padding: 20px; }
+    .sidebar label { display: block; font-size: 0.75rem; font-weight: 600; color: #8b8fa4; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; margin-top: 16px; }
+    .sidebar label:first-child { margin-top: 0; }
+    .sidebar select, .sidebar input[type="range"] { width: 100%; margin-top: 4px; }
+    .sidebar select { background: #1a1e2e; color: #e4e6ef; border: 1px solid #1f2335; border-radius: 6px; padding: 8px; font-family: inherit; font-size: 0.85rem; }
+    .sidebar input[type="range"] { accent-color: #818cf8; }
+    .sidebar .value-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: #8b8fa4; margin-top: 2px; }
+    .sidebar .color-grid { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .sidebar .color-grid button { width: 28px; height: 28px; border: 2px solid transparent; border-radius: 6px; cursor: pointer; }
+    .sidebar .color-grid button.active { border-color: #818cf8; }
+    .sidebar .align-grid { display: flex; gap: 6px; }
+    .sidebar .align-grid button { flex: 1; padding: 8px; border: 1px solid #1f2335; border-radius: 6px; background: transparent; color: #8b8fa4; cursor: pointer; font-size: 0.8rem; }
+    .sidebar .align-grid button.active { background: #818cf8; color: #0b0d14; border-color: #818cf8; }
+    .preview-area { background: #141824; border: 1px solid #1f2335; border-radius: 16px; padding: 32px; min-height: 400px; display: flex; align-items: center; }
+    .preview-text { width: 100%; outline: none; border: none; background: transparent; color: inherit; resize: none; font-family: 'Inter', sans-serif; font-size: 1.2rem; line-height: 1.6; min-height: 200px; }
+    .meta { margin-top: 16px; padding: 12px 16px; background: #0d0f17; border: 1px solid #1f2335; border-radius: 8px; font-size: 0.8rem; color: #8b8fa4; font-family: 'JetBrains Mono', monospace; }
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Typography Tester \u2014 Preview Fonts & Text Styles",
+  "description": "Test and preview typography with adjustable font weight, size, line-height, letter-spacing, and alignment. Live text preview.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="index.html">← Back to Toolkit</a>
+    <h1>🔤 Typography Tester</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p class="sub">Preview Google Fonts with live adjustable properties.</p>
+    <div class="layout">
+      <div class="sidebar">
+        <label>Font Family</label>
+        <select id="fontSelect">
+          <option value="'Inter', sans-serif">Inter</option>
+          <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+          <option value="'DM Sans', sans-serif">DM Sans</option>
+          <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+          <option value="'Poppins', sans-serif">Poppins</option>
+          <option value="'Cabin', sans-serif">Cabin</option>
+          <option value="'Playfair Display', serif">Playfair Display</option>
+          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+        </select>
+
+        <label>Font Weight</label>
+        <input type="range" id="weightSlider" min="100" max="900" step="100" value="400" />
+        <div class="value-label"><span id="weightLabel">400</span><span>Regular</span></div>
+
+        <label>Font Size</label>
+        <input type="range" id="sizeSlider" min="10" max="72" value="24" />
+        <div class="value-label"><span id="sizeLabel">24</span><span>px</span></div>
+
+        <label>Line Height</label>
+        <input type="range" id="lineHeightSlider" min="0.8" max="2.5" step="0.1" value="1.6" />
+        <div class="value-label"><span id="lineHeightLabel">1.6</span></div>
+
+        <label>Letter Spacing</label>
+        <input type="range" id="letterSpacingSlider" min="-2" max="8" step="0.1" value="0" />
+        <div class="value-label"><span id="letterSpacingLabel">0</span><span>px</span></div>
+
+        <label>Text Color</label>
+        <div class="color-grid" id="textColors">
+          <button style="background:#e4e6ef" data-color="#e4e6ef"></button>
+          <button style="background:#ffffff" data-color="#ffffff"></button>
+          <button style="background:#818cf8" data-color="#818cf8"></button>
+          <button style="background:#f472b6" data-color="#f472b6"></button>
+          <button style="background:#34d399" data-color="#34d399"></button>
+        </div>
+
+        <label>Alignment</label>
+        <div class="align-grid" id="alignGrid">
+          <button data-align="left" class="active">⬅</button>
+          <button data-align="center">⬇</button>
+          <button data-align="right">➡</button>
+          <button data-align="justify">↔</button>
+        </div>
+      </div>
+      <div>
+        <div class="preview-area">
+          <textarea class="preview-text" id="previewText" spellcheck="false">The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump!
+
+Typography is the craft of arranging type to make written language legible, readable, and visually appealing. Good typography establishes a strong visual hierarchy and provides a great reading experience.</textarea>
+        </div>
+        <div class="meta" id="metaDisplay">Font: Inter · 400 · 24px · 1.6 line-height · #e4e6ef</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const weights = ['Thin','ExtraLight','Light','Regular','Medium','SemiBold','Bold','ExtraBold','Black'];
+    const preview = document.getElementById('previewText');
+    const meta = document.getElementById('metaDisplay');
+
+    function updateTypography() {
+      const font = document.getElementById('fontSelect').value;
+      const weight = document.getElementById('weightSlider').value;
+      const size = document.getElementById('sizeSlider').value;
+      const lh = document.getElementById('lineHeightSlider').value;
+      const ls = document.getElementById('letterSpacingSlider').value;
+      const color = document.querySelector('#textColors .active')?.dataset.color || '#e4e6ef';
+      const align = document.querySelector('#alignGrid .active')?.dataset.align || 'left';
+
+      preview.style.fontFamily = font;
+      preview.style.fontWeight = weight;
+      preview.style.fontSize = size + 'px';
+      preview.style.lineHeight = lh;
+      preview.style.letterSpacing = ls + 'px';
+      preview.style.color = color;
+      preview.style.textAlign = align;
+
+      const fontName = font.replace(/'/g,'').split(',')[0].trim();
+      const weightName = weights[Math.round(weight/100)-1] || weight;
+      meta.textContent = `Font: ${fontName} · ${weight} (${weightName}) · ${size}px · ${lh} line-height · ${color} · ${align}`;
+    }
+
+    document.getElementById('fontSelect').addEventListener('change', updateTypography);
+    document.getElementById('weightSlider').addEventListener('input', e => {
+      document.getElementById('weightLabel').textContent = e.target.value;
+      updateTypography();
+    });
+    document.getElementById('sizeSlider').addEventListener('input', e => {
+      document.getElementById('sizeLabel').textContent = e.target.value;
+      updateTypography();
+    });
+    document.getElementById('lineHeightSlider').addEventListener('input', e => {
+      document.getElementById('lineHeightLabel').textContent = e.target.value;
+      updateTypography();
+    });
+    document.getElementById('letterSpacingSlider').addEventListener('input', e => {
+      document.getElementById('letterSpacingLabel').textContent = e.target.value;
+      updateTypography();
+    });
+
+    document.querySelectorAll('#textColors button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#textColors button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateTypography();
+      });
+    });
+    document.querySelectorAll('#alignGrid button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#alignGrid button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateTypography();
+      });
+    });
+    preview.addEventListener('input', updateTypography);
+    updateTypography();
+  </script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/color-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Color Converter — HEX to RGB to HSL Converter</a>
+      <a href="/color-palette" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Color Palette Generator — Create Color Schemes</a>
+      <a href="/gradient-builder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Gradient Builder — Create Linear & Radial Gradients</a>
+      <a href="/box-shadow" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Box Shadow Generator — Create Shadow Effects</a>
+      <a href="/grid-layout" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Grid Layout Builder — Design Responsive Grids</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

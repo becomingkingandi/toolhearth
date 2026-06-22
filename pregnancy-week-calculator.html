@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pregnancy Week Calculator — Current Week, Trimester & Due Date</title>
+<meta name="description" content="Track your pregnancy week by week. See current gestational age, trimester, baby size comparison, and common symptoms for each week.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:520px;width:100%;background:#1a1a2e;border-radius:16px;padding:24px;margin-top:20px}
+h1{font-size:22px;text-align:center;color:#ffffff;margin-bottom:8px}
+.subtitle{text-align:center;color:#888;font-size:14px;margin-bottom:20px}
+.input-group{margin-bottom:14px}
+label{display:block;font-size:13px;font-weight:600;color:#aaa;margin-bottom:4px}
+input[type="date"]{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#16162b;color:#e0e0e0;font-size:15px;outline:none}
+input[type="date"]:focus{border-color:#ff7eb3}
+select{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#16162b;color:#e0e0e0;font-size:15px;outline:none}
+button{width:100%;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#ff7eb3,#ff5e8a);color:#fff;margin-top:8px;transition:opacity .2s}
+button:hover{opacity:.9}
+.results{display:none;margin-top:20px;background:#16162b;border-radius:12px;padding:20px}
+.results.show{display:block}
+.result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#888;font-size:14px}
+.result-value{color:#fff;font-size:14px;font-weight:600;text-align:right}
+.progress-container{background:#222;border-radius:20px;height:24px;position:relative;margin:16px 0;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#ff7eb3,#ff5e8a);border-radius:20px;transition:width .5s ease;min-width:2%}
+.progress-label{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.week-detail{background:#1e1e38;border-radius:12px;padding:16px;margin-top:16px}
+.week-detail h3{font-size:15px;color:#ff7eb3;margin-bottom:8px}
+.week-detail p{font-size:13px;color:#ccc;line-height:1.5}
+.week-detail .fruit{display:inline-block;background:#ff7eb322;border:1px solid #ff7eb344;border-radius:6px;padding:2px 8px;font-size:12px;color:#ff7eb3;margin-top:6px}
+.symptoms-list{list-style:none;margin-top:8px}
+.symptoms-list li{padding:4px 0;font-size:13px;color:#bbb;padding-left:16px;position:relative}
+.symptoms-list li::before{content:'•';position:absolute;left:4px;color:#ff7eb3}
+.week-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px}
+.week-nav button{padding:8px 16px;font-size:13px;width:auto;flex:1;margin-top:0}
+.week-nav span{font-size:13px;color:#888;flex:0 0 auto}
+.error{color:#ff6b6b;font-size:13px;margin-top:6px;display:none}
+@media(max-width:480px){.container{padding:16px}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Pregnancy Week Calculator \u2014 Current Week, Trimester & Due Date",
+  "description": "Track your pregnancy week by week. See current gestational age, trimester, baby size comparison, and common symptoms for each week.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🤰 Pregnancy Week Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Track your pregnancy week by week</p>
+
+<div class="input-group">
+<label for="calcMode">Calculate using</label>
+<select id="calcMode">
+<option value="due">Due Date</option>
+<option value="lmp">Last Menstrual Period (LMP)</option>
+</select>
+</div>
+
+<div class="input-group">
+<label id="dateLabel" for="dateInput">Your due date</label>
+<input type="date" id="dateInput">
+</div>
+
+<div class="error" id="errorMsg">Please select a valid date.</div>
+
+<button onclick="calculate()">Show My Week</button>
+
+<div class="results" id="results">
+<div class="result-row"><span class="result-label">Current Week</span><span class="result-value" id="currentWeek">—</span></div>
+<div class="result-row"><span class="result-label">Trimester</span><span class="result-value" id="trimester">—</span></div>
+<div class="result-row"><span class="result-label">How Far Along</span><span class="result-value" id="farAlong">—</span></div>
+<div class="result-row"><span class="result-label">Time Left</span><span class="result-value" id="timeLeft">—</span></div>
+
+<div class="progress-container">
+<div class="progress-bar" id="progressBar" style="width:0%"></div>
+<div class="progress-label" id="progressLabel">0 / 40 weeks</div>
+</div>
+
+<div class="week-detail" id="weekDetail">
+<h3 id="detailTitle">Week —</h3>
+<p id="detailDesc">Enter your dates above to see week details.</p>
+<div id="detailExtra"></div>
+</div>
+
+<div class="week-nav">
+<button onclick="changeWeek(-1)">◀ Previous</button>
+<span id="weekNavLabel">Week —</span>
+<button onclick="changeWeek(1)">Next ▶</button>
+</div>
+</div>
+</div>
+
+<script>
+const weekData = [
+{ fruit: 'Poppy seed', size: '0.1 cm', symptoms: ['Implantation', 'Very early pregnancy signs', 'Fatigue'], desc: 'Fertilized egg implants in the uterus.' },
+{ fruit: 'Sesame seed', size: '0.2 cm', symptoms: ['Missed period', 'Nausea', 'Breast tenderness'], desc: 'HCG levels rise. Home pregnancy tests turn positive.' },
+{ fruit: 'Blueberry', size: '0.6 cm', symptoms: ['Morning sickness', 'Food aversions', 'Frequent urination'], desc: 'Baby\'s heart begins to beat. Tiny limb buds form.' },
+{ fruit: 'Raspberry', size: '1.1 cm', symptoms: ['Exhaustion', 'Bloating', 'Mood swings'], desc: 'Facial features start forming. Neural tube closes.' },
+{ fruit: 'Sweet potato', size: '2.0 cm', symptoms: ['Heartburn', 'Constipation', 'Increased appetite'], desc: 'Baby is the size of a kumquat. Arms and legs grow.' },
+{ fruit: 'Orange slice', size: '3.5 cm', symptoms: ['Visible baby bump', 'Less nausea', 'Nasal congestion'], desc: 'Eyes, ears, and nose take shape. Baby moves but you can\'t feel it yet.' },
+{ fruit: 'Blueberry (big)', size: '5.0 cm', symptoms: ['Skin changes', 'Round ligament pain', 'Mild cramping'], desc: 'Tooth buds appear. Baby\'s skeleton starts hardening.' },
+{ fruit: 'Raspberry (big)', size: '6.5 cm', symptoms: ['Increased discharge', 'Stretch marks possible', 'Less bloating'], desc: 'Baby\'s fingers and toes are separate. Cartilage turns to bone.' },
+{ fruit: 'Grapefruit', size: '8.0 cm', symptoms: ['Energy returns', 'Visible bump', 'Clumsiness'], desc: 'All essential organs have formed. Baby looks more human.' },
+{ fruit: 'Green olive', size: '10 cm', symptoms: ['Breast growth', 'Veins visible', 'Weight gain'], desc: 'Digestive system works. Baby can swallow and hiccup.' },
+{ fruit: 'Lime', size: '12 cm', symptoms: ['Nosebleeds', 'Linea nigra appears', 'Leg cramps'], desc: 'Genitals develop. Baby\'s head is half the body length.' },
+{ fruit: 'Fig', size: '14 cm', symptoms: ['Less morning sickness', 'Itchy belly', 'Varicose veins'], desc: 'Baby can open and close fists. Tooth buds appear under gums.' },
+{ fruit: 'Plum', size: '16 cm', symptoms: ['Baby bump obvious', 'Braxton Hicks', 'Increased libido'], desc: 'Vocal cords form. Baby can make facial expressions.' },
+{ fruit: 'Peach', size: '18 cm', symptoms: ['Rounder belly', 'Skin tags', 'Lightning crotch'], desc: 'Ears move to final position. Baby\'s fingerprints form.' },
+{ fruit: 'Lemon', size: '20 cm', symptoms: ['Back pain', 'Swollen feet', 'Glowing skin'], desc: 'Baby\'s kidneys produce urine. Lanugo covers the body.' },
+{ fruit: 'Apple', size: '22 cm', symptoms: ['Sciatica', 'Shortness of breath', 'Strong kicks'], desc: 'Baby\'s bones get denser. You may feel the first flutters.' },
+{ fruit: 'Avocado', size: '24 cm', symptoms: ['Pelvic pressure', 'Forgetfulness', 'Bigger appetite'], desc: 'Baby\'s eyes can move slowly. Hair and eyebrows grow.' },
+{ fruit: 'Turnip', size: '26 cm', symptoms: ['Difficulty sleeping', 'Acne', 'Ligament pain'], desc: 'Baby\'s hearing develops. Loud noises may startle them.' },
+{ fruit: 'Bell pepper', size: '28 cm', symptoms: ['Low back ache', 'Breathlessness', 'Frequent bathroom trips'], desc: 'Baby\'s bones are fully formed. Vernix caseosa protects skin.' },
+{ fruit: 'Banana', size: '30 cm', symptoms: ['Hemorrhoids', 'Rib pain', 'Braxton Hicks stronger'], desc: 'Baby begins to hear your voice. You may feel hiccups.' },
+{ fruit: 'Carrot', size: '32 cm', symptoms: ['Swollen ankles', 'Stretch marks', 'Navel pops out'], desc: 'Gender visible on ultrasound. Baby is very active.' },
+{ fruit: 'Pomegranate', size: '34 cm', symptoms: ['Lightning crotch', 'Varicose veins', 'Carpal tunnel'], desc: 'Baby practices breathing. Eyebrows and lashes are fully formed.' },
+{ fruit: 'Papaya', size: '36 cm', symptoms: ['Heart palpitations', 'Joint pain', 'Vivid dreams'], desc: 'Baby has sleep-wake cycles. The brain is developing rapidly.' },
+{ fruit: 'Grapefruit', size: '38 cm', symptoms: ['Contractions possible', 'Ankle swelling', 'Emotional'], desc: 'Baby\'s lungs begin producing surfactant. Skin is less translucent.' },
+{ fruit: 'Cauliflower', size: '40 cm', symptoms: ['Pelvic pressure', 'Backache', 'Leg cramps'], desc: 'Baby can hear and recognize your voice. Most babies turn head-down.' },
+{ fruit: 'Eggplant', size: '42 cm', symptoms: ['Insomnia', 'Frequent urination', 'Braxton Hicks'], desc: 'Baby responds to light. Lungs continue to mature.' },
+{ fruit: 'Kale bunch', size: '44 cm', symptoms: ['Anxiety', 'Fatigue', 'Waddling gait'], desc: 'Baby\'s eyes open. Immune system strengthens.' },
+{ fruit: 'Coconut', size: '46 cm', symptoms: ['Shortness of breath', 'Heartburn', 'Itchy belly'], desc: 'Baby can blink. Brain tissue continues growing.' },
+{ fruit: 'Butternut squash', size: '48 cm', symptoms: ['Hard to get comfy', 'Lower back pain', 'Nesting instinct'], desc: 'Baby\'s bones are fully developed but still soft. Baby is very active.' },
+{ fruit: 'Large cabbage', size: '50 cm', symptoms: ['Trouble sleeping', 'Contractions', 'Water retention'], desc: 'Baby\'s fingernails reach fingertips. Lanugo starts falling off.' },
+{ fruit: 'Large cucumber', size: '52 cm', symptoms: ['Braxton Hicks intensifies', 'Pelvic pressure', 'Fatigue'], desc: 'Baby\'s movements may feel different as space gets tight.' },
+{ fruit: 'Jicama', size: '54 cm', symptoms: ['Shortness of breath', 'Varicose veins', 'Lightning crotch'], desc: 'Baby\'s kicks are strong. Most babies are head-down by now.' },
+{ fruit: 'Honeydew', size: '56 cm', symptoms: ['Pelvic pain', 'Backache', 'Nesting energy'], desc: 'Baby\'s skin is smooth. Pupils react to light.' },
+{ fruit: 'Pineapple', size: '58 cm', symptoms: ['Contractions', 'Diarrhea', 'Mucus plug loss'], desc: 'Baby\'s immune system develops. Fingernails reach fingertips.' },
+{ fruit: 'Large honeydew', size: '60 cm', symptoms: ['Lightning (baby drops)', 'Cervical dilation', 'Back labor'], desc: 'Baby\'s lungs are nearly fully mature. Baby gains 200g+ per week.' },
+{ fruit: 'Romaine lettuce', size: '62 cm', symptoms: ['Braxton Hicks', 'Pelvic pressure', 'Exhaustion'], desc: 'Baby\'s hearing is fully developed. Baby may settle into the pelvis.' },
+{ fruit: 'Bunch of Swiss chard', size: '64 cm', symptoms: ['Swollen feet', 'Difficulty breathing', 'Anxiety'], desc: 'Baby\'s head may engage. Vernix and lanugo continue shedding.' },
+{ fruit: 'Leek', size: '66 cm', symptoms: ['Stronger contractions', 'Diarrhea', 'Nesting urge'], desc: 'Baby\'s grip is strong. Most body hair has fallen off.' },
+{ fruit: 'Small pumpkin', size: '68 cm', symptoms: ['Frequent Braxton Hicks', 'Loss of appetite', 'Contractions'], desc: 'Baby\'s lungs are mature. Baby may descend into the pelvis.' },
+{ fruit: 'Watermelon', size: '70 cm', symptoms: ['Cramping', 'Back labor', 'Water breaking possible'], desc: 'Baby is full term. All organs ready for life outside the womb.' },
+{ fruit: 'Mini watermelon', size: '72 cm', symptoms: ['Contractions', 'Cervical changes', 'Baby engagement'], desc: 'Baby is post-term. Induction may be discussed if overdue.' },
+{ fruit: 'Cantaloupe', size: '74 cm', symptoms: ['Mucus plug loss', 'Regular contractions', 'Water breaking'], desc: 'Baby is still healthy but medical supervision increases.' }
+];
+
+let currentWeek = 0;
+
+function calculate() {
+const mode = document.getElementById('calcMode').value;
+const input = document.getElementById('dateInput');
+const errorEl = document.getElementById('errorMsg');
+errorEl.style.display = 'none';
+
+if (!input.value) {
+errorEl.textContent = 'Please select a valid date.';
+errorEl.style.display = 'block';
+return;
+}
+
+const selected = new Date(input.value + 'T12:00:00');
+if (isNaN(selected.getTime())) {
+errorEl.style.display = 'block';
+return;
+}
+
+const today = new Date();
+today.setHours(12,0,0,0);
+
+let lmp;
+if (mode === 'due') {
+const dueDate = new Date(selected);
+lmp = new Date(dueDate);
+lmp.setDate(lmp.getDate() - 280);
+} else {
+lmp = new Date(selected);
+}
+
+const daysPregnant = Math.floor((today - lmp) / (1000*60*60*24));
+let weeks = Math.floor(daysPregnant / 7);
+const days = daysPregnant % 7;
+if (weeks < 0) weeks = 0;
+if (weeks > 42) weeks = 42;
+
+currentWeek = Math.min(Math.max(weeks, 0), 41);
+
+const dueDate = new Date(lmp);
+dueDate.setDate(dueDate.getDate() + 280);
+
+const daysLeft = Math.max(0, Math.floor((dueDate - today) / (1000*60*60*24)));
+const weeksLeft = Math.floor(daysLeft / 7);
+const daysLeftMod = daysLeft % 7;
+
+let trimester = '';
+if (weeks < 13) trimester = 'First Trimester (Weeks 1–12)';
+else if (weeks < 28) trimester = 'Second Trimester (Weeks 13–27)';
+else trimester = 'Third Trimester (Weeks 28–40)';
+
+document.getElementById('currentWeek').textContent = 'Week ' + (weeks === 0 && daysPregnant < 0 ? '0 (not yet pregnant)' : weeks);
+document.getElementById('trimester').textContent = daysPregnant < 0 ? 'Not yet pregnant' : trimester;
+document.getElementById('farAlong').textContent = daysPregnant < 1 ? 'Not yet pregnant' : weeks + ' weeks, ' + days + ' days';
+document.getElementById('timeLeft').textContent = daysPregnant < 1 ? formatDate(dueDate) + ' (due date)' : weeksLeft + ' weeks, ' + daysLeftMod + ' days';
+
+const progressPct = Math.min(100, Math.max(0, (weeks / 40) * 100));
+document.getElementById('progressBar').style.width = progressPct + '%';
+document.getElementById('progressLabel').textContent = weeks + ' / 40 weeks';
+
+updateWeekDetail();
+document.getElementById('results').classList.add('show');
+}
+
+function updateWeekDetail() {
+const idx = Math.min(currentWeek, weekData.length - 1);
+const data = weekData[idx];
+document.getElementById('detailTitle').textContent = 'Week ' + idx + ' — Baby is the size of a ' + data.fruit;
+document.getElementById('detailDesc').textContent = data.desc;
+const extra = document.getElementById('detailExtra');
+extra.innerHTML = '<span class="fruit">🍎 Size: ' + data.size + '</span><ul class="symptoms-list">' + data.symptoms.map(s => '<li>' + s + '</li>').join('') + '</ul>';
+document.getElementById('weekNavLabel').textContent = 'Week ' + idx;
+}
+
+function changeWeek(delta) {
+currentWeek = Math.max(0, Math.min(41, currentWeek + delta));
+updateWeekDetail();
+document.getElementById('progressBar').style.width = ((currentWeek / 40) * 100) + '%';
+document.getElementById('progressLabel').textContent = currentWeek + ' / 40 weeks';
+
+const today = new Date();
+today.setHours(12,0,0,0);
+const mode = document.getElementById('calcMode').value;
+const input = document.getElementById('dateInput');
+if (input.value) {
+let lmp;
+const selected = new Date(input.value + 'T12:00:00');
+if (mode === 'due') {
+const dueDate = new Date(selected);
+lmp = new Date(dueDate);
+lmp.setDate(lmp.getDate() - 280);
+} else {
+lmp = new Date(selected);
+}
+const wDate = addDays(lmp, currentWeek * 7);
+document.getElementById('detailDesc').textContent = weekData[Math.min(currentWeek, 40)].desc + ' (Week ' + currentWeek + ' occurs around ' + formatDate(wDate) + ')';
+}
+}
+
+function addDays(date, days) {
+const r = new Date(date);
+r.setDate(r.getDate() + days);
+return r;
+}
+
+function formatDate(date) {
+const d = new Date(date);
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+document.getElementById('calcMode').addEventListener('change', function() {
+const label = document.getElementById('dateLabel');
+label.textContent = this.value === 'due' ? 'Your due date' : 'First day of last menstrual period';
+document.getElementById('results').classList.remove('show');
+});
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/ovulation-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Ovulation Calculator — Fertility Window & Ovulation Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

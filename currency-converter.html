@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Currency Converter — Live Exchange Rates (USD, EUR, GBP, JPY)</title>
+<meta name="description" content="Convert between 21 world currencies using live exchange rates. Auto-detects your local currency. Free currency converter.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 32px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 24px;
+    color: #f0f6fc;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #8b949e;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  input, select {
+    width: 100%;
+    padding: 12px 14px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    color: #e6edf3;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus {
+    border-color: #58a6ff;
+  }
+  select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+  .currency-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .currency-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+  }
+  .swap-btn {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #30363d;
+    border-radius: 50%;
+    background: #21262d;
+    color: #e6edf3;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+    margin-bottom: 0;
+    align-self: flex-end;
+  }
+  .swap-btn:hover {
+    background: #30363d;
+    border-color: #58a6ff;
+  }
+  .swap-btn svg { display: block; }
+  .convert-btn {
+    width: 100%;
+    padding: 14px;
+    background: #238636;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 4px;
+  }
+  .convert-btn:hover { background: #2ea043; }
+  .convert-btn:disabled {
+    background: #1a5e2a;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .result {
+    margin-top: 20px;
+    padding: 20px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    text-align: center;
+    display: none;
+  }
+  .result.show { display: block; }
+  .result .amount {
+    font-size: 32px;
+    font-weight: 700;
+    color: #f0f6fc;
+    word-break: break-all;
+  }
+  .result .rate {
+    font-size: 14px;
+    color: #8b949e;
+    margin-top: 8px;
+  }
+  .error {
+    color: #f85149;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 12px;
+    display: none;
+  }
+  .error.show { display: block; }
+  .loading {
+    text-align: center;
+    margin-top: 12px;
+    color: #8b949e;
+    font-size: 14px;
+    display: none;
+  }
+  .loading.show { display: block; }
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #30363d;
+    border-top-color: #58a6ff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .footer {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: #484f58;
+  }
+  @media (max-width: 520px) {
+    .container { padding: 20px 16px; }
+    h1 { font-size: 20px; }
+    .currency-row { flex-direction: column; gap: 12px; }
+    .swap-btn {
+      width: 100%;
+      height: 42px;
+      border-radius: 8px;
+      align-self: stretch;
+    }
+    .result .amount { font-size: 26px; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Currency Converter \u2014 Live Exchange Rates (USD, EUR, GBP, JPY)",
+  "description": "Convert between 21 world currencies using live exchange rates. Auto-detects your local currency. Free currency converter.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<div class="container">
+  <h1>Currency Converter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+
+  <div class="form-group">
+    <label for="amount">Amount</label>
+    <input type="number" id="amount" placeholder="Enter amount" min="0" step="any" value="1">
+  </div>
+
+  <div class="currency-row">
+    <div class="form-group">
+      <label for="from">From</label>
+      <select id="from"></select>
+    </div>
+    <button class="swap-btn" id="swapBtn" title="Swap currencies" aria-label="Swap currencies">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
+      </svg>
+    </button>
+    <div class="form-group">
+      <label for="to">To</label>
+      <select id="to"></select>
+    </div>
+  </div>
+
+  <button class="convert-btn" id="convertBtn">Convert</button>
+
+  <div class="loading" id="loading">
+    <span class="spinner"></span>Fetching rates…
+  </div>
+
+  <div class="error" id="error"></div>
+
+  <div class="result" id="result">
+    <div class="amount" id="convertedAmount"></div>
+    <div class="rate" id="exchangeRate"></div>
+  </div>
+
+  <div class="footer">Free Currency Converter — Powered by open exchange rates</div>
+</div>
+
+<script>
+(function() {
+  const currencies = [
+    'USD','EUR','GBP','JPY','CAD','AUD','CHF','CNY','INR','MXN',
+    'BRL','KRW','SEK','NOK','NZD','SGD','HKD','TRY','ZAR','AED','SAR'
+  ];
+
+  const fromSelect = document.getElementById('from');
+  const toSelect = document.getElementById('to');
+  const amountInput = document.getElementById('amount');
+  const convertBtn = document.getElementById('convertBtn');
+  const swapBtn = document.getElementById('swapBtn');
+  const resultDiv = document.getElementById('result');
+  const convertedAmount = document.getElementById('convertedAmount');
+  const exchangeRate = document.getElementById('exchangeRate');
+  const errorDiv = document.getElementById('error');
+  const loadingDiv = document.getElementById('loading');
+
+  // Detect local currency via Intl
+  let localCurrency = 'USD';
+  try {
+    const parts = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).resolvedOptions();
+    localCurrency = parts.currency;
+  } catch (_) {}
+
+  // Populate dropdowns
+  function populateSelect(select, selected) {
+    select.innerHTML = '';
+    currencies.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      if (c === selected) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+
+  // Set defaults: from=USD, to=local (or EUR if local === USD)
+  let defaultFrom = 'USD';
+  let defaultTo = localCurrency === 'USD' ? 'EUR' : localCurrency;
+  populateSelect(fromSelect, defaultFrom);
+  populateSelect(toSelect, defaultTo);
+
+  // Swap
+  swapBtn.addEventListener('click', function() {
+    const tmp = fromSelect.value;
+    fromSelect.value = toSelect.value;
+    toSelect.value = tmp;
+    resultDiv.classList.remove('show');
+    errorDiv.classList.remove('show');
+  });
+
+  // Convert
+  convertBtn.addEventListener('click', doConvert);
+
+  async function doConvert() {
+    const from = fromSelect.value;
+    const to = toSelect.value;
+    const amount = parseFloat(amountInput.value);
+
+    if (isNaN(amount) || amount <= 0) {
+      showError('Please enter a valid positive amount.');
+      return;
+    }
+
+    if (from === to) {
+      showError('Select two different currencies.');
+      return;
+    }
+
+    resultDiv.classList.remove('show');
+    errorDiv.classList.remove('show');
+    loadingDiv.classList.add('show');
+    convertBtn.disabled = true;
+
+    try {
+      const resp = await fetch('https://open.er-api.com/v6/latest/' + from);
+      if (!resp.ok) throw new Error('Failed to fetch rates (HTTP ' + resp.status + ')');
+      const data = await resp.json();
+
+      if (data.result !== 'success') {
+        throw new Error(data['error-type'] || 'API returned an error');
+      }
+
+      const rate = data.rates[to];
+      if (rate === undefined) {
+        throw new Error('Rate for ' + to + ' not available.');
+      }
+
+      const result = amount * rate;
+
+      // Format
+      const fmtAmount = new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency: to,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(result);
+
+      const fmtRate = new Intl.NumberFormat(undefined, {
+        style: 'decimal',
+        minimumSignificantDigits: 4,
+        maximumSignificantDigits: 6
+      }).format(rate);
+
+      convertedAmount.textContent = fmtAmount;
+      exchangeRate.textContent = '1 ' + from + ' = ' + fmtRate + ' ' + to;
+      resultDiv.classList.add('show');
+    } catch (err) {
+      showError(err.message || 'Conversion failed. Please try again.');
+    } finally {
+      loadingDiv.classList.remove('show');
+      convertBtn.disabled = false;
+    }
+  }
+
+  function showError(msg) {
+    errorDiv.textContent = msg;
+    errorDiv.classList.add('show');
+  }
+
+  // Convert on Enter key
+  amountInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doConvert();
+  });
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/unit-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Unit Converter — Length, Mass, Volume, Temperature & More</a>
+      <a href="/inches-to-feet" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Inches to Feet Converter — Convert Inches to Feet+Inches</a>
+      <a href="/km-to-miles" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Kilometers to Miles Converter — KM to MI</a>
+      <a href="/mm-to-inches" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Millimeters to Inches Converter — MM to IN</a>
+      <a href="/timezone-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Time Zone Converter — Convert Time Between Timezones</a>
+      <a href="/binary-translator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Binary Translator — Convert Text to Binary & Binary to Text</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

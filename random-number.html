@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random Number Generator — Generate Random Numbers</title>
+<meta name="description" content="Generate random numbers within any range. Supports batches, unique values, and history tracking.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.container{max-width:520px;width:100%}
+h1{text-align:center;color:#ffd700;margin:24px 0 20px;font-size:1.6rem}
+.controls{background:#1e1e1e;border-radius:12px;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.controls label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:#aaa}
+.controls label.full{grid-column:1/-1}
+.controls input[type=number]{padding:10px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:#e0e0e0;font-size:1rem}
+.controls input[type=checkbox]{width:20px;height:20px;accent-color:#ffd700}
+.controls .checkbox-label{display:flex;flex-direction:row;align-items:center;gap:8px;font-size:.85rem;color:#aaa}
+.btn{background:#ffd700;color:#111;border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:.15s;grid-column:1/-1}
+.btn:hover{background:#ffed4a;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+#results{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;min-height:60px}
+#results .num{background:#1a1a2e;border-radius:10px;padding:14px 20px;font-size:1.3rem;font-weight:700;color:#ffd700;min-width:50px;text-align:center;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+#history{background:#1e1e1e;border-radius:12px;padding:16px}
+#history h3{font-size:.95rem;color:#aaa;margin-bottom:10px}
+#historyList{list-style:none;font-size:.85rem;max-height:200px;overflow-y:auto}
+#historyList li{padding:6px 8px;border-bottom:1px solid #2a2a2a;display:flex;justify-content:space-between}
+#historyList li:last-child{border-bottom:none}
+.clear-btn{background:transparent;color:#f55;border:1px solid #f55;border-radius:6px;padding:4px 12px;font-size:.8rem;cursor:pointer;float:right}
+.error{color:#f55;font-size:.85rem;text-align:center;margin-bottom:8px;min-height:20px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Random Number Generator \u2014 Generate Random Numbers",
+  "description": "Generate random numbers within any range. Supports batches, unique values, and history tracking.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🔢 Random Number Generator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="controls">
+<label>Min <input type="number" id="minVal" value="1"></label>
+<label>Max <input type="number" id="maxVal" value="100"></label>
+<label>Count (1-20) <input type="number" id="countVal" value="1" min="1" max="20"></label>
+<label class="checkbox-label"><input type="checkbox" id="uniqueToggle"> Unique (no repeats)</label>
+<button class="btn" id="generateBtn">🎲 Generate</button>
+</div>
+<div id="error" class="error"></div>
+<div id="results"></div>
+<div id="history">
+<h3>📜 History <button class="clear-btn" id="clearHistory">Clear</button></h3>
+<ul id="historyList"></ul>
+</div>
+</div>
+<script>
+const minVal=document.getElementById('minVal');
+const maxVal=document.getElementById('maxVal');
+const countVal=document.getElementById('countVal');
+const uniqueToggle=document.getElementById('uniqueToggle');
+const generateBtn=document.getElementById('generateBtn');
+const resultsDiv=document.getElementById('results');
+const errorDiv=document.getElementById('error');
+const historyList=document.getElementById('historyList');
+let history=JSON.parse(localStorage.getItem('randomHistory')||'[]');
+
+function generate(){
+const min=parseInt(minVal.value);
+const max=parseInt(maxVal.value);
+let count=parseInt(countVal.value);
+const unique=uniqueToggle.checked;
+errorDiv.textContent='';
+if(isNaN(min)||isNaN(max)||isNaN(count)){errorDiv.textContent='Please fill all fields';return}
+if(min>=max){errorDiv.textContent='Min must be less than Max';return}
+if(count<1||count>20){errorDiv.textContent='Count must be 1-20';return}
+const range=max-min+1;
+if(unique&&count>range){errorDiv.textContent='Cannot generate that many unique numbers in this range';return}
+let nums;
+if(unique){
+const pool=Array.from({length:range},(_,i)=>i+min);
+for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+nums=pool.slice(0,count);
+}else{
+nums=Array.from({length:count},()=>Math.floor(Math.random()*range)+min);
+}
+resultsDiv.innerHTML=nums.map(n=>`<span class="num">${n}</span>`).join('');
+const entry=`[${min}-${max}] ×${count}${unique?' U':''}: ${nums.join(', ')}`;
+history.push(entry);
+if(history.length>50)history=history.slice(-50);
+localStorage.setItem('randomHistory',JSON.stringify(history));
+renderHistory();
+}
+function renderHistory(){
+historyList.innerHTML=history.slice().reverse().map(h=>`<li><span>${h}</span></li>`).join('');
+}
+generateBtn.addEventListener('click',generate);
+document.getElementById('clearHistory').addEventListener('click',()=>{history=[];localStorage.removeItem('randomHistory');renderHistory();});
+renderHistory();
+</script>
+</div>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Christmas Planning Spreadsheet — Holiday Planner</title>
+<meta name="description" content="Plan your Christmas with a comprehensive spreadsheet template. Gift tracker, budget, meal planner, guest list, and shopping checklist.">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #0d0d0d;
+    color: #e8e8e8;
+    line-height: 1.6;
+  }
+  a { color: #f43f5e; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .badge {
+    display: inline-block;
+    background: rgba(244, 63, 94, .15);
+    color: #fb7185;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 80px 0 60px;
+    background: linear-gradient(180deg, #1a1a2e 0%, #0d0d0d 100%);
+  }
+  .hero h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #f43f5e, #fb923c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: 1.15rem;
+    color: #a1a1aa;
+    max-width: 640px;
+    margin: 0 auto 32px;
+  }
+
+  /* Product image placeholder */
+  .product-card {
+    background: linear-gradient(145deg, #1e1e2f, #151525);
+    border: 1px solid #2a2a3e;
+    border-radius: 20px;
+    padding: 48px 32px;
+    margin: 0 auto 48px;
+    max-width: 500px;
+    text-align: center;
+  }
+  .product-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #f43f5e20, #fb923c20);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    border: 1px solid #2a2a3e;
+  }
+  .product-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .product-card .price {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #f43f5e;
+    margin: 12px 0 8px;
+  }
+  .product-card .price span {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #71717a;
+  }
+  .product-card .one-time {
+    color: #71717a;
+    font-size: .9rem;
+    margin-bottom: 24px;
+  }
+
+  .btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 14px 40px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(244,63,94,.35);
+    text-decoration: none;
+  }
+  .btn--gumroad {
+    background: linear-gradient(135deg, #ff90e8, #ff5cd1);
+  }
+  .btn--gumroad:hover {
+    box-shadow: 0 8px 25px rgba(255,92,209,.3);
+  }
+
+  /* Features */
+  .features {
+    padding: 64px 0;
+  }
+  .section-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 40px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    background: #15151f;
+    border: 1px solid #222;
+    border-radius: 16px;
+    padding: 28px 24px;
+    transition: border-color .2s;
+  }
+  .feature-card:hover { border-color: #f43f5e44; }
+  .feature-card .icon { font-size: 32px; margin-bottom: 12px; }
+  .feature-card h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; }
+  .feature-card p { font-size: .92rem; color: #a1a1aa; }
+
+  /* What's included */
+  .included {
+    background: #11111c;
+    padding: 64px 0;
+  }
+  .included-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .included-item {
+    background: #15151f;
+    border: 1px solid #222;
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+  }
+  .included-item .num {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f43f5e, #fb923c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .included-item p { color: #a1a1aa; font-size: .92rem; margin-top: 4px; }
+
+  /* Reviews */
+  .reviews {
+    padding: 64px 0;
+  }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .review-card {
+    background: #15151f;
+    border: 1px solid #222;
+    border-radius: 16px;
+    padding: 28px 24px;
+  }
+  .review-card .stars {
+    color: #fbbf24;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  .review-card blockquote {
+    font-size: .95rem;
+    color: #d4d4d8;
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+  .review-card .author {
+    font-size: .85rem;
+    color: #71717a;
+  }
+  .review-card .author strong { color: #a1a1aa; }
+
+  /* FAQ */
+  .faq {
+    background: #11111c;
+    padding: 64px 0;
+  }
+  .faq-list {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  details {
+    background: #15151f;
+    border: 1px solid #222;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  details summary {
+    padding: 18px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: '+';
+    font-size: 1.2rem;
+    color: #f43f5e;
+    transition: transform .2s;
+  }
+  details[open] summary::after {
+    content: '−';
+  }
+  details .answer {
+    padding: 0 24px 18px;
+    color: #a1a1aa;
+    font-size: .95rem;
+  }
+
+  /* Affiliate + Footer */
+  .affiliate {
+    text-align: center;
+    padding: 24px;
+    font-size: .8rem;
+    color: #52525b;
+    border-top: 1px solid #1f1f2e;
+  }
+  .affiliate a { color: #71717a; }
+  .footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: .85rem;
+    color: #52525b;
+  }
+
+  /* CTA section */
+  .cta-section {
+    text-align: center;
+    padding: 48px 0 64px;
+  }
+  .cta-section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .cta-section p {
+    color: #a1a1aa;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 2rem; }
+    .hero { padding: 48px 0 32px; }
+    .product-card { padding: 32px 20px; }
+    .product-icon { width: 90px; height: 90px; font-size: 42px; }
+    .features-grid, .included-grid, .reviews-grid { grid-template-columns: 1fr; }
+    .section-title { font-size: 1.6rem; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Christmas Planning Spreadsheet \u2014 Holiday Planner",
+  "description": "Plan your Christmas with a comprehensive spreadsheet template. Gift tracker, budget, meal planner, guest list, and shopping checklist.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <span class="badge">🎄 Holiday Planner</span>
+    <h1>The Ultimate Christmas Planning Spreadsheet</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p>Stop the holiday chaos. One spreadsheet to track gifts, budget, meals, guests, and your entire Christmas schedule — so you can actually enjoy the season.</p>
+
+    <!-- Product image placeholder -->
+    <div class="product-card">
+      <div class="product-icon">🎄</div>
+      <h3>Christmas Planning Spreadsheet</h3>
+      <div class="price">$12 <span>USD</span></div>
+      <p class="one-time">One-time payment · Lifetime access · Instant download</p>
+      <a href="#" class="btn btn--gumroad">🎁 Buy on Gumroad</a>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="container">
+    <h2 class="section-title">Everything You Need in One Sheet</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon">🎁</div>
+        <h4>Gift Tracker</h4>
+        <p>Track every gift — who, what, budget, bought, wrapped, and delivered. Never double-buy or forget a present again.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💰</div>
+        <h4>Budget Planner</h4>
+        <p>Set your total holiday budget, allocate per category (gifts, food, decor, travel), and see real-time spending vs. plan.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🍽️</div>
+        <h4>Meal Planner</h4>
+        <p>Plan Christmas Eve, Christmas Day, and Boxing Day menus. Include ingredients lists and prep-day schedules.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">👥</div>
+        <h4>Guest List</h4>
+        <p>Manage RSVPs, dietary restrictions, plus-ones, and seating arrangements — all in one view.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📅</div>
+        <h4>Schedule</h4>
+        <p>Countdown calendar with daily tasks from November 1st through New Year's. Know exactly what to do each day.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">✅</div>
+        <h4>Shopping Checklist</h4>
+        <p>Master list of everything to buy — food, gifts, decor, supplies. Check off items as you shop and see what's left.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- What's Included -->
+<section class="included" id="whats-included">
+  <div class="container">
+    <h2 class="section-title">What's Inside</h2>
+    <div class="included-grid">
+      <div class="included-item">
+        <div class="num">6</div>
+        <p>Pre-built spreadsheet sheets</p>
+      </div>
+      <div class="included-item">
+        <div class="num">20+</div>
+        <p>Ready-to-use templates &amp; formulas</p>
+      </div>
+      <div class="included-item">
+        <div class="num">📄</div>
+        <p>Printable PDF version included</p>
+      </div>
+      <div class="included-item">
+        <div class="num">📱</div>
+        <p>Works in Google Sheets &amp; Excel</p>
+      </div>
+      <div class="included-item">
+        <div class="num">🔄</div>
+        <p>Free lifetime updates</p>
+      </div>
+      <div class="included-item">
+        <div class="num">🎄</div>
+        <p>Bonus Christmas card list</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="reviews" id="reviews">
+  <div class="container">
+    <h2 class="section-title">Loved by Thousands of Planners</h2>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"This spreadsheet saved my Christmas. I used to forget at least 3 gifts every year. Now everything is tracked — bought, wrapped, delivered. My family thinks I'm super organized now!"</blockquote>
+        <p class="author"><strong>Sarah M.</strong> — Verified Buyer</p>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The meal planner alone is worth the $12. I planned the entire Christmas dinner, assigned dishes to guests, and my shopping list was auto-generated. No last-minute store runs this year."</blockquote>
+        <p class="author"><strong>James K.</strong> — Verified Buyer</p>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I host 20+ people every year and this spreadsheet keeps me sane. Guest list, dietary restrictions, budget tracking — it's all there. The printable PDF is a lifesaver for my non-techy relatives helping out."</blockquote>
+        <p class="author"><strong>Amanda R.</strong> — Verified Buyer</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <details>
+        <summary>How do I access the spreadsheet after purchase?</summary>
+        <div class="answer">Immediately after purchase on Gumroad, you'll receive a download link via email. Download the file and open it in Google Sheets (free) or Microsoft Excel.</div>
+      </details>
+      <details>
+        <summary>Does it work in both Google Sheets and Excel?</summary>
+        <div class="answer">Yes! The spreadsheet is fully compatible with Google Sheets and Excel 2016 or newer. All formulas, conditional formatting, and dropdowns work in both.</div>
+      </details>
+      <details>
+        <summary>Can I get a printable version?</summary>
+        <div class="answer">Absolutely. The download includes a PDF version of all sheets, formatted and ready to print on US Letter or A4 paper.</div>
+      </details>
+      <details>
+        <summary>Is this a one-time purchase or subscription?</summary>
+        <div class="answer">One-time payment of $12. No subscriptions, no recurring fees. You own the spreadsheet forever and get free lifetime updates.</div>
+      </details>
+      <details>
+        <summary>Can I share it with family members?</summary>
+        <div class="answer">The license covers personal use for you and your household. If you'd like to share with extended family or use it for a community event, please reach out — we're happy to help.</div>
+      </details>
+      <details>
+        <summary>What if I need a refund?</summary>
+        <div class="answer">Your satisfaction is guaranteed. If the spreadsheet doesn't work for you, email us within 14 days for a full refund — no questions asked.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Ready to Have the Best Christmas Ever?</h2>
+    <p>Join 5,000+ organized families who start their Christmas planning with this spreadsheet.</p>
+    <a href="#" class="btn btn--gumroad">🎁 Buy on Gumroad — $12</a>
+  </div>
+</section>
+
+<!-- Affiliate disclosure -->
+<div class="affiliate">
+  <p><em>Affiliate Disclosure:</em> Some links on this page are affiliate links. We may earn a small commission if you purchase through them, at no extra cost to you. This helps us keep creating useful resources. Thank you for your support! 🎄</p>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>&copy; 2026 Christmas Planning Spreadsheet. All rights reserved.</p>
+</footer>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

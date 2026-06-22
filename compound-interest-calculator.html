@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compound Interest Calculator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:900px;width:100%}
+h1{text-align:center;font-size:1.7rem;font-weight:700;color:#fff;margin:10px 0 6px}
+.subtitle{text-align:center;color:#8b949e;font-size:.9rem;margin-bottom:24px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{font-size:1.05rem;font-weight:600;color:#f0f6fc;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #30363d}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.field label{display:block;font-size:.82rem;color:#8b949e;margin-bottom:4px;font-weight:500}
+.field input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#f0f6fc;font-size:.95rem;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#58a6ff;box-shadow:0 0 0 2px rgba(88,166,255,.15)}
+.field input::placeholder{color:#484f58}
+.radio-group{display:flex;gap:16px;margin-top:6px}
+.radio-group label{font-size:.88rem;color:#c9d1d9;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn{width:100%;background:linear-gradient(135deg,#238636,#2ea043);border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:600;color:#fff;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:8px}
+.btn:hover{opacity:.9}
+.btn:active{transform:scale(.98)}
+.result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.result-item{background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:14px 16px}
+.result-item .label{font-size:.75rem;color:#8b949e;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.result-item .value{font-size:1.25rem;font-weight:700;color:#f0f6fc}
+.result-item .value.accent{color:#58a6ff}
+.result-item .value.green{color:#3fb950}
+.result-item .value.orange{color:#d29922}
+.chart-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:8px}
+.chart-bar{display:flex;height:32px;border-radius:8px;overflow:hidden;width:100%;max-width:500px}
+.chart-bar .seg{display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;color:#fff;transition:width .4s ease}
+.chart-bar .seg.principal{background:#58a6ff}
+.chart-bar .seg.contributions{background:#3fb950}
+.chart-bar .seg.interest{background:#d29922}
+.chart-labels{display:flex;justify-content:center;gap:24px;font-size:.82rem;flex-wrap:wrap}
+.chart-labels span{display:flex;align-items:center;gap:6px}
+.chart-labels .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.principal{background:#58a6ff}
+.dot.contributions{background:#3fb950}
+.dot.interest{background:#d29922}
+.year-table-wrap{overflow-x:auto;max-height:350px;overflow-y:auto}
+.year-table-wrap::-webkit-scrollbar{width:6px}
+.year-table-wrap::-webkit-scrollbar-thumb{background:#30363d;border-radius:4px}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead{position:sticky;top:0;z-index:1}
+th{background:#0d1117;color:#8b949e;font-weight:600;text-align:right;padding:8px 10px;border-bottom:1px solid #30363d;white-space:nowrap}
+th:first-child{text-align:left}
+td{text-align:right;padding:7px 10px;border-bottom:1px solid #21262d;color:#c9d1d9}
+td:first-child{text-align:left;color:#8b949e}
+tr:hover td{background:#161b22}
+footer{text-align:center;padding:20px 0 10px;color:#484f58;font-size:.8rem;border-top:1px solid #21262d;width:100%}
+@media(max-width:600px){.grid,.grid-3,.result-grid{grid-template-columns:1fr}.card{padding:16px}h1{font-size:1.35rem}}
+</style>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>📈 Compound Interest Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">See how your money grows over time with compound interest</p>
+
+<div class="card">
+  <h2>⚙️ Parameters</h2>
+  <div class="grid">
+    <div class="field">
+      <label>Initial Deposit ($)</label>
+      <input type="number" id="initial" value="10000" min="0" step="500">
+    </div>
+    <div class="field">
+      <label>Monthly Contribution ($)</label>
+      <input type="number" id="monthly" value="500" min="0" step="50">
+    </div>
+    <div class="field">
+      <label>Annual Interest Rate (%)</label>
+      <input type="number" id="rate" value="7" min="0" max="100" step="0.25">
+    </div>
+    <div class="field">
+      <label>Time Horizon (years)</label>
+      <input type="number" id="years" value="20" min="1" max="80">
+    </div>
+  </div>
+  <div class="field" style="margin-top:10px">
+    <label>Compound Frequency</label>
+    <div class="radio-group">
+      <label><input type="radio" name="compound" value="12" checked> Monthly</label>
+      <label><input type="radio" name="compound" value="4"> Quarterly</label>
+      <label><input type="radio" name="compound" value="1"> Annually</label>
+    </div>
+  </div>
+  <button class="btn" id="calcBtn">📊 Calculate</button>
+</div>
+
+<div class="card">
+  <h2>💰 Results</h2>
+  <div class="result-grid">
+    <div class="result-item"><div class="label">Final Balance</div><div class="value accent" id="finalBalance">$0.00</div></div>
+    <div class="result-item"><div class="label">Total Contributions</div><div class="value" id="totalContributions">$0.00</div></div>
+    <div class="result-item"><div class="label">Total Interest Earned</div><div class="value green" id="totalInterest">$0.00</div></div>
+  </div>
+  <div class="chart-wrap">
+    <div class="chart-bar">
+      <div class="seg principal" id="segPrincipal" style="width:0%">Init</div>
+      <div class="seg contributions" id="segContributions" style="width:0%">Contrib</div>
+      <div class="seg interest" id="segInterest" style="width:0%">Interest</div>
+    </div>
+    <div class="chart-labels">
+      <span><span class="dot principal"></span> Initial: <strong id="chartInitial">$0</strong></span>
+      <span><span class="dot contributions"></span> Contributions: <strong id="chartContrib">$0</strong></span>
+      <span><span class="dot interest"></span> Interest: <strong id="chartInterest">$0</strong></span>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📅 Year-by-Year Growth</h2>
+  <div class="year-table-wrap">
+    <table>
+      <thead><tr><th>Year</th><th>Contributions</th><th>Interest/Yr</th><th>Cumulative Interest</th><th>Balance</th></tr></thead>
+      <tbody id="yearBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>Compound Interest Calculator — All calculations done client-side</footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function fmt(n) {
+  return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function calc() {
+  const P = Math.max(0, parseFloat($('initial').value) || 0);
+  const monthly = Math.max(0, parseFloat($('monthly').value) || 0);
+  const annualRate = Math.max(0, parseFloat($('rate').value) || 0) / 100;
+  const years = Math.max(1, parseInt($('years').value) || 10);
+  const compoundFreq = parseInt(document.querySelector('input[name="compound"]:checked').value);
+
+  const n = compoundFreq;   // compounds per year
+  const r = annualRate / n; // rate per period
+  const totalPeriods = years * n;
+  const periodsPerYear = n;
+
+  // Future value of initial deposit: P * (1 + r)^(totalPeriods)
+  const fvInitial = P * Math.pow(1 + r, totalPeriods);
+
+  // Future value of series (monthly contributions converted to per-compound-period contributions)
+  // Monthly contributions: monthly * 12 per year, so per period: (monthly * 12) / n
+  const periodicContrib = (monthly * 12) / n;
+  let fvContrib = 0;
+  if (r > 0) {
+    fvContrib = periodicContrib * ((Math.pow(1 + r, totalPeriods) - 1) / r);
+  } else {
+    fvContrib = periodicContrib * totalPeriods;
+  }
+
+  const finalBalance = fvInitial + fvContrib;
+  const totalContributions = P + (monthly * 12 * years);
+  const totalInterest = finalBalance - totalContributions;
+
+  // Display results
+  $('finalBalance').textContent = fmt(finalBalance);
+  $('totalContributions').textContent = fmt(totalContributions);
+  $('totalInterest').textContent = fmt(totalInterest);
+
+  // Chart bar
+  const maxSeg = Math.max(finalBalance, 1);
+  const initPct = (P / maxSeg) * 100;
+  const contribTotal = monthly * 12 * years;
+  const contribPct = (contribTotal / maxSeg) * 100;
+  const intPct = (totalInterest / maxSeg) * 100;
+  $('segPrincipal').style.width = initPct + '%';
+  $('segContributions').style.width = contribPct + '%';
+  $('segInterest').style.width = intPct + '%';
+  $('chartInitial').textContent = fmt(P);
+  $('chartContrib').textContent = fmt(contribTotal);
+  $('chartInterest').textContent = fmt(totalInterest);
+
+  // Year-by-year table
+  const tbody = $('yearBody');
+  tbody.innerHTML = '';
+  let balance = P;
+  let cumulativeInterest = 0;
+  let cumulativeContrib = P;
+
+  for (let y = 1; y <= years; y++) {
+    const yearContrib = monthly * 12;
+    cumulativeContrib += yearContrib;
+    let yearInterest = 0;
+
+    // Calculate interest earned this year by simulating each compound period
+    for (let p = 0; p < periodsPerYear; p++) {
+      if (r > 0) {
+        const interestThisPeriod = balance * r;
+        yearInterest += interestThisPeriod;
+        balance += interestThisPeriod;
+      }
+      balance += periodicContrib;
+    }
+
+    cumulativeInterest += yearInterest;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + y + '</td>'
+      + '<td>' + fmt(cumulativeContrib) + '</td>'
+      + '<td>' + fmt(yearInterest) + '</td>'
+      + '<td>' + fmt(cumulativeInterest) + '</td>'
+      + '<td><strong>' + fmt(balance) + '</strong></td>';
+    tbody.appendChild(tr);
+  }
+}
+
+$('calcBtn').addEventListener('click', calc);
+document.querySelectorAll('input').forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') calc(); }));
+calc();
+</script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

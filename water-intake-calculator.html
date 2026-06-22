@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Water Intake Calculator — How Much Water Should You Drink Daily</title>
+<meta name="description" content="Calculate your daily water intake needs based on weight, activity level, and climate. Get your hydration goal in ounces and liters.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{width:100%;max-width:520px}
+h1{color:#58a6ff;font-size:1.6rem;margin:20px 0;text-align:center}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:20px;margin-bottom:20px}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:0.85rem;color:#8b949e;margin-bottom:4px;font-weight:600}
+input,select{width:100%;padding:10px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:0.95rem;outline:none;transition:border .2s}
+input:focus,select:focus{border-color:#58a6ff}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.btn{width:100%;padding:12px;background:#238636;border:none;border-radius:6px;color:#fff;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.result-box{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;margin-top:16px;text-align:center}
+.result-box .big{font-size:1.8rem;font-weight:700;color:#58a6ff}
+.result-box .label{font-size:0.8rem;color:#8b949e;margin-bottom:2px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.target-card{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:14px;text-align:center}
+.target-card .val{font-size:1.1rem;font-weight:700;color:#58a6ff}
+.target-card .lbl{font-size:0.75rem;color:#8b949e}
+.schedule{margin-top:16px}
+.schedule-item{display:flex;justify-content:space-between;padding:8px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;margin-bottom:6px;font-size:0.85rem}
+.schedule-item .time{color:#8b949e}
+.schedule-item .amt{color:#58a6ff;font-weight:600}
+.hidden{display:none}
+.unit-toggle{display:flex;gap:6px;margin-bottom:4px}
+.unit-toggle button{flex:1;padding:6px;background:#0d1117;border:1px solid #30363d;border-radius:4px;color:#8b949e;font-size:0.8rem;cursor:pointer}
+.unit-toggle button.active{background:#1f6feb;border-color:#1f6feb;color:#fff}
+.note{font-size:0.75rem;color:#484f58;margin-top:8px;text-align:center;line-height:1.4}
+footer{text-align:center;padding:20px 0;color:#484f58;font-size:0.75rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Water Intake Calculator \u2014 How Much Water Should You Drink Daily",
+  "description": "Calculate your daily water intake needs based on weight, activity level, and climate. Get your hydration goal in ounces and liters.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>💧 Water Intake Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="card">
+<div class="form-group">
+<label>Weight</label>
+<div class="unit-toggle" id="weightUnitToggle">
+<button class="active" data-unit="kg">kg</button>
+<button data-unit="lbs">lbs</button>
+</div>
+<input type="number" id="weight" step="0.1" value="70" placeholder="Weight">
+</div>
+<div class="form-group">
+<label>Activity Level</label>
+<select id="activity">
+<option value="0">Sedentary (little exercise)</option>
+<option value="0.3" selected>Light (1-3 days / week)</option>
+<option value="0.5">Moderate (3-5 days / week)</option>
+<option value="0.7">Active (6-7 days / week)</option>
+<option value="1.0">Very Active (intense daily / athlete)</option>
+</select>
+</div>
+<div class="form-group">
+<label>Climate</label>
+<select id="climate">
+<option value="0.9">Cool (mild temperatures)</option>
+<option value="1.0" selected>Moderate (average climate)</option>
+<option value="1.2">Hot (high heat / humidity)</option>
+</select>
+</div>
+<button class="btn" onclick="calculate()">Calculate</button>
+<div id="results" class="hidden">
+<div class="result-box">
+<div class="label">Daily Water Intake</div>
+<div class="big" id="ozResult">—</div>
+<div style="font-size:1rem;color:#8b949e;margin-top:4px" id="literResult">—</div>
+</div>
+<div class="grid-2">
+<div class="target-card"><div class="lbl">Per Hour (16h awake)</div><div class="val" id="perHour">—</div></div>
+<div class="target-card"><div class="lbl">8-fl oz Glasses</div><div class="val" id="glasses">—</div></div>
+</div>
+<div class="schedule" id="schedule"></div>
+<div class="note">💡 General guideline: ~30-35 mL per kg of body weight, adjusted for activity and climate. Individual needs vary.</div>
+</div>
+</div>
+<footer>Water Intake Calculator</footer>
+</div>
+<script>
+(function(){
+let weightUnit='kg';
+document.querySelectorAll('#weightUnitToggle button').forEach(b=>{
+b.addEventListener('click',()=>{
+document.querySelectorAll('#weightUnitToggle button').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');
+weightUnit=b.dataset.unit;
+document.getElementById('weight').placeholder=weightUnit==='kg'?'kg':'lbs';
+});
+});
+window.calculate=function(){
+const weightInput=parseFloat(document.getElementById('weight').value);
+let weightKg=weightUnit==='kg'?weightInput:weightInput*0.453592;
+const activity=parseFloat(document.getElementById('activity').value);
+const climate=parseFloat(document.getElementById('climate').value);
+if(!weightKg||weightKg<1){alert('Please enter a valid weight');return;}
+const baseMl=weightKg*33;
+const activityMl=baseMl*activity;
+const climateAdj=(baseMl+activityMl)*(climate-1);
+const totalMl=baseMl+activityMl+climateAdj;
+const totalOz=totalMl/29.5735;
+const totalL=totalMl/1000;
+document.getElementById('ozResult').textContent=Math.round(totalOz).toLocaleString()+' fl oz';
+document.getElementById('literResult').textContent=totalL.toFixed(1)+' liters';
+const perHourMl=totalMl/16;
+document.getElementById('perHour').textContent=Math.round(perHourMl/29.5735)+' oz / '+(perHourMl/1000).toFixed(2)+' L';
+const glasses8oz=totalOz/8;
+document.getElementById('glasses').textContent=Math.round(glasses8oz)+' glasses';
+const scheduleEl=document.getElementById('schedule');
+scheduleEl.innerHTML='<div style="font-size:0.85rem;color:#8b949e;margin-bottom:8px;font-weight:600">⏰ Suggested Schedule (16 waking hours)</div>';
+const perServingMl=totalMl/8;
+const times=['7:00 AM · Wake up','9:00 AM · Morning','11:00 AM · Midday','1:00 PM · Lunch','3:00 PM · Afternoon','5:00 PM · Evening','7:00 PM · Dinner','9:00 PM · Wind down'];
+times.forEach((t,i)=>{
+const div=document.createElement('div');
+div.className='schedule-item';
+const ozVal=perServingMl/29.5735;
+div.innerHTML='<span class="time">'+t+'</span><span class="amt">'+Math.round(ozVal)+' oz / '+(perServingMl/1000).toFixed(2)+' L</span>';
+scheduleEl.appendChild(div);
+});
+document.getElementById('results').classList.remove('hidden');
+};
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+      <a href="/ovulation-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Ovulation Calculator — Fertility Window & Ovulation Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debt Payoff Calculator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:1000px;width:100%}
+h1{text-align:center;font-size:1.7rem;font-weight:700;color:#fff;margin:10px 0 6px}
+.subtitle{text-align:center;color:#8b949e;font-size:.9rem;margin-bottom:24px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{font-size:1.05rem;font-weight:600;color:#f0f6fc;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #30363d}
+.method-tabs{display:flex;gap:8px;margin-bottom:16px}
+.method-tab{padding:8px 18px;border-radius:8px;border:1px solid #30363d;background:transparent;color:#8b949e;font-size:.88rem;cursor:pointer;transition:all .2s}
+.method-tab.active{background:#1f6feb;border-color:#1f6feb;color:#fff}
+.method-tab:hover:not(.active){border-color:#58a6ff;color:#c9d1d9}
+.strategy-box{background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:14px;margin-bottom:14px}
+.strategy-box h3{font-size:.9rem;color:#f0f6fc;margin-bottom:4px}
+.strategy-box p{font-size:.82rem;color:#8b949e;line-height:1.5}
+.flex-row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.flex-row .field{flex:1;min-width:120px}
+.field label{display:block;font-size:.82rem;color:#8b949e;margin-bottom:4px;font-weight:500}
+.field input,.field select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#f0f6fc;font-size:.9rem;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:#58a6ff;box-shadow:0 0 0 2px rgba(88,166,255,.15)}
+.field input::placeholder{color:#484f58}
+.field select option{background:#0d1117;color:#c9d1d9}
+.btn{background:linear-gradient(135deg,#238636,#2ea043);border:none;border-radius:8px;padding:10px 20px;font-size:.95rem;font-weight:600;color:#fff;cursor:pointer;transition:opacity .2s,transform .1s;white-space:nowrap}
+.btn:hover{opacity:.9}
+.btn:active{transform:scale(.98)}
+.btn.danger{background:linear-gradient(135deg,#da3633,#f85149)}
+.btn.secondary{background:#21262d;border:1px solid #30363d}
+.btn.secondary:hover{background:#30363d}
+.debt-list{margin-bottom:14px}
+.debt-row{display:grid;grid-template-columns:2fr 1.5fr 1.5fr 1fr 40px auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #21262d}
+.debt-row.header{font-size:.78rem;color:#484f58;text-transform:uppercase;padding:8px 0;border-bottom:1px solid #30363d;font-weight:600}
+.debt-row .remove-btn{background:none;border:none;color:#f85149;font-size:1.1rem;cursor:pointer;padding:0;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.debt-row .remove-btn:hover{background:#2d1215}
+.strategy-results{display:none;margin-top:16px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+.summary-item{background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center}
+.summary-item .label{font-size:.72rem;color:#8b949e;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.summary-item .value{font-size:1.3rem;font-weight:700;color:#f0f6fc}
+.summary-item .value.green{color:#3fb950}
+.summary-item .value.accent{color:#58a6ff}
+.summary-item .value.orange{color:#d29922}
+.plan-list{list-style:none}
+.plan-list li{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:8px;margin-bottom:6px;font-size:.88rem}
+.plan-list li.priority-0{background:#0d2818;border:1px solid #196c2e}
+.plan-list li.priority-1{background:#1a1a2e;border:1px solid #30363d}
+.plan-list li.priority-2{background:#2d1215;border:1px solid #5c1a1e}
+.plan-list .name{font-weight:600;color:#f0f6fc}
+.plan-list .detail{color:#8b949e;font-size:.82rem}
+.payoff-timeline{margin-top:14px}
+.payoff-bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:.8rem}
+.payoff-bar-wrap .debt-label{min-width:120px;color:#c9d1d9;text-align:right}
+.payoff-track{flex:1;height:22px;background:#21262d;border-radius:6px;overflow:hidden;position:relative}
+.payoff-fill{height:100%;border-radius:6px;transition:width .5s ease;min-width:2px}
+.payoff-fill.avalanche{background:#3fb950}
+.payoff-fill.snowball{background:#58a6ff}
+.payoff-label{min-width:80px;color:#8b949e;font-size:.78rem}
+.comparison-banner{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.comp-card{background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:18px;text-align:center}
+.comp-card h3{font-size:.85rem;color:#8b949e;margin-bottom:8px}
+.comp-card .big{font-size:1.6rem;font-weight:700}
+.comp-card .big.green{color:#3fb950}
+.comp-card .big.blue{color:#58a6ff}
+.comp-card .sub{font-size:.78rem;color:#484f58;margin-top:4px}
+footer{text-align:center;padding:20px 0 10px;color:#484f58;font-size:.8rem;border-top:1px solid #21262d;width:100%}
+@media(max-width:600px){.debt-row{grid-template-columns:1fr 1fr;gap:6px}.debt-row.header{display:none}.flex-row .field{min-width:100%}.summary-grid,.comparison-banner{grid-template-columns:1fr}.card{padding:16px}h1{font-size:1.35rem}}
+</style>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>💳 Debt Payoff Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Compare Avalanche vs Snowball methods — pay off debt faster and save on interest</p>
+
+<div class="card">
+  <h2>📋 Your Debts</h2>
+  <div class="debt-row header">
+    <span>Name</span><span>Balance</span><span>APR %</span><span>Min Payment</span><span></span><span></span>
+  </div>
+  <div id="debtList" class="debt-list"></div>
+  <div class="flex-row" style="margin-top:10px">
+    <div class="field"><input type="text" id="newName" placeholder="e.g. Credit Card" value=""></div>
+    <div class="field"><input type="number" id="newBalance" placeholder="Balance" min="0" step="100"></div>
+    <div class="field"><input type="number" id="newApr" placeholder="APR %" min="0" max="100" step="0.1"></div>
+    <div class="field"><input type="number" id="newMin" placeholder="Min Payment" min="0" step="10"></div>
+    <button class="btn secondary" id="addDebtBtn">+ Add Debt</button>
+  </div>
+
+  <div class="strategy-box" style="margin-top:16px">
+    <h3>💰 Extra Monthly Payment</h3>
+    <p>How much extra can you put toward debt each month (beyond minimums)?</p>
+    <div class="flex-row" style="margin-top:8px">
+      <div class="field" style="max-width:250px"><input type="number" id="extraPayment" value="200" min="0" step="50"></div>
+      <button class="btn" id="calcDebtBtn">📊 Calculate Both Strategies</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>⚔️ Strategy Comparison</h2>
+  <div class="method-tabs">
+    <div class="method-tab active" data-method="avalanche">❄️ Avalanche</div>
+    <div class="method-tab" data-method="snowball">⛄ Snowball</div>
+  </div>
+
+  <div id="strategyResults" class="strategy-results">
+    <div class="summary-grid">
+      <div class="summary-item"><div class="label">Payoff Time</div><div class="value accent" id="payoffTime">—</div></div>
+      <div class="summary-item"><div class="label">Total Interest Paid</div><div class="value orange" id="totalInterestPaid">$0.00</div></div>
+      <div class="summary-item"><div class="label">Total Paid</div><div class="value" id="totalPaidAmt">$0.00</div></div>
+    </div>
+
+    <h3 style="font-size:.9rem;color:#8b949e;margin-bottom:8px">📅 Payoff Order</h3>
+    <ul class="plan-list" id="payoffOrder"></ul>
+
+    <div class="comparison-banner">
+      <div class="comp-card">
+        <h3>❄️ Avalanche</h3>
+        <div class="big green" id="avalancheTime">—</div>
+        <div class="sub" id="avalancheInterest">Interest: $0.00</div>
+      </div>
+      <div class="comp-card">
+        <h3>⛄ Snowball</h3>
+        <div class="big blue" id="snowballTime">—</div>
+        <div class="sub" id="snowballInterest">Interest: $0.00</div>
+      </div>
+    </div>
+
+    <div class="payoff-timeline" id="payoffTimeline"></div>
+  </div>
+</div>
+
+<footer>Debt Payoff Calculator — Educational tool. Consult a financial advisor for personalized advice.</footer>
+</div>
+
+<script>
+let debts = [];
+let debtIdCounter = 0;
+
+const $ = id => document.getElementById(id);
+
+function fmt(n) {
+  return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function defaultDebts() {
+  return [
+    { id: ++debtIdCounter, name: 'Credit Card', balance: 8500, apr: 22.99, minPayment: 175 },
+    { id: ++debtIdCounter, name: 'Car Loan', balance: 15000, apr: 6.5, minPayment: 320 },
+    { id: ++debtIdCounter, name: 'Student Loan', balance: 28000, apr: 4.5, minPayment: 280 },
+    { id: ++debtIdCounter, name: 'Personal Loan', balance: 5000, apr: 12.0, minPayment: 110 }
+  ];
+}
+
+function renderDebts() {
+  const container = $('debtList');
+  container.innerHTML = '';
+  debts.forEach(d => {
+    const row = document.createElement('div');
+    row.className = 'debt-row';
+    row.innerHTML = `
+      <span><strong>${d.name}</strong></span>
+      <span>${fmt(d.balance)}</span>
+      <span>${d.apr.toFixed(1)}%</span>
+      <span>${fmt(d.minPayment)}</span>
+      <span></span>
+      <button class="remove-btn" data-id="${d.id}" title="Remove">✕</button>
+    `;
+    container.appendChild(row);
+  });
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = parseInt(btn.dataset.id);
+      debts = debts.filter(d => d.id !== id);
+      renderDebts();
+    });
+  });
+}
+
+function addDebt() {
+  const name = $('newName').value.trim();
+  const balance = parseFloat($('newBalance').value);
+  const apr = parseFloat($('newApr').value);
+  const minPayment = parseFloat($('newMin').value);
+  if (!name || isNaN(balance) || isNaN(apr) || isNaN(minPayment) || balance <= 0 || apr < 0 || minPayment <= 0) return;
+  debts.push({ id: ++debtIdCounter, name, balance, apr, minPayment });
+  $('newName').value = ''; $('newBalance').value = ''; $('newApr').value = ''; $('newMin').value = '';
+  renderDebts();
+}
+
+$('addDebtBtn').addEventListener('click', addDebt);
+['newName','newBalance','newApr','newMin'].forEach(id => {
+  $(id).addEventListener('keydown', e => { if (e.key === 'Enter') addDebt(); });
+});
+
+// Tab switching
+document.querySelectorAll('.method-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    if (debts.length > 0) calculate();
+  });
+});
+
+function simulatePayoff(debtList, method, extraMonthly) {
+  // method: 'avalanche' (highest APR first) or 'snowball' (lowest balance first)
+  const debtsCopy = debtList.map(d => ({ ...d }));
+  let totalMonths = 0;
+  let totalInterest = 0;
+
+  while (debtsCopy.some(d => d.balance > 0.01)) {
+    // Sort by strategy
+    if (method === 'avalanche') {
+      debtsCopy.sort((a, b) => (a.balance > 0.01 ? b.apr - a.apr : -1) || (b.balance > 0.01 ? 1 : 0));
+    } else {
+      debtsCopy.sort((a, b) => {
+        if (a.balance <= 0.01 && b.balance > 0.01) return 1;
+        if (b.balance <= 0.01 && a.balance > 0.01) return -1;
+        return a.balance - b.balance;
+      });
+    }
+
+    let monthInterest = 0;
+    let totalMinPayment = 0;
+
+    // Apply minimum payments to all debts
+    debtsCopy.forEach(d => {
+      if (d.balance <= 0.01) return;
+      const interest = d.balance * (d.apr / 100 / 12);
+      monthInterest += interest;
+      d.balance += interest;
+      const pay = Math.min(d.minPayment, d.balance);
+      d.balance -= pay;
+      totalMinPayment += pay;
+    });
+
+    // Apply extra to the first debt in the sorted list (the target)
+    const target = debtsCopy.find(d => d.balance > 0.01);
+    if (target) {
+      const extra = Math.min(extraMonthly, target.balance);
+      target.balance -= extra;
+      totalMinPayment += extra;
+    }
+
+    totalInterest += monthInterest;
+    totalMonths++;
+
+    // Safety cap
+    if (totalMonths > 1200) break;
+  }
+
+  return { months: totalMonths, interest: totalInterest, totalPaid: totalInterest + debtList.reduce((s, d) => s + d.balance, 0) };
+}
+
+function calculate() {
+  if (debts.length === 0) return;
+
+  const extra = Math.max(0, parseFloat($('extraPayment').value) || 0);
+
+  const avalanche = simulatePayoff(debts, 'avalanche', extra);
+  const snowball = simulatePayoff(debts, 'snowball', extra);
+
+  const activeMethod = document.querySelector('.method-tab.active').dataset.method;
+  const result = activeMethod === 'avalanche' ? avalanche : snowball;
+
+  function timeStr(months) {
+    if (months <= 0) return '—';
+    const yrs = Math.floor(months / 12);
+    const mos = months % 12;
+    let s = '';
+    if (yrs > 0) s += yrs + 'yr ';
+    if (mos > 0 || yrs === 0) s += mos + 'mo';
+    return s.trim();
+  }
+
+  $('payoffTime').textContent = timeStr(result.months);
+  $('totalInterestPaid').textContent = fmt(result.interest);
+  $('totalPaidAmt').textContent = fmt(result.totalPaid);
+  $('strategyResults').style.display = 'block';
+
+  // Comparison banner
+  $('avalancheTime').textContent = timeStr(avalanche.months);
+  $('avalancheInterest').textContent = 'Interest: ' + fmt(avalanche.interest);
+  $('snowballTime').textContent = timeStr(snowball.months);
+  $('snowballInterest').textContent = 'Interest: ' + fmt(snowball.interest);
+
+  // Payoff order
+  const orderContainer = $('payoffOrder');
+  orderContainer.innerHTML = '';
+
+  const sorted = activeMethod === 'avalanche'
+    ? [...debts].sort((a, b) => b.apr - a.apr)
+    : [...debts].sort((a, b) => a.balance - b.balance);
+
+  sorted.forEach((d, i) => {
+    const li = document.createElement('li');
+    li.className = `priority-${i}`;
+    const payoffMonth = avalanche.months;
+    li.innerHTML = `<span class="name">${i + 1}. ${d.name}</span>`
+      + `<span class="detail">${fmt(d.balance)} @ ${d.apr.toFixed(1)}% APR</span>`;
+    orderContainer.appendChild(li);
+  });
+
+  // Payoff timeline bars
+  const timeline = $('payoffTimeline');
+  timeline.innerHTML = '<h3 style="font-size:.9rem;color:#8b949e;margin-bottom:8px;margin-top:12px">📊 Payoff Progress (Avalanche)</h3>';
+
+  const avSorted = [...debts].sort((a, b) => b.apr - a.apr);
+  const maxBalance = Math.max(...debts.map(d => d.balance), 1);
+
+  avSorted.forEach(d => {
+    const pct = (d.balance / maxBalance) * 100;
+    const div = document.createElement('div');
+    div.className = 'payoff-bar-wrap';
+    div.innerHTML = `<span class="debt-label">${d.name}</span>`
+      + `<div class="payoff-track"><div class="payoff-fill avalanche" style="width:${pct}%"></div></div>`
+      + `<span class="payoff-label">${fmt(d.balance)}</span>`;
+    timeline.appendChild(div);
+  });
+}
+
+$('calcDebtBtn').addEventListener('click', calculate);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'extraPayment') calculate();
+});
+
+// Initialize
+debts = defaultDebts();
+renderDebts();
+calculate();
+</script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

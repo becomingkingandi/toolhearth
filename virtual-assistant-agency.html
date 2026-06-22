@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Assistant Agency — AI-Augmented VA Services</title>
+<meta name="description" content="AI-augmented virtual assistants for busy founders. Email, scheduling, research, and social media management.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0b0d14;
+    --bg-card: #12141e;
+    --bg-card-hover: #181b28;
+    --border: #1f2233;
+    --text: #e8eaf0;
+    --text-muted: #8b8fa3;
+    --accent: #6c5ce7;
+    --accent-glow: rgba(108,92,231,.35);
+    --green: #00d68f;
+    --gradient: linear-gradient(135deg,#6c5ce7,#a29bfe);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- NAV ---- */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px; max-width: 1200px; margin: 0 auto;
+  }
+  nav .logo { font-weight: 700; font-size: 1.35rem; letter-spacing: -.02em; }
+  nav .logo span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  nav .nav-cta {
+    background: var(--gradient); color: #fff; border: none; border-radius: 8px;
+    padding: 10px 24px; font-size: .9rem; font-weight: 600; cursor: pointer;
+    transition: opacity .2s;
+  }
+  nav .nav-cta:hover { opacity: .85; }
+
+  /* ---- HERO ---- */
+  .hero {
+    text-align: center; padding: 100px 24px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -40%; left: 50%; translate: -50% 0;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle,var(--accent-glow) 0%,transparent 70%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem,6vw,3.8rem); font-weight: 800;
+    line-height: 1.2; margin-bottom: 20px; position: relative;
+    letter-spacing: -.03em;
+  }
+  .hero h1 .highlight { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p {
+    font-size: 1.15rem; color: var(--text-muted); max-width: 600px;
+    margin: 0 auto 36px; position: relative;
+  }
+  .hero .btn-primary {
+    display: inline-block; background: var(--gradient); color: #fff;
+    border: none; border-radius: 10px; padding: 16px 40px;
+    font-size: 1.05rem; font-weight: 600; cursor: pointer;
+    transition: transform .2s, box-shadow .2s; text-decoration: none;
+  }
+  .hero .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+
+  /* ---- SECTIONS ---- */
+  section { padding: 80px 0; }
+  .section-label {
+    display: inline-block; text-transform: uppercase; letter-spacing: .12em;
+    font-size: .8rem; font-weight: 600; color: var(--accent); margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: clamp(1.6rem,4vw,2.4rem); font-weight: 700;
+    margin-bottom: 14px; letter-spacing: -.02em;
+  }
+  .section-sub {
+    color: var(--text-muted); font-size: 1.05rem;
+    max-width: 580px; margin-bottom: 48px;
+  }
+  .center { text-align: center; }
+  .center .section-sub { margin-left: auto; margin-right: auto; }
+
+  /* ---- PRICING ---- */
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(auto-fit,minmax(290px,1fr));
+    gap: 24px;
+  }
+  .pricing-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 36px 28px;
+    transition: border-color .25s, transform .2s;
+    display: flex; flex-direction: column;
+  }
+  .pricing-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .pricing-card.featured {
+    border-color: var(--accent); position: relative;
+    box-shadow: 0 0 0 1px var(--accent-glow);
+  }
+  .pricing-card.featured::after {
+    content: 'Most Popular'; position: absolute; top: 16px; right: 20px;
+    background: var(--gradient); color: #fff; font-size: .73rem;
+    font-weight: 600; padding: 4px 14px; border-radius: 100px;
+  }
+  .pricing-card h3 { font-size: 1.35rem; margin-bottom: 4px; }
+  .pricing-card .price { font-size: 2.6rem; font-weight: 800; margin: 12px 0 4px; }
+  .pricing-card .price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+  .pricing-card .desc { color: var(--text-muted); font-size: .95rem; margin-bottom: 24px; }
+  .pricing-card ul { list-style: none; flex: 1; }
+  .pricing-card ul li {
+    padding: 6px 0; font-size: .95rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .pricing-card ul li::before { content: '✦'; color: var(--green); font-size: .8rem; }
+  .pricing-card .btn-outline {
+    margin-top: 28px; display: block; text-align: center;
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 13px; font-weight: 600; color: var(--text);
+    text-decoration: none; transition: border-color .2s, background .2s;
+  }
+  .pricing-card .btn-outline:hover { border-color: var(--accent); background: rgba(108,92,231,.08); }
+  .pricing-card .btn-solid {
+    margin-top: 28px; display: block; text-align: center;
+    background: var(--gradient); border: none; border-radius: 10px;
+    padding: 13px; font-weight: 600; color: #fff;
+    text-decoration: none; transition: opacity .2s;
+  }
+  .pricing-card .btn-solid:hover { opacity: .85; }
+
+  /* ---- VA HANDLES ---- */
+  .handles-grid {
+    display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    gap: 16px;
+  }
+  .handle-item {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 18px; text-align: center;
+    transition: border-color .25s;
+  }
+  .handle-item:hover { border-color: var(--accent); }
+  .handle-item .icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+  .handle-item span { font-size: .95rem; font-weight: 500; }
+
+  /* ---- HOW IT WORKS ---- */
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+    gap: 28px;
+  }
+  .step {
+    text-align: center; padding: 32px 20px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; position: relative;
+  }
+  .step .num {
+    width: 52px; height: 52px; line-height: 52px; border-radius: 50%;
+    background: var(--gradient); color: #fff; font-weight: 700; font-size: 1.2rem;
+    margin: 0 auto 16px;
+  }
+  .step h4 { font-size: 1.2rem; margin-bottom: 8px; }
+  .step p { color: var(--text-muted); font-size: .95rem; }
+
+  /* ---- TESTIMONIALS ---- */
+  .test-grid {
+    display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 24px;
+  }
+  .test-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px;
+    transition: border-color .25s;
+  }
+  .test-card:hover { border-color: var(--accent); }
+  .test-card .stars { color: #fbbf24; font-size: 1rem; margin-bottom: 10px; }
+  .test-card blockquote { color: var(--text-muted); font-size: .95rem; font-style: italic; margin-bottom: 16px; }
+  .test-card .author { font-weight: 600; font-size: .95rem; }
+  .test-card .role { color: var(--text-muted); font-size: .85rem; }
+
+  /* ---- FAQ ---- */
+  .faq-list { max-width: 760px; margin: 0 auto; }
+  .faq-item {
+    border-bottom: 1px solid var(--border); padding: 18px 0;
+  }
+  .faq-item:first-child { border-top: 1px solid var(--border); }
+  .faq-q {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; background: none; border: none; color: var(--text);
+    font-size: 1.05rem; font-weight: 600; cursor: pointer;
+    padding: 4px 0; text-align: left;
+  }
+  .faq-q .arrow { font-size: 1.2rem; transition: transform .3s; color: var(--text-muted); }
+  .faq-q.open .arrow { transform: rotate(180deg); }
+  .faq-a {
+    max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .35s ease;
+    color: var(--text-muted); font-size: .95rem;
+  }
+  .faq-a.open { max-height: 300px; padding-top: 12px; padding-bottom: 4px; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 1px solid var(--border); padding: 40px 24px;
+    text-align: center; color: var(--text-muted); font-size: .9rem;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 640px) {
+    .hero { padding: 70px 16px 50px; }
+    .hero h1 { font-size: 2rem; }
+    section { padding: 60px 0; }
+    .pricing-card { padding: 28px 20px; }
+    .handles-grid { grid-template-columns: repeat(2,1fr); }
+    .test-grid { grid-template-columns: 1fr; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Virtual Assistant Agency \u2014 AI-Augmented VA Services",
+  "description": "AI-augmented virtual assistants for busy founders. Email, scheduling, research, and social media management.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span>Zenith</span> Exec</div>
+  <a href="#cta" class="nav-cta" style="text-decoration:none">Get Started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Your Time Is Worth <span class="highlight">More Than Admin Work</span></h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p>AI-augmented virtual assistants handle your email, calendar, research, and social media — so you can focus on building your business.</p>
+  <a href="#cta" class="btn-primary">Claim Your Free Consultation</a>
+</section>
+
+<!-- SERVICES / PRICING -->
+<section id="pricing">
+  <div class="container center">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Plans Built for Founders</h2>
+    <p class="section-sub">No contracts. Cancel anytime. Every plan includes a dedicated VA + AI tools.</p>
+  </div>
+  <div class="container">
+    <div class="pricing-grid">
+      <!-- Basic -->
+      <div class="pricing-card">
+        <h3>Executive Assistant</h3>
+        <div class="price">$999 <span>/mo</span></div>
+        <p class="desc">Perfect for solo founders who need inbox zero and a sane calendar.</p>
+        <ul>
+          <li>Email management &amp; triage</li>
+          <li>Calendar scheduling</li>
+          <li>Travel booking</li>
+          <li>Basic research</li>
+          <li>10 hr/week included</li>
+        </ul>
+        <a href="#cta" class="btn-outline">Choose Plan</a>
+      </div>
+      <!-- Featured -->
+      <div class="pricing-card featured">
+        <h3>Operations</h3>
+        <div class="price">$1,999 <span>/mo</span></div>
+        <p class="desc">Best for growing teams that need research, social, and CRM support.</p>
+        <ul>
+          <li>Everything in Executive</li>
+          <li>Social media management</li>
+          <li>CRM updates &amp; pipeline mgmt</li>
+          <li>In-depth research &amp; analysis</li>
+          <li>25 hr/week included</li>
+        </ul>
+        <a href="#cta" class="btn-solid">Choose Plan</a>
+      </div>
+      <!-- Premium -->
+      <div class="pricing-card">
+        <h3>Full Suite</h3>
+        <div class="price">$3,499 <span>/mo</span></div>
+        <p class="desc">Full operational support for founders ready to scale without limits.</p>
+        <ul>
+          <li>Everything in Operations</li>
+          <li>Priority 24/7 support</li>
+          <li>Dedicated project management</li>
+          <li>Content drafting &amp; scheduling</li>
+          <li>40 hr/week + overflow</li>
+        </ul>
+        <a href="#cta" class="btn-outline">Choose Plan</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOUR VA HANDLES -->
+<section>
+  <div class="container center">
+    <div class="section-label">Capabilities</div>
+    <h2 class="section-title">What Your VA Handles</h2>
+    <p class="section-sub">Our assistants combine human judgment with AI speed — so nothing falls through the cracks.</p>
+  </div>
+  <div class="container">
+    <div class="handles-grid">
+      <div class="handle-item"><span class="icon">📧</span><span>Email Management</span></div>
+      <div class="handle-item"><span class="icon">📅</span><span>Calendar</span></div>
+      <div class="handle-item"><span class="icon">✈️</span><span>Travel Booking</span></div>
+      <div class="handle-item"><span class="icon">🔍</span><span>Research</span></div>
+      <div class="handle-item"><span class="icon">📱</span><span>Social Media</span></div>
+      <div class="handle-item"><span class="icon">📊</span><span>CRM Updates</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="container center">
+    <div class="section-label">Process</div>
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-sub">From first call to daily support in three simple steps.</p>
+  </div>
+  <div class="container">
+    <div class="steps-grid">
+      <div class="step">
+        <div class="num">1</div>
+        <h4>Onboarding Call</h4>
+        <p>We learn your workflows, tools, and preferences in a 30-min discovery session.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h4>Matched with Your VA</h4>
+        <p>We pair you with an assistant whose skills and time zone fit your needs perfectly.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h4>Daily Support</h4>
+        <p>Your VA handles the grind — email, calendar, research, social — while you build.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="container center">
+    <div class="section-label">Testimonials</div>
+    <h2 class="section-title">What Founders Say</h2>
+    <p class="section-sub">Real results from founders who reclaimed their time.</p>
+  </div>
+  <div class="container">
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Zenith Exec gave me back 15 hours a week. My inbox used to be a black hole — now it's handled before I wake up."</blockquote>
+        <div class="author">— Sarah Chen</div>
+        <div class="role">Founder, Lumos Health</div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"We scaled from 2 to 12 employees and I never once felt buried in admin. The Operations plan is a cheat code."</blockquote>
+        <div class="author">— Marcus Rivera</div>
+        <div class="role">CEO, Stride Analytics</div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I was skeptical about AI-augmented support, but the blend of human oversight and automation is seamless. Totally worth it."</blockquote>
+        <div class="author">— Priya Kapoor</div>
+        <div class="role">Co-founder, Bloom Studio</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="container center">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-sub">Everything you need to know before getting started.</p>
+  </div>
+  <div class="container faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How is this different from hiring a regular VA?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">Our assistants use proprietary AI tools to automate triage, draft responses, and suggest next actions — so they move faster than a traditional VA. Human oversight ensures quality, and you only pay for the result.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I switch plans later?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">Absolutely. You can upgrade, downgrade, or cancel at any time. No contracts, no penalties. Changes take effect at the start of your next billing cycle.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How do you handle data privacy?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">All assistants sign NDAs. We use enterprise-grade encryption, never store sensitive credentials, and offer SOC 2 compliance upon request. Your data stays yours.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What time zones do you support?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">Our VAs span every major time zone — US, UK, EU, and APAC. We'll match you with someone who overlaps your core working hours.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What happens if my VA is unavailable?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">Every plan includes a backup assistant who is briefed on your account. For the Full Suite plan, you also get 24/7 priority support with near-instant response.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta" style="padding:60px 0 80px">
+  <div class="container center">
+    <div class="section-title" style="margin-bottom:12px">Ready to Reclaim Your Time?</div>
+    <p style="color:var(--text-muted);max-width:500px;margin:0 auto 30px;font-size:1.05rem">
+      book a free 15-minute call and we'll build a plan for your business.
+    </p>
+    <a href="#" class="btn-primary">Book Your Call</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">&copy; 2026 Zenith Exec. All rights reserved.</div>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  btn.classList.toggle('open');
+  var answer = btn.nextElementSibling;
+  answer.classList.toggle('open');
+}
+</script>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

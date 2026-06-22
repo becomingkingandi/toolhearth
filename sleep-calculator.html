@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sleep Calculator — Optimal Bedtime & Wake Time by Sleep Cycles</title>
+<meta name="description" content="Find the best bedtime or wake time based on 90-minute sleep cycles. Wake up refreshed between cycles, not mid-cycle.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+  .container {
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, #58a6ff, #bc8cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8b949e;
+    font-size: 0.9rem;
+    margin-bottom: 1.75rem;
+  }
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #f0f6fc;
+  }
+  .input-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .input-group label {
+    font-weight: 500;
+    color: #c9d1d9;
+    white-space: nowrap;
+  }
+  input[type="time"] {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    color: #e6edf3;
+    font-size: 1.1rem;
+    font-family: inherit;
+    flex: 1;
+    min-width: 120px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="time"]:focus {
+    border-color: #58a6ff;
+  }
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+  }
+  .btn {
+    background: #238636;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.25rem;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .btn:hover { background: #2ea043; }
+  .btn-secondary {
+    background: #21262d;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+  }
+  .btn-secondary:hover { background: #30363d; }
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 0.85rem;
+    background: #0d1117;
+    border-radius: 8px;
+    border: 1px solid #21262d;
+  }
+  .result-row .cycles {
+    color: #8b949e;
+    font-size: 0.85rem;
+  }
+  .result-row .time {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #58a6ff;
+    font-variant-numeric: tabular-nums;
+  }
+  .result-row.optimal {
+    border-color: #238636;
+    background: #0f1f12;
+  }
+  .result-row.optimal .time { color: #3fb950; }
+  .explanation {
+    color: #8b949e;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .explanation strong { color: #e6edf3; }
+  .rev-result {
+    margin-top: 0.75rem;
+    padding: 0.85rem;
+    background: #0d1117;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+    text-align: center;
+  }
+  .rev-result .wake-time {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #bc8cff;
+    margin-top: 0.25rem;
+  }
+  .rev-result .note {
+    color: #8b949e;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+  .footer {
+    text-align: center;
+    color: #484f58;
+    font-size: 0.8rem;
+    padding: 1.5rem 0 0.5rem;
+  }
+  @media (max-width: 480px) {
+    .container { padding: 0.5rem 0; }
+    .card { padding: 1rem; }
+    h1 { font-size: 1.4rem; }
+    .input-group { flex-direction: column; align-items: stretch; }
+    input[type="time"] { min-width: auto; }
+    .result-row { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sleep Calculator \u2014 Optimal Bedtime & Wake Time by Sleep Cycles",
+  "description": "Find the best bedtime or wake time based on 90-minute sleep cycles. Wake up refreshed between cycles, not mid-cycle.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>😴 Sleep Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p class="subtitle">Wake up at the end of a cycle — feel refreshed</p>
+
+  <div class="card">
+    <h2>⏰ When do you need to wake up?</h2>
+    <div class="input-group">
+      <label for="wakeup">Wake time:</label>
+      <input type="time" id="wakeup" value="07:00">
+      <button class="btn" onclick="calcBedtimes()">Calculate</button>
+    </div>
+    <div id="bedtimes" class="results" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="card">
+    <h2>🔄 Reverse — Going to bed now?</h2>
+    <div class="input-group">
+      <label for="bedtime">Bed time:</label>
+      <input type="time" id="bedtime">
+      <button class="btn btn-secondary" onclick="calcWakeups()">Calculate</button>
+    </div>
+    <div id="wakeups" class="rev-result" style="display:none;"></div>
+  </div>
+
+  <div class="card">
+    <h2>📖 About Sleep Cycles</h2>
+    <div class="explanation">
+      <p>Sleep cycles are <strong>~90 minutes</strong> each. Waking at the <strong>end of a cycle</strong> leaves you refreshed. Waking <strong>mid-cycle</strong> causes grogginess (sleep inertia).</p>
+      <p style="margin-top:0.6rem;">For best results, aim for <strong>5 or 6 full cycles</strong> — that's about 7.5&ndash;9 hours. Even 4 cycles (6 hours) works if your schedule is tight.</p>
+    </div>
+  </div>
+
+  <div class="footer">Free Sleep Calculator — Wake up refreshed, not groggy</div>
+</div>
+
+<script>
+(function init() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('bedtime').value = h + ':' + m;
+  calcBedtimes();
+  calcWakeups();
+})();
+
+function parseTime(val) {
+  if (!val) return null;
+  const parts = val.split(':');
+  const h = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10);
+  return { h, m };
+}
+
+function timeToMinutes(t) {
+  return t.h * 60 + t.m;
+}
+
+function minutesToTime(minutes) {
+  let m = minutes % (24 * 60);
+  if (m < 0) m += 24 * 60;
+  const h = Math.floor(m / 60);
+  const mn = m % 60;
+  return String(h).padStart(2, '0') + ':' + String(mn).padStart(2, '0');
+}
+
+function formatAmPm(minutes) {
+  let m = minutes % (24 * 60);
+  if (m < 0) m += 24 * 60;
+  const h = Math.floor(m / 60);
+  const mn = m % 60;
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return h12 + ':' + String(mn).padStart(2, '0') + ' ' + period;
+}
+
+function calcBedtimes() {
+  const val = document.getElementById('wakeup').value;
+  const t = parseTime(val);
+  if (!t) return;
+  const wakeMin = timeToMinutes(t);
+  const CYCLE = 90;
+  const container = document.getElementById('bedtimes');
+  
+  const cycles = [
+    { label: '😴 3 cycles', cycles: 3, hours: '4.5h' },
+    { label: '😐 4 cycles', cycles: 4, hours: '6h' },
+    { label: '🙂 5 cycles', cycles: 5, hours: '7.5h' },
+    { label: '😊 6 cycles', cycles: 6, hours: '9h' },
+  ];
+
+  let html = '';
+  for (const c of cycles) {
+    const bedMin = wakeMin - c.cycles * CYCLE;
+    const bedTime = formatAmPm(bedMin);
+    const isOptimal = c.cycles >= 5;
+    html += '<div class="result-row' + (isOptimal ? ' optimal' : '') + '">' +
+      '<span>' + c.label + ' <span class="cycles">' + c.hours + '</span></span>' +
+      '<span class="time">' + bedTime + '</span>' +
+      '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function calcWakeups() {
+  const val = document.getElementById('bedtime').value;
+  const t = parseTime(val);
+  if (!t) return;
+  const bedMin = timeToMinutes(t);
+  const CYCLE = 90;
+  const container = document.getElementById('wakeups');
+
+  const cycles = [
+    { label: '3 cycles', cycles: 3, hours: '4.5h later' },
+    { label: '4 cycles', cycles: 4, hours: '6h later' },
+    { label: '5 cycles', cycles: 5, hours: '7.5h later' },
+    { label: '6 cycles', cycles: 6, hours: '9h later' },
+  ];
+
+  let html = '';
+  for (const c of cycles) {
+    const wakeMin = bedMin + c.cycles * CYCLE;
+    const wakeTime = formatAmPm(wakeMin);
+    const isOptimal = c.cycles >= 5;
+    html += '<div class="result-row' + (isOptimal ? ' optimal' : '') + '">' +
+      '<span>' + (isOptimal ? '😊 ' : '') + c.label + ' <span class="cycles">' + c.hours + '</span></span>' +
+      '<span class="time">' + wakeTime + '</span>' +
+      '</div>';
+  }
+
+  container.style.display = 'block';
+  container.innerHTML =
+    '<div style="font-weight:600;margin-bottom:0.5rem;">Recommended wake times:</div>' +
+    html +
+    '<div class="note">Waking after 5–6 cycles leaves you most refreshed.</div>';
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

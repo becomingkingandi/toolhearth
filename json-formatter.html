@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON Formatter & Validator — Format, Validate, Minify JSON</title>
+<meta name="description" content="Format, validate, and minify JSON online. Syntax highlighting, error detection, and copy-to-clipboard. Free developer tool.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--radius:8px}
+  body{font-family:ui-monospace,'SF Mono','Cascadia Code','Fira Code',monospace;background:var(--bg);color:var(--text);padding:1.5rem;min-height:100vh}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+  .top h1{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:1.3rem;font-weight:600}
+  .top a{color:var(--muted);text-decoration:none;font-size:.85rem}
+  .top a:hover{color:var(--accent)}
+  .actions{display:flex;gap:.5rem;flex-wrap:wrap}
+  .actions button,.actions input[type=file]::file-selector-button{padding:.45rem 1rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.82rem;cursor:pointer;font-family:inherit}
+  .actions button:hover{background:#1c2333;border-color:var(--accent)}
+  .actions input[type=file]{font-size:.82rem;color:var(--muted)}
+  .actions input[type=file]::file-selector-button{margin-right:.5rem}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:1rem;height:calc(100vh - 150px)}
+  @media(max-width:800px){.panels{grid-template-columns:1fr;height:auto}}
+  .panel{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .panel-head{padding:.5rem .8rem;background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  .panel-head .count{color:var(--muted)}
+  .panel-head .count.ok{color:var(--green)}
+  .panel-head .count.err{color:var(--red)}
+  textarea{flex:1;background:var(--bg);color:var(--text);border:none;outline:none;padding:.8rem;font-family:inherit;font-size:.85rem;line-height:1.55;resize:none;tab-size:2}
+  textarea::placeholder{color:#484f58}
+  #output{flex:1;padding:.8rem;overflow:auto;font-size:.85rem;line-height:1.55;white-space:pre-wrap;word-break:break-all}
+  #output .key{color:#79c0ff}
+  #output .str{color:#a5d6ff}
+  #output .num{color:#79c0ff}
+  #output .bool{color:#ff7b72}
+  #output .null{color:#d2a8ff}
+  #output .bracket{color:#e6edf3}
+  #output .collapsed{color:var(--muted);cursor:pointer;user-select:none}
+  .err-msg{color:var(--red);padding:.8rem;font-size:.85rem;white-space:pre-wrap}
+  #tree{flex:1;overflow:auto;padding:.5rem .8rem;font-size:.85rem;line-height:1.7}
+  .tree-node{cursor:pointer;padding:2px 0}
+  .tree-node:hover{background:rgba(88,166,255,.08);border-radius:3px}
+  .tree-toggle{display:inline-block;width:1em;text-align:center;color:var(--muted);user-select:none}
+  .tree-children{padding-left:1.5em;display:none}
+  .tree-children.open{display:block}
+  .tree-key{color:#79c0ff}
+  .tree-str{color:#a5d6ff}
+  .tree-num{color:#79c0ff}
+  .tree-bool{color:#ff7b72}
+  .tree-null{color:#d2a8ff}
+  .tree-comma{color:var(--muted)}
+  .tree-colon{color:var(--muted)}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "JSON Formatter & Validator \u2014 Format, Validate, Minify JSON",
+  "description": "Format, validate, and minify JSON online. Syntax highlighting, error detection, and copy-to-clipboard. Free developer tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="top">
+  <h1><a href="index.html" style="color:var(--muted);text-decoration:none">←</a> { } JSON Formatter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="actions">
+    <button onclick="format()">Format</button>
+    <button onclick="minify()">Minify</button>
+    <button onclick="clearBoth()">Clear</button>
+    <button onclick="loadSample()">Sample</button>
+    <input type="file" accept=".json" onchange="loadFile(event)">
+  </div>
+</div>
+<div class="panels">
+  <div class="panel">
+    <div class="panel-head">
+      <span>Input</span>
+      <span id="status" class="count">—</span>
+    </div>
+    <textarea id="input" placeholder='Paste JSON here, e.g. {"key": "value"}' spellcheck="false"></textarea>
+  </div>
+  <div class="panel">
+    <div class="panel-head">
+      <span>Output</span>
+      <span id="charCount" class="count">0 chars</span>
+    </div>
+    <div id="output">⬅️ Paste or type JSON, then click <strong>Format</strong></div>
+  </div>
+</div>
+<script>
+const input = document.getElementById('input');
+const output = document.getElementById('output');
+const status = document.getElementById('status');
+const charCount = document.getElementById('charCount');
+
+function format() {
+  const raw = input.value.trim();
+  if (!raw) { output.textContent = '⚠️ Paste some JSON first.'; status.textContent = 'empty'; status.className='count'; charCount.textContent='0 chars'; return; }
+  try {
+    const parsed = JSON.parse(raw);
+    const formatted = JSON.stringify(parsed, null, 2);
+    output.innerHTML = syntaxHighlight(formatted);
+    status.textContent = '✅ Valid JSON';
+    status.className = 'count ok';
+    charCount.textContent = `${formatted.length} chars`;
+  } catch(e) {
+    output.innerHTML = `<div class="err-msg">❌ ${escapeHtml(e.message)}</div>`;
+    status.textContent = '❌ Invalid';
+    status.className = 'count err';
+    charCount.textContent = `${raw.length} chars`;
+  }
+}
+
+function minify() {
+  const raw = input.value.trim();
+  if (!raw) return;
+  try {
+    const parsed = JSON.parse(raw);
+    input.value = JSON.stringify(parsed);
+    format();
+  } catch(e) {
+    output.innerHTML = `<div class="err-msg">❌ Cannot minify — invalid JSON: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function clearBoth() { input.value=''; output.textContent='⬅️ Paste or type JSON, then click Format'; status.textContent='—'; status.className='count'; charCount.textContent='0 chars'; }
+
+function loadSample() {
+  input.value = JSON.stringify({
+    "name": "Dev Tools",
+    "version": "1.0.0",
+    "description": "Handy reference pages for developers",
+    "tools": [
+      { "id": "json", "enabled": true, "tags": ["format", "validate"] },
+      { "id": "base64", "enabled": true, "tags": ["encode", "decode"] },
+      { "id": "regex", "enabled": false, "tags": ["pattern"] }
+    ],
+    "config": {
+      "theme": "dark",
+      "fontSize": 14,
+      "debug": false
+    },
+    "empty": null
+  }, null, 2);
+  format();
+}
+
+function loadFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => { input.value = ev.target.result; format(); };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function syntaxHighlight(json) {
+  return json.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"([^"\\]*(\\.[^"\\]*)*)"/g,(m,g1)=>{
+      const isKey = m.length > 2 && json[json.indexOf(m)+m.length] === ':';
+      if (isKey) return `<span class="key">"${escapeHtml(g1)}"</span>`;
+      if (/^\d{4}-\d{2}/.test(g1) || g1.includes('\\')) return `<span class="str">${m}</span>`;
+      return `<span class="str">${m}</span>`;
+    })
+    .replace(/\b(true|false)\b/g,'<span class="bool">$1</span>')
+    .replace(/\bnull\b/g,'<span class="null">null</span>')
+    .replace(/\b(-?\d+\.?\d*(?:[eE][+-]?\d+)?)\b/g,'<span class="num">$1</span>');
+}
+
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+input.addEventListener('keydown', e => { if ((e.metaKey||e.ctrlKey) && e.key==='Enter') format(); });
+input.addEventListener('input', () => { charCount.textContent = `${input.value.length} chars`; });
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+      <a href="/diff-checker" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Diff Checker — Compare Text Differences Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

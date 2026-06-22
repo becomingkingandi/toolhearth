@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Zone Converter — Convert Time Between Timezones</title>
+<meta name="description" content="Convert time between different time zones. Supports 50+ timezones with DST awareness. Free world time converter.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;padding:20px;display:flex;flex-direction:column;align-items:center}
+h1{font-size:1.8rem;margin:20px 0;color:#fff}
+.container{width:100%;max-width:650px}
+.converter-card{background:#1a1a2e;border-radius:12px;padding:24px;border:1px solid #2a2a40}
+.form-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;align-items:end}
+.form-group{flex:1;min-width:140px}
+.form-group label{display:block;font-size:.8rem;color:#888;margin-bottom:6px;font-weight:500}
+.form-group select,.form-group input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#0f0f1a;color:#e0e0e0;font-size:.9rem;outline:none;transition:border .2s}
+.form-group select:focus,.form-group input:focus{border-color:#6c63ff}
+.form-group select option{background:#1a1a2e}
+.swap-btn{background:#2a2a40;border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:1.2rem;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;margin:0 auto 4px}
+.swap-btn:hover{background:#6c63ff}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.result-box{background:#0f0f1a;border-radius:10px;padding:18px;border:1px solid #2a2a40}
+.result-box h3{font-size:.85rem;color:#888;margin-bottom:6px;font-weight:500}
+.result-box .time{font-size:1.6rem;font-weight:700;color:#6c63ff;font-variant-numeric:tabular-nums;letter-spacing:1px}
+.result-box .date{font-size:.85rem;color:#aaa;margin-top:4px}
+.result-box .meta{font-size:.75rem;color:#666;margin-top:8px;padding-top:8px;border-top:1px solid #2a2a40}
+.badge{padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:600;background:#2a2a40;margin-left:6px}
+.badge.dst{background:#1a3a2a;color:#4caf50}
+.badge.no-dst{background:#3a2a2a;color:#ff6b6b}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Time Zone Converter \u2014 Convert Time Between Timezones",
+  "description": "Convert time between different time zones. Supports 50+ timezones with DST awareness. Free world time converter.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<h1>🕐 Timezone Converter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="container">
+  <div class="converter-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>From Timezone</label>
+        <select id="fromTz"></select>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;align-self:end;padding:0 4px">
+        <button class="swap-btn" onclick="swapTimezones()" title="Swap">⇄</button>
+      </div>
+      <div class="form-group">
+        <label>To Timezone</label>
+        <select id="toTz"></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 auto;min-width:160px">
+        <label>Date & Time</label>
+        <input type="datetime-local" id="dtInput">
+      </div>
+      <div class="form-group" style="flex:0 0 auto">
+        <label>&nbsp;</label>
+        <button onclick="convert()" style="padding:10px 24px;border-radius:8px;border:none;background:#6c63ff;color:#fff;font-size:.9rem;cursor:pointer;transition:background .2s;white-space:nowrap">Convert</button>
+      </div>
+    </div>
+    <div class="result-grid" id="resultGrid" style="display:none">
+      <div class="result-box" id="fromResult">
+        <h3 id="fromLabel">From</h3>
+        <div class="time" id="fromTime">—</div>
+        <div class="date" id="fromDate">—</div>
+        <div class="meta" id="fromMeta"></div>
+      </div>
+      <div class="result-box" id="toResult">
+        <h3 id="toLabel">To</h3>
+        <div class="time" id="toTime">—</div>
+        <div class="date" id="toDate">—</div>
+        <div class="meta" id="toMeta"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TIMEZONES = [
+  "America/New_York","America/Chicago","America/Denver","America/Los_Angeles",
+  "America/Toronto","America/Vancouver","America/Mexico_City","America/Sao_Paulo",
+  "America/Argentina/Buenos_Aires","America/Anchorage","America/Phoenix","America/Halifax",
+  "Europe/London","Europe/Paris","Europe/Berlin","Europe/Madrid","Europe/Rome",
+  "Europe/Amsterdam","Europe/Stockholm","Europe/Moscow","Europe/Istanbul","Europe/Dublin",
+  "Europe/Zurich","Europe/Oslo","Europe/Prague","Europe/Kyiv","Europe/Helsinki",
+  "Asia/Tokyo","Asia/Shanghai","Asia/Seoul","Asia/Singapore","Asia/Dubai",
+  "Asia/Kolkata","Asia/Bangkok","Asia/Hong_Kong","Asia/Karachi","Asia/Jakarta",
+  "Asia/Manila","Asia/Taipei","Asia/Kuala_Lumpur","Asia/Dhaka","Asia/Riyadh",
+  "Australia/Sydney","Australia/Melbourne","Australia/Perth","Australia/Adelaide",
+  "Africa/Cairo","Africa/Johannesburg","Africa/Lagos","Africa/Nairobi","Africa/Casablanca",
+  "Pacific/Auckland","Pacific/Honolulu","Pacific/Fiji","Pacific/Guam",
+  "America/Santiago","America/Bogota","America/Lima","America/Panama",
+  "Atlantic/Reykjavik"
+];
+
+function pad2(n) { return String(n).padStart(2,'0'); }
+
+function populateSelects() {
+  const from = document.getElementById('fromTz');
+  const to = document.getElementById('toTz');
+  TIMEZONES.forEach(tz => {
+    const o1 = document.createElement('option'); o1.value = tz; o1.textContent = tz;
+    const o2 = document.createElement('option'); o2.value = tz; o2.textContent = tz;
+    from.appendChild(o1); to.appendChild(o2);
+  });
+  from.value = 'America/New_York';
+  to.value = 'Europe/London';
+  // Set default datetime to now
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset()*60000);
+  document.getElementById('dtInput').value = local.toISOString().slice(0,16);
+}
+
+function getOffsetStr(tz, date) {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZone:tz, timeZoneName:'shortOffset', hour:'numeric', minute:'numeric' }).formatToParts(date);
+    const off = parts.find(p => p.type === 'timeZoneName');
+    return off ? off.value : '—';
+  } catch { return '—'; }
+}
+
+function isDST(date, tz) {
+  // Heuristic: compare standard offset to current offset
+  const jan = new Date(date.getFullYear(), 0, 1);
+  try {
+    const janOpts = { timeZone:tz, timeZoneName:'shortOffset' };
+    const julOpts = { timeZone:tz, timeZoneName:'shortOffset' };
+    const janParts = new Intl.DateTimeFormat('en-US', janOpts).formatToParts(jan);
+    const julParts = new Intl.DateTimeFormat('en-US', julOpts).formatToParts(new Date(date.getFullYear(), 6, 1));
+    const janOff = janParts.find(p => p.type === 'timeZoneName');
+    const julOff = julParts.find(p => p.type === 'timeZoneName');
+    if (janOff && julOff && janOff.value !== julOff.value) {
+      // DST observed — check current
+      const curParts = new Intl.DateTimeFormat('en-US', janOpts).formatToParts(date);
+      const curOff = curParts.find(p => p.type === 'timeZoneName');
+      return curOff && curOff.value !== janOff.value;
+    }
+  } catch {}
+  return false;
+}
+
+function convert() {
+  const fromTz = document.getElementById('fromTz').value;
+  const toTz = document.getElementById('toTz').value;
+  const dtVal = document.getElementById('dtInput').value;
+  if (!dtVal) { alert('Please select a date and time.'); return; }
+
+  const date = new Date(dtVal + ':00' + getLocalOffsetISO());
+
+  document.getElementById('fromLabel').textContent = fromTz;
+  document.getElementById('toLabel').textContent = toTz;
+
+  // From time
+  const fromTime = new Intl.DateTimeFormat('en-US', { timeZone:fromTz, timeStyle:'medium', hour12:false }).format(date);
+  const fromDate = new Intl.DateTimeFormat('en-US', { timeZone:fromTz, weekday:'long', year:'numeric', month:'long', day:'numeric' }).format(date);
+  document.getElementById('fromTime').textContent = fromTime;
+  document.getElementById('fromDate').textContent = fromDate;
+  const fromOff = getOffsetStr(fromTz, date);
+  const fromDst = isDST(date, fromTz);
+  document.getElementById('fromMeta').innerHTML = `UTC Offset: ${fromOff} <span class="badge ${fromDst ? 'dst' : 'no-dst'}">${fromDst ? 'DST' : 'No DST'}</span>`;
+
+  // To time
+  const toTime = new Intl.DateTimeFormat('en-US', { timeZone:toTz, timeStyle:'medium', hour12:false }).format(date);
+  const toDate = new Intl.DateTimeFormat('en-US', { timeZone:toTz, weekday:'long', year:'numeric', month:'long', day:'numeric' }).format(date);
+  document.getElementById('toTime').textContent = toTime;
+  document.getElementById('toDate').textContent = toDate;
+  const toOff = getOffsetStr(toTz, date);
+  const toDst = isDST(date, toTz);
+  document.getElementById('toMeta').innerHTML = `UTC Offset: ${toOff} <span class="badge ${toDst ? 'dst' : 'no-dst'}">${toDst ? 'DST' : 'No DST'}</span>`;
+
+  document.getElementById('resultGrid').style.display = 'grid';
+}
+
+function getLocalOffsetISO() {
+  const off = -new Date().getTimezoneOffset();
+  const h = Math.floor(Math.abs(off)/60);
+  const m = Math.abs(off)%60;
+  return (off >= 0 ? '+' : '-') + pad2(h) + ':' + pad2(m);
+}
+
+function swapTimezones() {
+  const from = document.getElementById('fromTz');
+  const to = document.getElementById('toTz');
+  const tmp = from.value;
+  from.value = to.value;
+  to.value = tmp;
+  convert();
+}
+
+populateSelects();
+convert();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/unit-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Unit Converter — Length, Mass, Volume, Temperature & More</a>
+      <a href="/currency-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Currency Converter — Live Exchange Rates (USD, EUR, GBP, JPY)</a>
+      <a href="/inches-to-feet" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Inches to Feet Converter — Convert Inches to Feet+Inches</a>
+      <a href="/km-to-miles" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Kilometers to Miles Converter — KM to MI</a>
+      <a href="/mm-to-inches" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Millimeters to Inches Converter — MM to IN</a>
+      <a href="/binary-translator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Binary Translator — Convert Text to Binary & Binary to Text</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regex Tester — Test Regular Expressions Online</title>
+<meta name="description" content="Test and debug regular expressions with real-time matching. Flags support, match highlighting, and cheat sheet included.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--orange:#d29922;--red:#f85149;--radius:8px}
+  body{font-family:ui-monospace,'SF Mono','Cascadia Code','Fira Code',monospace;background:var(--bg);color:var(--text);padding:1.5rem;min-height:100vh}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;flex-wrap:wrap;gap:.5rem}
+  .top h1{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:1.3rem;font-weight:600}
+  .top a{color:var(--muted);text-decoration:none;font-size:.85rem}
+  .top a:hover{color:var(--accent)}
+  .input-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+  .input-row label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.3rem}
+  .input-row input[type=text]{flex:1;min-width:180px;padding:.5rem .7rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;font-size:.9rem}
+  .input-row input[type=text]:focus{border-color:var(--accent);outline:none}
+  .input-row input[type=text].err{border-color:var(--red)}
+  .flags{display:flex;gap:.5rem;flex-wrap:wrap}
+  .flags label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.2rem;cursor:pointer}
+  .flags input[type=checkbox]{accent-color:var(--accent)}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:1rem;height:calc(100vh - 200px)}
+  @media(max-width:800px){.panels{grid-template-columns:1fr;height:auto;min-height:50vh}}
+  .panel{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .panel-head{padding:.45rem .8rem;background:var(--surface);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  .panel-head button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;padding:2px 6px;border-radius:4px}
+  .panel-head button:hover{color:var(--accent);background:rgba(88,166,255,.1)}
+  textarea{flex:1;background:var(--bg);color:var(--text);border:none;outline:none;padding:.8rem;font-family:inherit;font-size:.85rem;line-height:1.55;resize:none}
+  textarea::placeholder{color:#484f58}
+  textarea:focus{background:#0a0e14}
+  #matches{flex:1;overflow:auto;padding:.8rem;font-size:.85rem;line-height:1.6}
+  .match-item{padding:4px 0;border-bottom:1px solid var(--border)}
+  .match-item:last-child{border-bottom:none}
+  .match-idx{color:var(--muted);margin-right:.5rem}
+  .match-val{background:rgba(61,185,80,.15);border-radius:3px;padding:1px 4px}
+  .match-groups{padding-left:1.2rem;font-size:.8rem;color:var(--muted);margin-top:2px}
+  .match-groups strong{color:var(--accent)}
+  .no-match{color:var(--muted);font-style:italic}
+  #hlPreview{background:var(--bg);padding:.8rem;font-family:inherit;font-size:.85rem;line-height:1.55;white-space:pre-wrap;word-break:break-all;overflow-y:auto;flex:1;display:none}
+  .mark{background:rgba(61,185,80,.3);border-radius:2px}
+  .mark-g1{background:rgba(212,168,255,.25)}
+  .mark-g2{background:rgba(210,153,34,.2)}
+  .ref-toggle{color:var(--muted);cursor:pointer;font-size:.78rem;padding:2px 6px;border-radius:4px}
+  .ref-toggle:hover{color:var(--accent);background:rgba(88,166,255,.1)}
+  #refSheet{display:none;padding:1rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:.82rem;line-height:1.7;border:1px solid var(--border);border-radius:var(--radius);margin-top:.8rem;max-height:300px;overflow-y:auto}
+  #refSheet.open{display:block}
+  #refSheet table{width:100%;border-collapse:collapse}
+  #refSheet td{padding:3px 8px;border-bottom:1px solid var(--border)}
+  #refSheet td:first-child{color:var(--accent);font-family:monospace;white-space:nowrap;width:120px}
+  #refSheet td:last-child{color:var(--muted)}
+  .info-bar{display:flex;gap:1rem;flex-wrap:wrap;padding:.4rem .8rem;background:var(--surface);border-radius:var(--radius);font-size:.78rem;color:var(--muted);margin-top:.5rem}
+  .tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border)}
+  .tab-bar button{padding:.4rem .8rem;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.78rem;font-family:inherit;border-bottom:2px solid transparent}
+  .tab-bar button.active{color:var(--text);border-bottom-color:var(--accent)}
+  .tab-bar button:hover:not(.active){color:var(--text)}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Regex Tester \u2014 Test Regular Expressions Online",
+  "description": "Test and debug regular expressions with real-time matching. Flags support, match highlighting, and cheat sheet included.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="top">
+  <h1><a href="index.html" style="color:var(--muted);text-decoration:none">←</a> .* Regex Tester &amp; Reference</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <span class="ref-toggle" onclick="toggleRef()">📖 Cheat Sheet</span>
+</div>
+
+<div class="input-row">
+  <label>Pattern /<input type="text" id="pattern" value="\b\w+@\w+\.\w+\b" spellcheck="false" oninput="testRegex()"></label>/<span id="flagDisplay" style="font-size:.9rem;color:var(--muted)"></span>
+  <div class="flags">
+    <label><input type="checkbox" id="flagG" checked onchange="testRegex()"> g</label>
+    <label><input type="checkbox" id="flagI" onchange="testRegex()"> i</label>
+    <label><input type="checkbox" id="flagM" onchange="testRegex()"> m</label>
+    <label><input type="checkbox" id="flagS" onchange="testRegex()"> s</label>
+    <label><input type="checkbox" id="flagU" onchange="testRegex()"> u</label>
+  </div>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-head">
+      <span>Test Text</span>
+      <span id="textLen" style="color:var(--muted)">0 chars</span>
+    </div>
+    <textarea id="testText" placeholder="Enter text to test against the regex…" spellcheck="false">The quick brown fox jumps over the lazy dog.
+Contact: support@example.com or call (555) 123-4567.
+Visit https://example.com for more info.
+Hello World! hello-world hello_world</textarea>
+  </div>
+  <div class="panel">
+    <div class="panel-head">
+      <div class="tab-bar">
+        <button id="tabMatch" class="active" onclick="switchTab('match')">Matches</button>
+        <button id="tabHL" onclick="switchTab('hl')">Highlight</button>
+      </div>
+      <span id="matchCount" style="color:var(--muted)">0</span>
+    </div>
+    <div id="matches"></div>
+    <div id="hlPreview"></div>
+  </div>
+</div>
+
+<div class="info-bar">
+  <span id="status">✅ Pattern OK</span>
+  <span id="matchInfo">📊 0 matches</span>
+</div>
+
+<div id="refSheet">
+  <table>
+    <tr><td>.</td><td>Any character (except newline unless s flag)</td></tr>
+    <tr><td>\w</td><td>Word character [a-zA-Z0-9_]</td></tr>
+    <tr><td>\W</td><td>Non-word character</td></tr>
+    <tr><td>\d</td><td>Digit [0-9]</td></tr>
+    <tr><td>\D</td><td>Non-digit</td></tr>
+    <tr><td>\s</td><td>Whitespace [ \t\n\r\f\v]</td></tr>
+    <tr><td>\S</td><td>Non-whitespace</td></tr>
+    <tr><td>\b</td><td>Word boundary</td></tr>
+    <tr><td>\B</td><td>Non-word boundary</td></tr>
+    <tr><td>^</td><td>Start of string / line (m flag)</td></tr>
+    <tr><td>$</td><td>End of string / line (m flag)</td></tr>
+    <tr><td>*</td><td>0 or more</td></tr>
+    <tr><td>+</td><td>1 or more</td></tr>
+    <tr><td>?</td><td>0 or 1 (optional)</td></tr>
+    <tr><td>{n,m}</td><td>Quantifier: n to m times</td></tr>
+    <tr><td>(x)</td><td>Capturing group</td></tr>
+    <tr><td>(?:x)</td><td>Non-capturing group</td></tr>
+    <tr><td>(?=x)</td><td>Lookahead</td></tr>
+    <tr><td>(?!x)</td><td>Negative lookahead</td></tr>
+    <tr><td>(?&lt;=x)</td><td>Lookbehind</td></tr>
+    <tr><td>(?&lt;!x)</td><td>Negative lookbehind</td></tr>
+    <tr><td>[abc]</td><td>Character class</td></tr>
+    <tr><td>[^abc]</td><td>Negated character class</td></tr>
+    <tr><td>\|</td><td>Alternation (OR)</td></tr>
+    <tr><td>\1, \2...</td><td>Backreference</td></tr>
+  </table>
+</div>
+
+<script>
+const pattern = document.getElementById('pattern');
+const testText = document.getElementById('testText');
+const matchesDiv = document.getElementById('matches');
+const hlPreview = document.getElementById('hlPreview');
+const matchCount = document.getElementById('matchCount');
+const status = document.getElementById('status');
+const matchInfo = document.getElementById('matchInfo');
+const textLen = document.getElementById('textLen');
+const flagG = document.getElementById('flagG');
+const flagI = document.getElementById('flagI');
+const flagM = document.getElementById('flagM');
+const flagS = document.getElementById('flagS');
+const flagU = document.getElementById('flagU');
+const flagDisplay = document.getElementById('flagDisplay');
+
+function getFlags() {
+  let f = '';
+  if (flagG.checked) f+='g';
+  if (flagI.checked) f+='i';
+  if (flagM.checked) f+='m';
+  if (flagS.checked) f+='s';
+  if (flagU.checked) f+='u';
+  return f || 'g';
+}
+
+function switchTab(tab) {
+  document.getElementById('tabMatch').className = tab === 'match' ? 'active' : '';
+  document.getElementById('tabHL').className = tab === 'hl' ? 'active' : '';
+  matchesDiv.style.display = tab === 'match' ? 'block' : 'none';
+  hlPreview.style.display = tab === 'hl' ? 'block' : 'none';
+}
+
+function testRegex() {
+  const pat = pattern.value;
+  const text = testText.value;
+  const flags = getFlags();
+  flagDisplay.textContent = flags;
+  textLen.textContent = `${text.length} chars`;
+
+  if (!pat) {
+    matchesDiv.innerHTML = '<div class="no-match">Type a pattern to test</div>';
+    hlPreview.textContent = text || '';
+    status.textContent = '⏳ Enter pattern';
+    matchCount.textContent = '0';
+    matchInfo.textContent = '📊 0 matches';
+    return;
+  }
+
+  let regex;
+  try {
+    regex = new RegExp(pat, flags);
+    status.innerHTML = '✅ Pattern OK';
+    pattern.className = '';
+  } catch(e) {
+    matchesDiv.innerHTML = `<div class="no-match" style="color:var(--red)">❌ ${e.message}</div>`;
+    hlPreview.textContent = text || '';
+    status.innerHTML = '❌ Invalid';
+    pattern.className = 'err';
+    matchCount.textContent = '—';
+    matchInfo.textContent = '📊 error';
+    return;
+  }
+
+  // Collect all matches
+  const allMatches = [];
+  const hasG = flags.includes('g');
+  const re = new RegExp(pat, flags);
+  let m;
+  let totalGroups = 0;
+
+  if (hasG) {
+    while ((m = re.exec(text)) !== null) {
+      allMatches.push(m);
+      totalGroups += m.length - 1;
+      if (m[0].length === 0) { re.lastIndex++; }
+    }
+  } else {
+    m = regex.exec(text);
+    if (m) allMatches.push(m);
+    totalGroups += m ? m.length - 1 : 0;
+  }
+
+  // Build matches list
+  if (allMatches.length === 0) {
+    matchesDiv.innerHTML = '<div class="no-match">No matches found</div>';
+    matchCount.textContent = '0';
+    matchInfo.textContent = '📊 0 matches';
+  } else {
+    let html = '';
+    allMatches.forEach((m, i) => {
+      html += `<div class="match-item"><span class="match-idx">#${i+1}</span> <span class="match-val">${esc(m[0])}</span>`;
+      if (m.length > 1) {
+        html += '<div class="match-groups">';
+        for (let g = 1; g < m.length; g++) {
+          if (m[g] !== undefined) {
+            html += `<strong>$${g}:</strong> ${esc(m[g])}`;
+            if (g < m.length - 1) html += ' &middot; ';
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+    matchesDiv.innerHTML = html;
+    matchCount.textContent = `${allMatches.length}`;
+    matchInfo.textContent = `📊 ${allMatches.length} match${allMatches.length!==1?'es':''}`;
+  }
+
+  // Build highlighted preview
+  if (allMatches.length === 0) {
+    hlPreview.textContent = text;
+  } else {
+    const groupColors = ['mark','mark-g1','mark-g2'];
+    let result = '';
+    let lastIdx = 0;
+    const re2 = new RegExp(pat, flags);
+    if (hasG) {
+      let m2;
+      while ((m2 = re2.exec(text)) !== null) {
+        if (m2.index > lastIdx) result += esc(text.slice(lastIdx, m2.index));
+        const mlen = m2[0].length;
+        if (mlen > 0) {
+          result += `<span class="mark">${esc(m2[0])}</span>`;
+          lastIdx = re2.lastIndex;
+        } else {
+          result += esc(text[m2.index] || '');
+          lastIdx = m2.index + 1;
+        }
+        if (m2[0].length === 0 && lastIdx >= text.length) break;
+      }
+      if (lastIdx < text.length) result += esc(text.slice(lastIdx));
+    } else {
+      m = regex.exec(text);
+      if (m) {
+        if (m.index > 0) result += esc(text.slice(0, m.index));
+        result += `<span class="mark">${esc(m[0])}</span>`;
+        const end = m.index + m[0].length;
+        if (end < text.length) result += esc(text.slice(end));
+      } else {
+        result = esc(text);
+      }
+    }
+    hlPreview.innerHTML = result;
+  }
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toggleRef() { document.getElementById('refSheet').classList.toggle('open'); }
+
+testText.addEventListener('input', testRegex);
+pattern.addEventListener('input', testRegex);
+flagG.addEventListener('change', testRegex);
+flagI.addEventListener('change', testRegex);
+flagM.addEventListener('change', testRegex);
+flagS.addEventListener('change', testRegex);
+flagU.addEventListener('change', testRegex);
+
+// Init
+testRegex();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+      <a href="/diff-checker" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Diff Checker — Compare Text Differences Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

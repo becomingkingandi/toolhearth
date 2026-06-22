@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Formatter — Format and Beautify SQL Queries</title>
+<meta name="description" content="Format messy SQL queries into readable, indented statements. Supports SELECT, FROM, WHERE, JOIN, and more. Free online tool.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:system-ui,-apple-system,sans-serif;padding:20px;min-height:100vh}
+.container{max-width:1000px;margin:0 auto}
+h1{color:#58a6ff;margin-bottom:8px;font-size:1.5rem;text-align:center}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:20px;font-size:.9rem}
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.btn{background:#238636;color:#fff;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn.secondary{background:#21262d;border:1px solid #30363d;color:#c9d1d9}
+.btn.secondary:hover{background:#30363d}
+.btn.danger{background:#da3633}
+.btn.danger:hover{background:#f85149}
+.editor-wrap{border:1px solid #30363d;border-radius:8px;overflow:hidden}
+.editor-header{background:#161b22;padding:8px 12px;font-size:.8rem;color:#8b949e;border-bottom:1px solid #30363d;display:flex;justify-content:space-between;align-items:center}
+.editor-header .info{display:flex;gap:16px;align-items:center}
+textarea{width:100%;min-height:300px;background:#0d1117;color:#c9d1d9;border:none;padding:14px;font-family:'Cascadia Code','Fira Code','Courier New',monospace;font-size:.85rem;resize:vertical;outline:none;line-height:1.6;tab-size:2}
+textarea:focus{background:#010409}
+.output-wrap{border:1px solid #30363d;border-radius:8px;overflow:hidden;margin-top:16px}
+.output-wrap .editor-header{background:#161b22;border-radius:8px 8px 0 0}
+.output-wrap pre{background:#0d1117;color:#c9d1d9;padding:14px;margin:0;font-family:'Cascadia Code','Fira Code','Courier New',monospace;font-size:.85rem;line-height:1.6;overflow-x:auto;min-height:100px;white-space:pre-wrap;word-break:break-word}
+.placeholder{color:#8b949e;font-style:italic}
+.actions{display:flex;gap:8px}
+.toast{position:fixed;bottom:24px;right:24px;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;font-size:.85rem;opacity:0;transition:opacity .3s;z-index:100}
+.toast.show{opacity:1}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "SQL Formatter \u2014 Format and Beautify SQL Queries",
+  "description": "Format messy SQL queries into readable, indented statements. Supports SELECT, FROM, WHERE, JOIN, and more. Free online tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🗄️ SQL Formatter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Format, beautify, and minify SQL queries</p>
+
+<div class="toolbar">
+<button class="btn" onclick="formatSQL()">✨ Format</button>
+<button class="btn secondary" onclick="minifySQL()">📦 Minify</button>
+<button class="btn secondary" onclick="copyOutput()">📋 Copy</button>
+<button class="btn danger" onclick="clearAll()">🗑️ Clear</button>
+</div>
+
+<div class="editor-wrap">
+<div class="editor-header">
+<span>Input SQL</span>
+<span class="info"><span id="inputLines">0 lines</span><span id="inputChars">0 chars</span></span>
+</div>
+<textarea id="sqlInput" placeholder="SELECT * FROM users WHERE id = 1" spellcheck="false"></textarea>
+</div>
+
+<div class="output-wrap">
+<div class="editor-header">
+<span>Formatted Output</span>
+<span class="info"><span id="outputLines">0 lines</span><span id="outputChars">0 chars</span></span>
+</div>
+<pre id="sqlOutput"><span class="placeholder">Formatted SQL will appear here...</span></pre>
+</div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const sqlInput = document.getElementById('sqlInput');
+const sqlOutput = document.getElementById('sqlOutput');
+const toast = document.getElementById('toast');
+
+sqlInput.addEventListener('input', updateCounts);
+updateCounts();
+
+function updateCounts() {
+const text = sqlInput.value;
+document.getElementById('inputLines').textContent = (text ? text.split('\n').length : 0) + ' lines';
+document.getElementById('inputChars').textContent = text.length + ' chars';
+}
+
+function showToast(msg) {
+toast.textContent = msg;
+toast.classList.add('show');
+setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+const majorClauses = ['SELECT','FROM','WHERE','JOIN','LEFT JOIN','RIGHT JOIN','INNER JOIN','OUTER JOIN','FULL JOIN','CROSS JOIN','GROUP BY','ORDER BY','HAVING','LIMIT','OFFSET','UNION','UNION ALL','VALUES','SET','INSERT INTO','UPDATE','DELETE FROM','CREATE TABLE','ALTER TABLE','DROP TABLE','CREATE INDEX','CREATE VIEW','AND','OR'];
+
+function formatSQL() {
+const input = sqlInput.value.trim();
+if (!input) {
+sqlOutput.innerHTML = '<span class="placeholder">No SQL to format.</span>';
+return;
+}
+
+let sql = input
+.replace(/\s+/g, ' ')
+.trim();
+
+const keywords = ['SELECT','FROM','WHERE','JOIN','LEFT JOIN','RIGHT JOIN','INNER JOIN','OUTER JOIN','FULL JOIN','CROSS JOIN','GROUP BY','ORDER BY','HAVING','LIMIT','OFFSET','UNION','UNION ALL','INSERT INTO','UPDATE','DELETE FROM','CREATE TABLE','ALTER TABLE','DROP TABLE','CREATE INDEX','CREATE VIEW','SET','VALUES','INTO','ON DUPLICATE KEY UPDATE','RETURNING','WINDOW','PARTITION BY'];
+
+const regex = new RegExp('\\b(' + keywords.join('|') + ')\\b', 'gi');
+sql = sql.replace(regex, function(m) { return m.toUpperCase(); });
+
+let indent = 0;
+const lines = [];
+const tokens = sql.split(/\b(?=SELECT|FROM|WHERE|JOIN|LEFT JOIN|RIGHT JOIN|INNER JOIN|OUTER JOIN|FULL JOIN|CROSS JOIN|GROUP BY|ORDER BY|HAVING|LIMIT|OFFSET|UNION|UNION ALL|INSERT INTO|UPDATE|DELETE FROM|CREATE TABLE|ALTER TABLE|DROP TABLE|CREATE INDEX|CREATE VIEW|SET|VALUES|INTO|AND|OR|ON\b)/i);
+
+for (let i = 0; i < tokens.length; i++) {
+let t = tokens[i].trim();
+if (!t) continue;
+
+const upper = t.toUpperCase();
+
+if (/^(SELECT|FROM|WHERE|HAVING|ORDER BY|GROUP BY|LIMIT|OFFSET|SET|VALUES)$/i.test(upper)) {
+if (upper === 'SELECT') indent = 1;
+lines.push(t);
+continue;
+}
+
+if (/^(JOIN|LEFT JOIN|RIGHT JOIN|INNER JOIN|OUTER JOIN|FULL JOIN|CROSS JOIN)$/i.test(upper)) {
+lines.push(t);
+continue;
+}
+
+if (upper === 'INSERT INTO' || upper === 'UPDATE' || upper === 'DELETE FROM' || upper === 'CREATE TABLE' || upper === 'ALTER TABLE' || upper === 'DROP TABLE' || upper === 'CREATE INDEX' || upper === 'CREATE VIEW') {
+lines.push(t);
+continue;
+}
+
+if (upper.startsWith('UNION')) {
+lines.push(t);
+continue;
+}
+
+if (i > 0) {
+const lastUpper = tokens[i-1].trim().toUpperCase();
+if (/^(SELECT|SET)$/i.test(lastUpper)) {
+const parts = t.split(',');
+parts.forEach((p, idx) => {
+const line = '  ' + p.trim();
+lines.push(idx === 0 ? '  ' + parts[0].trim() : '  ' + p.trim());
+});
+continue;
+}
+if (lastUpper === 'VALUES') {
+lines.push('  ' + t);
+continue;
+}
+lines.push(t);
+} else {
+lines.push(t);
+}
+}
+
+let result = lines.join('\n');
+
+result = result
+.replace(/\b(select|from|where|join|left join|right join|inner join|outer join|full join|cross join|group by|order by|having|limit|offset|union|union all|insert into|update|delete from|create table|alter table|drop table|create index|create view|set|values|and|or|on|not|null|is|in|as|asc|desc|between|like|exists|case|when|then|else|end|distinct|count|sum|avg|min|max)\b/gi, function(m) {
+return m.toUpperCase();
+});
+
+result = result.replace(/\b(IN|AS|ASC|DESC|ON|AND|OR|NOT|NULL|IS|LIKE|BETWEEN|EXISTS|CASE|WHEN|THEN|ELSE|END|DISTINCT)\b/g, function(m) {
+return m.toUpperCase();
+});
+
+result = result.replace(/,/g, ',\n  ');
+
+sqlOutput.textContent = result;
+const outLines = result.split('\n').length;
+const outChars = result.length;
+document.getElementById('outputLines').textContent = outLines + ' lines';
+document.getElementById('outputChars').textContent = outChars + ' chars';
+showToast('✅ Formatted!');
+}
+
+function minifySQL() {
+const input = sqlInput.value.trim();
+if (!input) {
+sqlOutput.innerHTML = '<span class="placeholder">No SQL to minify.</span>';
+return;
+}
+let minified = input.replace(/\s+/g, ' ').trim();
+const keywords = ['SELECT','FROM','WHERE','JOIN','LEFT JOIN','RIGHT JOIN','INNER JOIN','OUTER JOIN','FULL JOIN','CROSS JOIN','GROUP BY','ORDER BY','HAVING','LIMIT','OFFSET','UNION','UNION ALL','INSERT INTO','UPDATE','DELETE FROM','CREATE TABLE','ALTER TABLE','DROP TABLE','CREATE INDEX','CREATE VIEW','SET','VALUES','AND','OR','ON'];
+const regex = new RegExp('\\b(' + keywords.join('|') + ')\\b', 'gi');
+minified = minified.replace(regex, function(m) { return m.toUpperCase(); });
+sqlOutput.textContent = minified;
+const outLines = minified.split('\n').length;
+const outChars = minified.length;
+document.getElementById('outputLines').textContent = outLines + ' lines';
+document.getElementById('outputChars').textContent = outChars + ' chars';
+showToast('📦 Minified!');
+}
+
+function copyOutput() {
+const text = sqlOutput.textContent;
+if (!text || text === 'Formatted SQL will appear here...') {
+showToast('Nothing to copy');
+return;
+}
+navigator.clipboard.writeText(text).then(() => showToast('📋 Copied!'));
+}
+
+function clearAll() {
+sqlInput.value = '';
+updateCounts();
+sqlOutput.innerHTML = '<span class="placeholder">Formatted SQL will appear here...</span>';
+document.getElementById('outputLines').textContent = '0 lines';
+document.getElementById('outputChars').textContent = '0 chars';
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

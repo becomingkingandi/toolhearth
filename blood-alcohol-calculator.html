@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BAC Calculator — Blood Alcohol Content Estimator (Widmark Formula)</title>
+<meta name="description" content="Estimate your blood alcohol content based on drinks consumed, weight, and time. Uses the Widmark formula with legal limit indicators.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px;
+  }
+  .container { max-width: 640px; width: 100%; }
+  h1 {
+    font-size: 1.6rem; font-weight: 700; color: #ffffff;
+    text-align: center; margin-bottom: 24px; letter-spacing: -0.5px;
+  }
+  h1 span { color: #6c9bff; }
+  .card {
+    background: #1a1a2e; border: 1px solid #2a2a44;
+    border-radius: 14px; padding: 24px; margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 1.05rem; font-weight: 600; color: #c0c0e0;
+    margin-bottom: 16px;
+  }
+  .input-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .input-group {
+    display: flex; flex-direction: column;
+  }
+  .input-group.full { grid-column: 1 / -1; }
+  .input-group label {
+    font-size: 0.8rem; color: #8888aa; margin-bottom: 4px; font-weight: 500;
+  }
+  .input-group input, .input-group select {
+    background: #12121f; border: 1px solid #2e2e4a; border-radius: 8px;
+    padding: 10px 12px; font-size: 1rem; color: #ffffff; outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-group select option { background: #1a1a2e; }
+  .input-group input:focus, .input-group select:focus {
+    border-color: #6c9bff; box-shadow: 0 0 0 2px rgba(108,155,255,0.15);
+  }
+  .input-group input::placeholder { color: #555577; }
+  button {
+    width: 100%; background: linear-gradient(135deg, #4a7cf7, #6c9bff);
+    border: none; border-radius: 10px; padding: 12px; font-size: 1rem;
+    font-weight: 600; color: #fff; cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s; margin-top: 8px;
+  }
+  button:hover { opacity: 0.9; }
+  button:active { transform: scale(0.98); }
+
+  .bac-display {
+    text-align: center; padding: 18px;
+    border-radius: 14px; margin-bottom: 16px;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+  .bac-display .label {
+    font-size: 0.8rem; color: #8888aa; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 4px;
+  }
+  .bac-display .value {
+    font-size: 2.8rem; font-weight: 800;
+    letter-spacing: -1px;
+  }
+  .bac-display .status {
+    font-size: 0.95rem; font-weight: 600; margin-top: 6px;
+  }
+  .bac-display.green {
+    background: rgba(76, 217, 100, 0.08);
+    border: 1px solid rgba(76, 217, 100, 0.3);
+  }
+  .bac-display.green .value { color: #4cd964; }
+  .bac-display.green .status { color: #4cd964; }
+  .bac-display.yellow {
+    background: rgba(255, 149, 0, 0.08);
+    border: 1px solid rgba(255, 149, 0, 0.3);
+  }
+  .bac-display.yellow .value { color: #ff9500; }
+  .bac-display.yellow .status { color: #ff9500; }
+  .bac-display.red {
+    background: rgba(255, 59, 48, 0.08);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+  }
+  .bac-display.red .value { color: #ff3b30; }
+  .bac-display.red .status { color: #ff3b30; }
+
+  .result-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .result-item {
+    background: #141428; border-radius: 10px; padding: 14px 16px;
+  }
+  .result-item .label {
+    font-size: 0.75rem; color: #8888aa; text-transform: uppercase;
+    letter-spacing: 0.3px; margin-bottom: 4px;
+  }
+  .result-item .value {
+    font-size: 1.2rem; font-weight: 700; color: #ffffff;
+  }
+  .result-item .value.accent { color: #6c9bff; }
+
+  .bar-container {
+    margin-top: 16px;
+  }
+  .bar-container .bar-label {
+    display: flex; justify-content: space-between; font-size: 0.78rem;
+    color: #8888aa; margin-bottom: 4px;
+  }
+  .bar-track {
+    height: 10px; background: #12121f; border-radius: 6px;
+    overflow: hidden; position: relative;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 6px; transition: width 0.5s ease;
+  }
+  .bar-fill.under { background: #4cd964; }
+  .bar-fill.at { background: #ff9500; }
+  .bar-fill.over { background: #ff3b30; }
+  .bar-markers {
+    position: relative; height: 6px; margin-top: 4px;
+  }
+  .bar-markers .marker {
+    position: absolute; top: 0; width: 2px; height: 6px; background: #555577;
+    transform: translateX(-50%);
+  }
+  .bar-markers .marker span {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    font-size: 0.65rem; color: #555577; white-space: nowrap;
+  }
+
+  .info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid #1f1f38;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .lbl { font-size: 0.85rem; color: #8888aa; }
+  .info-row .val { font-size: 0.95rem; font-weight: 600; color: #ffffff; }
+
+  footer {
+    text-align: center; font-size: 0.8rem;
+    color: #555577; padding: 20px 0 10px; margin-top: 8px;
+  }
+  .legal-note {
+    font-size: 0.72rem; color: #555577; text-align: center;
+    margin-top: 12px; line-height: 1.5;
+  }
+  .legal-note strong { color: #7777aa; }
+
+  @media (max-width: 600px) {
+    body { padding: 12px 10px; }
+    .card { padding: 16px; }
+    .input-grid { grid-template-columns: 1fr; }
+    .bac-display .value { font-size: 2.2rem; }
+    .result-grid { gap: 8px; }
+    .result-item { padding: 10px 12px; }
+    .result-item .value { font-size: 1rem; }
+    h1 { font-size: 1.3rem; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "BAC Calculator \u2014 Blood Alcohol Content Estimator (Widmark Formula)",
+  "description": "Estimate your blood alcohol content based on drinks consumed, weight, and time. Uses the Widmark formula with legal limit indicators.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🍺 <span>BAC</span> Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+
+  <div class="card">
+    <h2>📋 Drinking Info</h2>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Gender</label>
+        <select id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Weight (lbs)</label>
+        <input type="number" id="weight" value="180" min="80" max="500" step="1">
+      </div>
+      <div class="input-group">
+        <label>Number of Drinks</label>
+        <input type="number" id="drinks" value="3" min="0" max="50" step="0.5">
+      </div>
+      <div class="input-group">
+        <label>Drink Type</label>
+        <select id="drinkType">
+          <option value="beer">Beer (5% ABV)</option>
+          <option value="wine">Wine (12% ABV)</option>
+          <option value="liquor">Liquor (40% ABV)</option>
+        </select>
+      </div>
+      <div class="input-group full">
+        <label>Drink Size</label>
+        <select id="drinkSizeType">
+          <option value="standard">Standard (1 drink)</option>
+          <option value="custom">Custom (oz)</option>
+        </select>
+      </div>
+      <div class="input-group full" id="customSizeWrap" style="display:none;">
+        <label>Custom Drink Size (oz per drink)</label>
+        <input type="number" id="customOz" value="12" min="0.1" max="128" step="0.5">
+      </div>
+      <div class="input-group full">
+        <label>Hours Since First Drink</label>
+        <input type="number" id="hours" value="1" min="0" max="24" step="0.25">
+      </div>
+    </div>
+    <button id="calcBtn">🔄 Calculate BAC</button>
+  </div>
+
+  <div class="card">
+    <h2>📊 Results</h2>
+
+    <div class="bac-display green" id="bacDisplay">
+      <div class="label">Estimated Blood Alcohol Content</div>
+      <div class="value" id="bacValue">0.000%</div>
+      <div class="status" id="bacStatus">📋 Under legal limit</div>
+    </div>
+
+    <div class="bar-container">
+      <div class="bar-label">
+        <span>0.00%</span>
+        <span>0.08% (limit)</span>
+        <span>0.15%</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill under" id="bacBar" style="width:0%"></div>
+      </div>
+      <div class="bar-markers">
+        <div class="marker" style="left:53.33%"><span>0.08%</span></div>
+        <div class="marker" style="left:100%"><span>0.15%</span></div>
+      </div>
+    </div>
+
+    <div class="result-grid" style="margin-top:16px;">
+      <div class="result-item">
+        <div class="label">Alcohol Consumed</div>
+        <div class="value accent" id="alcoholGrams">0 g</div>
+      </div>
+      <div class="result-item">
+        <div class="label">Hours Until Zero BAC</div>
+        <div class="value accent" id="hoursToZero">0 hrs</div>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <span class="lbl">Legal Limit (US)</span>
+      <span class="val" style="color:#ff9500;">0.08%</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">Widmark Factor (r)</span>
+      <span class="val" id="widmarkFactor">0.73</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">Status</span>
+      <span class="val" id="legalStatus" style="color:#4cd964;">Under limit ✓</span>
+    </div>
+
+    <div class="legal-note">
+      <strong>Disclaimer:</strong> This calculator provides estimates only. BAC depends on many factors including metabolism, food intake, and individual physiology. Do not drink and drive.
+    </div>
+  </div>
+
+  <footer>Free Blood Alcohol Content Calculator — Widmark Formula</footer>
+</div>
+
+<script>
+(function() {
+  const genderEl = document.getElementById('gender');
+  const weightEl = document.getElementById('weight');
+  const drinksEl = document.getElementById('drinks');
+  const drinkTypeEl = document.getElementById('drinkType');
+  const drinkSizeTypeEl = document.getElementById('drinkSizeType');
+  const customOzEl = document.getElementById('customOz');
+  const customSizeWrap = document.getElementById('customSizeWrap');
+  const hoursEl = document.getElementById('hours');
+  const calcBtn = document.getElementById('calcBtn');
+
+  const bacValue = document.getElementById('bacValue');
+  const bacStatus = document.getElementById('bacStatus');
+  const bacDisplay = document.getElementById('bacDisplay');
+  const bacBar = document.getElementById('bacBar');
+  const alcoholGrams = document.getElementById('alcoholGrams');
+  const hoursToZero = document.getElementById('hoursToZero');
+  const widmarkFactor = document.getElementById('widmarkFactor');
+  const legalStatus = document.getElementById('legalStatus');
+
+  // Standard drink alcohol content by type
+  const ABV = { beer: 0.05, wine: 0.12, liquor: 0.40 };
+  const STD_OZ = { beer: 12, wine: 5, liquor: 1.5 };
+
+  drinkSizeTypeEl.addEventListener('change', function() {
+    customSizeWrap.style.display = this.value === 'custom' ? 'block' : 'none';
+  });
+
+  function calc() {
+    const gender = genderEl.value;
+    const weight = parseFloat(weightEl.value) || 180;
+    const numDrinks = parseFloat(drinksEl.value) || 0;
+    const drinkType = drinkTypeEl.value;
+    const hours = parseFloat(hoursEl.value) || 0;
+    const sizeMode = drinkSizeTypeEl.value;
+
+    // Widmark factor
+    const r = gender === 'male' ? 0.73 : 0.66;
+    widmarkFactor.textContent = r.toFixed(2);
+
+    // Alcohol per drink in grams
+    let ozPerDrink;
+    if (sizeMode === 'standard') {
+      ozPerDrink = STD_OZ[drinkType];
+    } else {
+      ozPerDrink = parseFloat(customOzEl.value) || 12;
+    }
+    const abv = ABV[drinkType];
+    const ethanolOz = ozPerDrink * abv;
+    const alcoholPerDrinkG = ethanolOz * 23.36;
+    const totalAlcoholG = alcoholPerDrinkG * numDrinks;
+
+    alcoholGrams.textContent = totalAlcoholG.toFixed(1) + ' g';
+
+    // Widmark formula: BAC% = A / (W * r * 4.536) - 0.015 * H
+    // A = total alcohol in grams, W = weight in lbs, r = Widmark factor
+    // 4.536 = 0.4536 * 10 (lb-to-kg * g/dL conversion)
+    // 0.015 = elimination rate per hour
+    const bacPctCorrect = Math.max(0, totalAlcoholG / (weight * r * 4.536) - 0.015 * hours);
+
+    bacValue.textContent = bacPctCorrect.toFixed(3) + '%';
+
+    bacDisplay.className = 'bac-display';
+    bacBar.className = 'bar-fill';
+
+    if (bacPctCorrect < 0.08) {
+      bacDisplay.classList.add('green');
+      bacBar.classList.add('under');
+      bacStatus.textContent = '✅ Under legal limit (0.08%)';
+      legalStatus.textContent = 'Under limit ✓';
+      legalStatus.style.color = '#4cd964';
+    } else if (bacPctCorrect <= 0.15) {
+      bacDisplay.classList.add('yellow');
+      bacBar.classList.add('at');
+      bacStatus.textContent = '⚠️ Over legal limit — Do not drive';
+      legalStatus.textContent = 'Over limit ⚠️';
+      legalStatus.style.color = '#ff9500';
+    } else {
+      bacDisplay.classList.add('red');
+      bacBar.classList.add('over');
+      bacStatus.textContent = '🚫 High BAC — Serious impairment risk';
+      legalStatus.textContent = 'High BAC 🚫';
+      legalStatus.style.color = '#ff3b30';
+    }
+
+    // Bar: scale 0 to 0.20 (max displayed)
+    const barPct = Math.min(100, (bacPctCorrect / 0.20) * 100);
+    bacBar.style.width = barPct + '%';
+
+    // Hours until zero BAC (elimination rate: 0.015% per hour)
+    if (bacPctCorrect > 0) {
+      const hrs = Math.ceil(bacPctCorrect / 0.015 * 10) / 10;
+      hoursToZero.textContent = hrs + ' hrs';
+    } else {
+      hoursToZero.textContent = '0 hrs';
+    }
+  }
+
+  calcBtn.addEventListener('click', calc);
+  calc();
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

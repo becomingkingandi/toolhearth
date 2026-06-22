@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Gradient Builder — Create Linear & Radial Gradients</title>
+<meta name="description" content="Build custom CSS gradients visually. Linear and radial gradients with multiple color stops. Copy the CSS code instantly.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0b0d14; color: #e4e6ef; min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+    .back { display: inline-flex; align-items: center; gap: 6px; color: #8b8fa4; text-decoration: none; font-size: 0.9rem; margin-bottom: 24px; }
+    .back:hover { color: #818cf8; }
+    h1 { font-size: 2rem; font-weight: 700; }
+    .sub { color: #8b8fa4; margin-bottom: 32px; }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .preview-panel { background: #141824; border: 1px solid #1f2335; border-radius: 16px; padding: 20px; }
+    .preview { width: 100%; height: 340px; border-radius: 12px; margin-bottom: 16px; }
+    .controls-panel { background: #141824; border: 1px solid #1f2335; border-radius: 16px; padding: 24px; }
+    .control-group { margin-bottom: 20px; }
+    .control-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #8b8fa4; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .type-toggle { display: flex; gap: 8px; }
+    .type-toggle button { flex: 1; padding: 10px; border: 1px solid #1f2335; border-radius: 8px; background: transparent; color: #8b8fa4; cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 500; transition: all 0.15s; }
+    .type-toggle button.active { background: #818cf8; color: #0b0d14; border-color: #818cf8; }
+    .angle-control { display: flex; align-items: center; gap: 12px; }
+    .angle-control input[type="range"] { flex: 1; accent-color: #818cf8; }
+    .angle-control .value { min-width: 40px; text-align: center; font-weight: 600; font-size: 0.9rem; }
+    .stops { display: flex; flex-direction: column; gap: 8px; }
+    .stop-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #1a1e2e; border-radius: 8px; }
+    .stop-row input[type="color"] { width: 36px; height: 36px; border: 2px solid #2a2e44; border-radius: 6px; cursor: pointer; background: none; padding: 2px; }
+    .stop-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    .stop-row input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+    .stop-row input[type="range"] { flex: 1; accent-color: #818cf8; }
+    .stop-row .pct { min-width: 36px; font-size: 0.8rem; color: #8b8fa4; text-align: right; }
+    .stop-row .remove { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.1rem; padding: 2px 6px; border-radius: 4px; }
+    .stop-row .remove:hover { background: rgba(239,68,68,0.15); }
+    .add-stop { margin-top: 8px; background: none; border: 1px dashed #2a2e44; color: #818cf8; padding: 8px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.85rem; width: 100%; }
+    .add-stop:hover { border-color: #818cf8; background: rgba(129,140,248,0.08); }
+    .code-panel { grid-column: 1 / -1; background: #0d0f17; border: 1px solid #1f2335; border-radius: 12px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.7; position: relative; }
+    .copy-btn { position: absolute; top: 12px; right: 12px; background: #1f2335; border: 1px solid #2a2e44; color: #e4e6ef; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-family: inherit; }
+    .copy-btn:hover { background: #2a2e44; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1f2335; padding: 10px 24px; border-radius: 8px; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CSS Gradient Builder \u2014 Create Linear & Radial Gradients",
+  "description": "Build custom CSS gradients visually. Linear and radial gradients with multiple color stops. Copy the CSS code instantly.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="index.html">← Back to Toolkit</a>
+    <h1>🎨 CSS Gradient Builder</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p class="sub">Build and preview linear &amp; radial gradients interactively.</p>
+    <div class="layout">
+      <div class="preview-panel">
+        <div class="preview" id="preview"></div>
+        <div class="type-toggle" id="typeToggle">
+          <button class="active" data-type="linear">Linear</button>
+          <button data-type="radial">Radial</button>
+        </div>
+      </div>
+      <div class="controls-panel">
+        <div class="control-group" id="angleGroup">
+          <label>Angle</label>
+          <div class="angle-control">
+            <input type="range" id="angleSlider" min="0" max="360" value="135" />
+            <span class="value" id="angleValue">135°</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Color Stops</label>
+          <div class="stops" id="stopsContainer"></div>
+          <button class="add-stop" onclick="addStop()">+ Add Stop</button>
+        </div>
+      </div>
+      <div class="code-panel">
+        <button class="copy-btn" onclick="copyCode()">Copy CSS</button>
+        <pre id="cssOutput">background: linear-gradient(135deg, #6366f1 0%, #c084fc 100%);</pre>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Copied!</div>
+  <script>
+    let stops = [
+      { color: '#6366f1', pos: 0 },
+      { color: '#c084fc', pos: 100 },
+    ];
+    let gradientType = 'linear';
+    let angle = 135;
+
+    function renderStops() {
+      const container = document.getElementById('stopsContainer');
+      container.innerHTML = '';
+      stops.forEach((stop, i) => {
+        const row = document.createElement('div');
+        row.className = 'stop-row';
+        const colorInput = document.createElement('input');
+        colorInput.type = 'color';
+        colorInput.value = stop.color;
+        colorInput.addEventListener('input', () => { stops[i].color = colorInput.value; updateAll(); });
+        const posSlider = document.createElement('input');
+        posSlider.type = 'range';
+        posSlider.min = 0; posSlider.max = 100;
+        posSlider.value = stop.pos;
+        posSlider.addEventListener('input', () => { stops[i].pos = Number(posSlider.value); pct.textContent = Math.round(stop.pos)+'%'; updateAll(); });
+        const pct = document.createElement('span');
+        pct.className = 'pct';
+        pct.textContent = Math.round(stop.pos)+'%';
+        row.appendChild(colorInput);
+        row.appendChild(posSlider);
+        row.appendChild(pct);
+        if (stops.length > 2) {
+          const removeBtn = document.createElement('button');
+          removeBtn.className = 'remove';
+          removeBtn.textContent = '×';
+          removeBtn.onclick = () => { stops.splice(i,1); renderStops(); updateAll(); };
+          row.appendChild(removeBtn);
+        }
+        container.appendChild(row);
+      });
+    }
+
+    function addStop() {
+      stops.push({ color: '#f472b6', pos: 50 });
+      renderStops();
+      updateAll();
+    }
+
+    function buildGradientCSS() {
+      const sorted = [...stops].sort((a,b) => a.pos - b.pos);
+      const parts = sorted.map(s => `${s.color} ${Math.round(s.pos)}%`).join(', ');
+      if (gradientType === 'linear') return `background: linear-gradient(${angle}deg, ${parts});`;
+      return `background: radial-gradient(circle, ${parts});`;
+    }
+
+    function updateAll() {
+      const css = buildGradientCSS();
+      document.getElementById('preview').style.cssText = css;
+      document.getElementById('cssOutput').textContent = css;
+    }
+
+    function copyCode() {
+      navigator.clipboard.writeText(buildGradientCSS());
+      const toast = document.getElementById('toast');
+      toast.textContent = 'CSS copied!';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1500);
+    }
+
+    // Type toggle
+    document.querySelectorAll('#typeToggle button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#typeToggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        gradientType = btn.dataset.type;
+        document.getElementById('angleGroup').style.display = gradientType === 'linear' ? 'block' : 'none';
+        updateAll();
+      });
+    });
+
+    document.getElementById('angleSlider').addEventListener('input', e => {
+      angle = Number(e.target.value);
+      document.getElementById('angleValue').textContent = angle + '°';
+      updateAll();
+    });
+
+    renderStops();
+    updateAll();
+  </script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/color-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Color Converter — HEX to RGB to HSL Converter</a>
+      <a href="/color-palette" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Color Palette Generator — Create Color Schemes</a>
+      <a href="/typography-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Typography Tester — Preview Fonts & Text Styles</a>
+      <a href="/box-shadow" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Box Shadow Generator — Create Shadow Effects</a>
+      <a href="/grid-layout" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Grid Layout Builder — Design Responsive Grids</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

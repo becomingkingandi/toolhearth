@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hacker News Reader — Top Stories, New, Show & Ask</title>
+<meta name="description" content="Browse the latest Hacker News stories. Filter by top, new, show, and ask categories. Free HN reader.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+  .container { max-width: 720px; margin: 0 auto; padding: 20px; flex: 1; width: 100%; }
+  h1 { text-align: center; margin: 24px 0 10px; font-size: 2rem; background: linear-gradient(135deg,#f78166,#e3b341); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { text-align: center; color: #8b949e; font-size: .9rem; margin-bottom: 20px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 20px; overflow-x: auto; }
+  .tab { padding: 10px 22px; border: 1px solid #30363d; border-radius: 8px; background: #161b22; color: #8b949e; cursor: pointer; font-size: .9rem; font-weight: 600; transition: all .2s; white-space: nowrap; }
+  .tab:hover { border-color: #f78166; color: #f0f6fc; }
+  .tab.active { background: #f78166; color: #fff; border-color: #f78166; }
+  .loading { text-align: center; padding: 40px; display: none; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #30363d; border-top-color: #f78166; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg { background: #3a1c1c; border: 1px solid #f85149; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; }
+  .story-list { display: flex; flex-direction: column; gap: 10px; }
+  .story { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 14px 16px; transition: border-color .2s; }
+  .story:hover { border-color: #30363d; }
+  .story .title { font-size: 1rem; font-weight: 600; color: #f0f6fc; margin-bottom: 6px; }
+  .story .title a { color: #f0f6fc; text-decoration: none; }
+  .story .title a:hover { color: #58a6ff; }
+  .story .meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: .82rem; color: #8b949e; }
+  .story .meta span { display: flex; align-items: center; gap: 3px; }
+  .story .meta .score { color: #e3b341; font-weight: 600; }
+  .story .meta .author { color: #58a6ff; }
+  .story .meta .comments { color: #7ee787; }
+  .story .meta .site { color: #8b949e; font-size: .78rem; }
+  .story .meta .site a { color: #8b949e; text-decoration: none; }
+  .story .meta .site a:hover { color: #58a6ff; }
+  .footer { text-align: center; padding: 24px; color: #484f58; font-size: .85rem; border-top: 1px solid #21262d; margin-top: 30px; }
+  .footer a { color: #58a6ff; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  @media (max-width: 500px) { .container { padding: 14px; } h1 { font-size: 1.5rem; } .tabs { gap: 4px; } .tab { padding: 8px 14px; font-size: .82rem; } }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Hacker News Reader \u2014 Top Stories, New, Show & Ask",
+  "description": "Browse the latest Hacker News stories. Filter by top, new, show, and ask categories. Free HN reader.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>📰 Hacker News</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="subtitle">Top stories from the HN community</div>
+  <div class="tabs">
+    <div class="tab active" data-endpoint="topstories">Top</div>
+    <div class="tab" data-endpoint="newstories">New</div>
+    <div class="tab" data-endpoint="showstories">Show</div>
+    <div class="tab" data-endpoint="askstories">Ask</div>
+  </div>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>Loading stories...</span>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="story-list" id="storyList"></div>
+</div>
+<div class="footer">Powered by <a href="https://github.com/HackerNews/API" target="_blank">HN API</a> &middot; <a href="https://github.com/me-shemika/cheat-sheet" target="_blank">GitHub</a></div>
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const loading = document.getElementById('loading');
+  const errorMsg = document.getElementById('errorMsg');
+  const storyList = document.getElementById('storyList');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      loadStories(tab.dataset.endpoint);
+    });
+  });
+
+  async function loadStories(endpoint) {
+    loading.style.display = 'block';
+    errorMsg.style.display = 'none';
+    storyList.innerHTML = '';
+    try {
+      const idsRes = await fetch(`https://hacker-news.firebaseio.com/v0/${endpoint}.json`);
+      if (!idsRes.ok) throw new Error('Failed to fetch story IDs.');
+      const ids = await idsRes.json();
+      const topIds = ids.slice(0, 30);
+      const stories = await Promise.all(topIds.map(id =>
+        fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(r => r.json())
+      ));
+      render(stories.filter(s => s && !s.deleted && !s.dead));
+    } catch (err) {
+      errorMsg.textContent = err.message;
+      errorMsg.style.display = 'block';
+    } finally {
+      loading.style.display = 'none';
+    }
+  }
+
+  function render(stories) {
+    storyList.innerHTML = stories.map(s => {
+      const domain = s.url ? new URL(s.url).hostname.replace(/^www\./, '') : '';
+      const hnLink = `https://news.ycombinator.com/item?id=${s.id}`;
+      return `
+        <div class="story">
+          <div class="title">
+            <a href="${s.url || hnLink}" target="_blank" rel="noopener">${s.title}</a>
+          </div>
+          <div class="meta">
+            <span class="score">⬆ ${s.score}</span>
+            <span class="author">by ${s.by}</span>
+            <span class="comments"><a href="${hnLink}" target="_blank" style="color:#7ee787;text-decoration:none;">💬 ${s.descendants || 0}</a></span>
+            ${domain ? `<span class="site">(<a href="${s.url}" target="_blank">${domain}</a>)</span>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Load Top on page load
+  loadStories('topstories');
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

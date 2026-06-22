@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retirement Calculator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:960px;width:100%}
+h1{text-align:center;font-size:1.7rem;font-weight:700;color:#fff;margin:10px 0 6px}
+.subtitle{text-align:center;color:#8b949e;font-size:.9rem;margin-bottom:24px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{font-size:1.05rem;font-weight:600;color:#f0f6fc;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #30363d}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 18px;border-radius:8px;border:1px solid #30363d;background:transparent;color:#8b949e;font-size:.88rem;cursor:pointer;transition:all .2s}
+.tab.active{background:#1f6feb;border-color:#1f6feb;color:#fff}
+.tab:hover:not(.active){border-color:#58a6ff;color:#c9d1d9}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.field label{display:block;font-size:.82rem;color:#8b949e;margin-bottom:4px;font-weight:500}
+.field input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#f0f6fc;font-size:.95rem;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#58a6ff;box-shadow:0 0 0 2px rgba(88,166,255,.15)}
+.field input::placeholder{color:#484f58}
+.btn{width:100%;background:linear-gradient(135deg,#1f6feb,#58a6ff);border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:600;color:#fff;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:8px}
+.btn:hover{opacity:.9}
+.btn:active{transform:scale(.98)}
+.result-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.result-item{background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:14px 16px}
+.result-item .label{font-size:.7rem;color:#8b949e;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;word-break:break-word}
+.result-item .value{font-size:1.2rem;font-weight:700;color:#f0f6fc}
+.result-item .value.green{color:#3fb950}
+.result-item .value.accent{color:#58a6ff}
+.result-item .value.orange{color:#d29922}
+.result-item .value.red{color:#f85149}
+.insight-box{background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:16px;margin-top:14px;font-size:.88rem;line-height:1.6}
+.insight-box strong{color:#f0f6fc}
+.insight-box .big{font-size:1.1rem;font-weight:700}
+.canvas-wrap{width:100%;max-width:600px;margin:10px auto}
+canvas{width:100%;height:auto;max-height:260px}
+.metric-row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.metric-pill{background:#0d1117;border:1px solid #30363d;border-radius:20px;padding:8px 18px;font-size:.82rem;text-align:center}
+.metric-pill .num{font-weight:700;color:#f0f6fc}
+.progress-ring-wrap{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:12px 0}
+.progress-ring{width:130px;height:130px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+.progress-ring .inner{text-align:center}
+.progress-ring .inner .pct{font-size:1.5rem;font-weight:700;color:#f0f6fc}
+.progress-ring .inner .lbl{font-size:.72rem;color:#8b949e}
+.progress-ring.goal-met{background:conic-gradient(#3fb950 0deg 360deg)}
+footer{text-align:center;padding:20px 0 10px;color:#484f58;font-size:.8rem;border-top:1px solid #21262d;width:100%}
+@media(max-width:600px){.grid,.grid-3,.result-grid{grid-template-columns:1fr 1fr}.card{padding:16px}h1{font-size:1.35rem}.result-grid{grid-template-columns:1fr 1fr}}
+</style>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🏖️ Retirement Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Plan your financial future — estimate when you can retire and how much you'll need</p>
+
+<div class="card">
+  <div class="tabs">
+    <div class="tab active" data-tab="standard">Standard</div>
+    <div class="tab" data-tab="fire">🔥 FIRE</div>
+    <div class="tab" data-tab="withdrawal">Withdrawal</div>
+  </div>
+
+  <!-- Standard Tab -->
+  <div class="tab-content active" id="tab-standard">
+    <div class="grid">
+      <div class="field"><label>Current Age</label><input type="number" id="stdAge" value="30" min="18" max="99"></div>
+      <div class="field"><label>Retirement Age</label><input type="number" id="stdRetireAge" value="65" min="18" max="99"></div>
+      <div class="field"><label>Current Savings ($)</label><input type="number" id="stdSavings" value="50000" min="0" step="5000"></div>
+      <div class="field"><label>Monthly Contribution ($)</label><input type="number" id="stdMonthly" value="800" min="0" step="100"></div>
+      <div class="field"><label>Expected Return (%)</label><input type="number" id="stdReturn" value="7" step="0.25" min="0" max="30"></div>
+      <div class="field"><label>Expected Inflation (%)</label><input type="number" id="stdInflation" value="3" step="0.1" min="0" max="20"></div>
+    </div>
+    <button class="btn calc-tab-btn" data-tab="standard">📊 Calculate</button>
+    <div id="stdResults" style="margin-top:14px;display:none">
+      <div class="result-grid">
+        <div class="result-item"><div class="label">At Retirement</div><div class="value accent" id="stdAtRetire">$0.00</div></div>
+        <div class="result-item"><div class="label">In Today's $</div><div class="value" id="stdTodayDollars">$0.00</div></div>
+        <div class="result-item"><div class="label">Total Contributed</div><div class="value" id="stdContributed">$0.00</div></div>
+        <div class="result-item"><div class="label">Growth</div><div class="value green" id="stdGrowth">$0.00</div></div>
+      </div>
+      <div class="insight-box" id="stdInsight"></div>
+      <div class="canvas-wrap">
+        <canvas id="stdChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIRE Tab -->
+  <div class="tab-content" id="tab-fire">
+    <div class="grid">
+      <div class="field"><label>Current Age</label><input type="number" id="fireAge" value="25" min="18" max="99"></div>
+      <div class="field"><label>Current Savings ($)</label><input type="number" id="fireSavings" value="20000" min="0" step="5000"></div>
+      <div class="field"><label>Monthly Savings ($)</label><input type="number" id="fireMonthly" value="2000" min="0" step="100"></div>
+      <div class="field"><label>Annual Expenses in Retirement ($)</label><input type="number" id="fireExpenses" value="40000" min="0" step="5000"></div>
+      <div class="field"><label>Expected Return (%)</label><input type="number" id="fireReturn" value="7" step="0.25" min="0" max="30"></div>
+      <div class="field"><label>Safe Withdrawal Rate (%)</label><input type="number" id="fireSWR" value="4" step="0.25" min="1" max="10"></div>
+    </div>
+    <button class="btn calc-tab-btn" data-tab="fire">🔥 Calculate FIRE</button>
+    <div id="fireResults" style="margin-top:14px;display:none">
+      <div class="result-grid">
+        <div class="result-item"><div class="label">FIRE Number</div><div class="value accent" id="fireNumber">$0.00</div></div>
+        <div class="result-item"><div class="label">Age at FIRE</div><div class="value green" id="fireAgeReach">—</div></div>
+        <div class="result-item"><div class="label">Years to Go</div><div class="value" id="fireYearsLeft">—</div></div>
+        <div class="result-item"><div class="label">Monthly Income</div><div class="value orange" id="fireIncome">$0.00</div></div>
+      </div>
+      <div class="insight-box" id="fireInsight"></div>
+      <div class="canvas-wrap">
+        <canvas id="fireChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Withdrawal Tab -->
+  <div class="tab-content" id="tab-withdrawal">
+    <div class="grid">
+      <div class="field"><label>Nest Egg ($)</label><input type="number" id="wdNest" value="1000000" min="0" step="100000"></div>
+      <div class="field"><label>Annual Withdrawal ($)</label><input type="number" id="wdWithdraw" value="40000" min="0" step="5000"></div>
+      <div class="field"><label>Portfolio Return (%)</label><input type="number" id="wdReturn" value="6" step="0.25" min="0" max="20"></div>
+      <div class="field"><label>Inflation Rate (%)</label><input type="number" id="wdInflation" value="3" step="0.1" min="0" max="20"></div>
+    </div>
+    <button class="btn calc-tab-btn" data-tab="withdrawal">🔄 Simulate</button>
+    <div id="wdResults" style="margin-top:14px;display:none">
+      <div class="result-grid">
+        <div class="result-item"><div class="label">Years Until Depleted</div><div class="value accent" id="wdYears">—</div></div>
+        <div class="result-item"><div class="label">After 10 Years</div><div class="value" id="wdAfter10">$0.00</div></div>
+        <div class="result-item"><div class="label">After 20 Years</div><div class="value" id="wdAfter20">$0.00</div></div>
+        <div class="result-item"><div class="label">After 30 Years</div><div class="value" id="wdAfter30">$0.00</div></div>
+      </div>
+      <div class="insight-box" id="wdInsight"></div>
+      <div class="canvas-wrap">
+        <canvas id="wdChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>Retirement Calculator — For educational purposes. Consult a financial advisor for personalized advice.</footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function fmt(n) {
+  return '$' + n.toLocaleString('en-US', {minimumFractionDigits:0,maximumFractionDigits:0});
+}
+
+function fmt2(n) {
+  return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    tab.classList.add('active');
+    $(`tab-${tab.dataset.tab}`).classList.add('active');
+    // Run the default calc for the activated tab
+    if (tab.dataset.tab === 'standard') calcStandard();
+    else if (tab.dataset.tab === 'fire') calcFire();
+    else if (tab.dataset.tab === 'withdrawal') calcWithdrawal();
+  });
+});
+
+function drawChart(canvasId, labels, lsValues, dcaValues, lsLabel, dcaLabel, color1, color2) {
+  const canvas = $(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const w = Math.min(rect.width || 600, 600);
+  canvas.width = w * dpr;
+  canvas.height = 240 * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = '240px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, 240);
+
+  const n = labels.length;
+  if (n === 0) return;
+
+  const allVals = [...lsValues, ...dcaValues];
+  const maxVal = Math.max(...allVals, 1);
+  const pad = { top: 20, bottom: 30, left: 60, right: 20 };
+  const cw = w - pad.left - pad.right;
+  const ch = 240 - pad.top - pad.bottom;
+
+  function xPos(i) { return pad.left + (i / (n - 1 || 1)) * cw; }
+  function yPos(v) { return pad.top + ch - (v / maxVal) * ch; }
+
+  // Grid
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (i / 4) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
+    ctx.fillStyle = '#484f58';
+    ctx.font = '10px -apple-system, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('$' + Math.round(maxVal * (1 - i/4) / 1000) + 'k', pad.left - 6, y + 3);
+  }
+
+  // X labels
+  ctx.fillStyle = '#484f58';
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  const skip = Math.max(1, Math.floor(n / 8));
+  for (let i = 0; i < n; i += skip) {
+    ctx.fillText(labels[i], xPos(i), 238);
+  }
+  if (n > 1 && (n - 1) % skip !== 0) {
+    ctx.fillText(labels[n - 1], xPos(n - 1), 238);
+  }
+
+  function drawLine(values, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = xPos(i);
+      const y = yPos(v);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+
+  drawLine(lsValues, color1);
+  if (dcaValues.length > 0) drawLine(dcaValues, color2);
+
+  // Legend
+  ctx.fillStyle = color1;
+  ctx.fillRect(w - 150, 6, 12, 12);
+  ctx.fillStyle = '#c9d1d9';
+  ctx.font = '11px -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(lsLabel, w - 134, 17);
+
+  if (dcaValues.length > 0) {
+    ctx.fillStyle = color2;
+    ctx.fillRect(w - 150, 24, 12, 12);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText(dcaLabel, w - 134, 35);
+  }
+}
+
+// --- Standard ---
+function calcStandard() {
+  const age = parseInt($('stdAge').value) || 30;
+  const retireAge = parseInt($('stdRetireAge').value) || 65;
+  const savings = Math.max(0, parseFloat($('stdSavings').value) || 0);
+  const monthly = Math.max(0, parseFloat($('stdMonthly').value) || 0);
+  const r = Math.max(0, parseFloat($('stdReturn').value) || 0) / 100;
+  const infl = Math.max(0, parseFloat($('stdInflation').value) || 0) / 100;
+
+  const years = Math.max(1, retireAge - age);
+  const n = years * 12;
+  const mr = r / 12;
+
+  // Future value of current savings
+  const fvSavings = savings * Math.pow(1 + r, years);
+
+  // Future value of monthly contributions
+  let fvContrib = 0;
+  if (mr > 0) {
+    fvContrib = monthly * ((Math.pow(1 + mr, n) - 1) / mr);
+  } else {
+    fvContrib = monthly * n;
+  }
+
+  const totalAtRetire = fvSavings + fvContrib;
+  const totalContributed = savings + (monthly * n);
+  const growth = totalAtRetire - totalContributed;
+
+  // Inflation-adjusted value
+  const todayDollars = totalAtRetire / Math.pow(1 + infl, years);
+
+  $('stdAtRetire').textContent = fmt(totalAtRetire);
+  $('stdTodayDollars').textContent = fmt(todayDollars);
+  $('stdContributed').textContent = fmt(totalContributed);
+  $('stdGrowth').textContent = fmt(growth);
+  $('stdResults').style.display = 'block';
+
+  const monthlyIncome = totalAtRetire * 0.04 / 12;
+  $('stdInsight').innerHTML = `If you retire at <strong>${retireAge}</strong>, you'll have <strong>${fmt(totalAtRetire)}</strong> saved. `
+    + `In today's dollars (adjusting for ${(infl*100).toFixed(1)}% inflation), that's worth about <strong>${fmt(todayDollars)}</strong>. `
+    + `A 4% withdrawal rate would give you ~<strong>${fmt2(monthlyIncome)}/month</strong>.`;
+
+  // Chart data
+  const chartLabels = [];
+  const chartVals = [];
+  for (let i = 0; i <= years; i += Math.max(1, Math.floor(years / 30))) {
+    chartLabels.push(String(age + i));
+    const yrs = i;
+    const fvS = savings * Math.pow(1 + r, yrs);
+    const months = yrs * 12;
+    let fvC = 0;
+    if (mr > 0) {
+      fvC = monthly * ((Math.pow(1 + mr, months) - 1) / mr);
+    } else {
+      fvC = monthly * months;
+    }
+    chartVals.push(fvS + fvC);
+  }
+  if (chartLabels[chartLabels.length - 1] !== String(retireAge)) {
+    chartLabels.push(String(retireAge));
+    chartVals.push(totalAtRetire);
+  }
+  drawChart('stdChart', chartLabels, chartVals, [], 'Portfolio Value', '', '#58a6ff', 'transparent');
+}
+
+// --- FIRE ---
+function calcFire() {
+  const age = parseInt($('fireAge').value) || 25;
+  const savings = Math.max(0, parseFloat($('fireSavings').value) || 0);
+  const monthly = Math.max(0, parseFloat($('fireMonthly').value) || 0);
+  const expenses = Math.max(0, parseFloat($('fireExpenses').value) || 0);
+  const r = Math.max(0, parseFloat($('fireReturn').value) || 0) / 100;
+  const swr = Math.max(0.01, parseFloat($('fireSWR').value) || 0) / 100;
+
+  // FIRE number = annual expenses / safe withdrawal rate
+  const fireNumber = expenses / swr;
+  const mr = r / 12;
+
+  // Find how many years to reach FIRE number
+  let balance = savings;
+  let yearsToFire = 0;
+  const maxYears = 80;
+  let reached = false;
+
+  const chartLabels = [String(age)];
+  const chartVals = [savings];
+
+  for (let y = 1; y <= maxYears; y++) {
+    // Simulate year by year with monthly compounding
+    for (let m = 0; m < 12; m++) {
+      balance += monthly;
+      balance *= (1 + mr);
+    }
+    chartLabels.push(String(age + y));
+    chartVals.push(balance);
+
+    if (!reached && balance >= fireNumber) {
+      yearsToFire = y;
+      reached = true;
+    }
+  }
+
+  if (!reached) {
+    yearsToFire = maxYears;
+  }
+
+  const fireAgeReached = age + yearsToFire;
+  const monthlyIncome = balance * swr / 12;
+
+  $('fireNumber').textContent = fmt(fireNumber);
+  $('fireAgeReach').textContent = fireAgeReached <= 100 ? fireAgeReached : '—';
+  $('fireYearsLeft').textContent = reached ? yearsToFire + ' yrs' : '60+ yrs';
+  $('fireIncome').textContent = fmt2(monthlyIncome);
+  $('fireResults').style.display = 'block';
+
+  $('fireInsight').innerHTML = `Your <strong>FIRE number</strong> is <strong>${fmt(fireNumber)}</strong> (${(swr*100).toFixed(0)}% of ${fmt(expenses)}/yr expenses). `
+    + (reached
+      ? `At your current savings rate, you'll reach FIRE at age <strong>${fireAgeReached}</strong> — just <strong>${yearsToFire} years</strong> away.`
+      : `At your current savings rate, reaching FIRE would take over ${maxYears} years. Consider increasing savings or reducing expenses.`);
+
+  drawChart('fireChart', chartLabels, chartVals, [], 'Portfolio', '', '#3fb950', 'transparent');
+}
+
+// --- Withdrawal ---
+function calcWithdrawal() {
+  const nestEgg = Math.max(0, parseFloat($('wdNest').value) || 0);
+  const withdraw = Math.max(0, parseFloat($('wdWithdraw').value) || 0);
+  const r = Math.max(0, parseFloat($('wdReturn').value) || 0) / 100;
+  const infl = Math.max(0, parseFloat($('wdInflation').value) || 0) / 100;
+
+  const realReturn = (1 + r) / (1 + infl) - 1; // inflation-adjusted return
+
+  let balance = nestEgg;
+  let year = 0;
+  const maxYears = 60;
+  const chartLabels = ['0'];
+  const chartVals = [nestEgg];
+
+  while (balance > 0 && year < maxYears) {
+    year++;
+    balance = balance * (1 + r) - withdraw * Math.pow(1 + infl, year - 1); // inflation-adjusted withdrawal
+    if (balance < 0) balance = 0;
+    chartLabels.push(String(year));
+    chartVals.push(balance);
+    if (balance <= 0) break;
+  }
+
+  const yearsDepleted = balance <= 0 ? year : maxYears;
+
+  // Calculate balances at specific years
+  function balanceAtYear(y) {
+    let b = nestEgg;
+    for (let i = 1; i <= y; i++) {
+      b = b * (1 + r) - withdraw * Math.pow(1 + infl, i - 1);
+      if (b < 0) { b = 0; break; }
+    }
+    return b;
+  }
+
+  $('wdYears').textContent = yearsDepleted >= maxYears ? '60+ yrs' : yearsDepleted + ' yrs';
+  $('wdAfter10').textContent = fmt(balanceAtYear(10));
+  $('wdAfter20').textContent = fmt(balanceAtYear(20));
+  $('wdAfter30').textContent = fmt(balanceAtYear(30));
+  $('wdResults').style.display = 'block';
+
+  const withdrawalRate = (withdraw / nestEgg * 100);
+  $('wdInsight').innerHTML = `Starting with <strong>${fmt(nestEgg)}</strong>, withdrawing <strong>${fmt2(withdraw)}/yr</strong> (${withdrawalRate.toFixed(1)}% withdrawal rate) `
+    + (yearsDepleted >= maxYears
+      ? `with a <strong>${(r*100).toFixed(1)}%</strong> return lasts <strong>60+ years</strong> — your portfolio is sustainable!`
+      : `at <strong>${(r*100).toFixed(1)}%</strong> return lasts about <strong>${yearsDepleted} years</strong>. `
+      + `Consider lowering your withdrawal rate or increasing your return.`);
+
+  drawChart('wdChart', chartLabels, chartVals, [], 'Portfolio Balance', '', '#d29922', 'transparent');
+}
+
+// Wire calc buttons
+document.querySelectorAll('.calc-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    if (tab === 'standard') calcStandard();
+    else if (tab === 'fire') calcFire();
+    else if (tab === 'withdrawal') calcWithdrawal();
+  });
+});
+
+// Enter key support
+document.querySelectorAll('input').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const tc = el.closest('.tab-content');
+      if (tc) {
+        const btn = tc.querySelector('.calc-tab-btn');
+        if (btn) btn.click();
+      }
+    }
+  });
+});
+
+// Run defaults
+calcStandard();
+</script>
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

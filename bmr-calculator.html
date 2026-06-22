@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</title>
+<meta name="description" content="Calculate your basal metabolic rate using two formulas. Compare Mifflin-St Jeor and Harris-Benedict results side by side.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{width:100%;max-width:520px}
+h1{color:#58a6ff;font-size:1.6rem;margin:20px 0;text-align:center}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:20px;margin-bottom:20px}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:0.85rem;color:#8b949e;margin-bottom:4px;font-weight:600}
+input,select{width:100%;padding:10px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:0.95rem;outline:none;transition:border .2s}
+input:focus,select:focus{border-color:#58a6ff}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.btn{width:100%;padding:12px;background:#238636;border:none;border-radius:6px;color:#fff;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.result-box{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;margin-top:16px}
+.comp-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #21262d}
+.comp-row:last-child{border-bottom:none}
+.comp-label{font-size:0.85rem;color:#8b949e}
+.comp-value{font-size:1.1rem;font-weight:700;color:#58a6ff}
+.section-title{font-size:0.95rem;color:#c9d1d9;font-weight:600;margin:16px 0 8px}
+.activity-table{margin-top:10px}
+.activity-row{display:flex;justify-content:space-between;padding:6px 0;font-size:0.85rem;border-bottom:1px solid #21262d}
+.activity-row:last-child{border-bottom:none}
+.activity-row .name{color:#8b949e}
+.activity-row .cals{color:#f0883e;font-weight:600}
+.hidden{display:none}
+.unit-toggle{display:flex;gap:6px;margin-bottom:4px}
+.unit-toggle button{flex:1;padding:6px;background:#0d1117;border:1px solid #30363d;border-radius:4px;color:#8b949e;font-size:0.8rem;cursor:pointer}
+.unit-toggle button.active{background:#1f6feb;border-color:#1f6feb;color:#fff}
+#heightCm input,#heightFtIn input{width:100%}
+footer{text-align:center;padding:20px 0;color:#484f58;font-size:0.75rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "BMR Calculator \u2014 Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)",
+  "description": "Calculate your basal metabolic rate using two formulas. Compare Mifflin-St Jeor and Harris-Benedict results side by side.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🧬 BMR Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="card">
+<div class="form-group">
+<label>Age</label>
+<input type="number" id="age" min="10" max="120" value="30" placeholder="Years">
+</div>
+<div class="form-group">
+<label>Gender</label>
+<select id="gender"><option value="male">Male</option><option value="female">Female</option></select>
+</div>
+<div class="form-group">
+<label>Weight</label>
+<div class="unit-toggle" id="weightUnitToggle">
+<button class="active" data-unit="kg">kg</button>
+<button data-unit="lbs">lbs</button>
+</div>
+<input type="number" id="weight" step="0.1" value="70" placeholder="Weight">
+</div>
+<div class="form-group">
+<label>Height</label>
+<div class="unit-toggle" id="heightUnitToggle">
+<button class="active" data-unit="cm">cm</button>
+<button data-unit="ftin">ft/in</button>
+</div>
+<div id="heightCm"><input type="number" id="heightCmVal" step="0.1" value="175" placeholder="cm"></div>
+<div id="heightFtIn" class="hidden"><div class="row"><input type="number" id="heightFt" min="1" max="8" placeholder="ft"><input type="number" id="heightIn" min="0" max="11" placeholder="in"></div></div>
+</div>
+<button class="btn" onclick="calculate()">Calculate BMR</button>
+<div id="results" class="hidden">
+<div class="result-box">
+<div class="section-title" style="margin-top:0">⚖️ BMR Formula Comparison</div>
+<div class="comp-row"><span class="comp-label">Mifflin-St Jeor</span><span class="comp-value" id="msjResult">— cal/day</span></div>
+<div class="comp-row"><span class="comp-label">Harris-Benedict</span><span class="comp-value" id="hbResult">— cal/day</span></div>
+</div>
+<div class="result-box">
+<div class="section-title" style="margin-top:0">📊 Daily Calorie Needs at Various Activity Levels</div>
+<div class="activity-table" id="activityTable"></div>
+</div>
+</div>
+</div>
+<footer>BMR Calculator</footer>
+</div>
+<script>
+(function(){
+let weightUnit='kg',heightUnit='cm';
+document.querySelectorAll('#weightUnitToggle button').forEach(b=>{
+b.addEventListener('click',()=>{
+document.querySelectorAll('#weightUnitToggle button').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');
+weightUnit=b.dataset.unit;
+document.getElementById('weight').placeholder=weightUnit==='kg'?'kg':'lbs';
+});
+});
+document.querySelectorAll('#heightUnitToggle button').forEach(b=>{
+b.addEventListener('click',()=>{
+document.querySelectorAll('#heightUnitToggle button').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');
+heightUnit=b.dataset.unit;
+document.getElementById('heightCm').classList.toggle('hidden',heightUnit!=='cm');
+document.getElementById('heightFtIn').classList.toggle('hidden',heightUnit!=='ftin');
+});
+});
+window.calculate=function(){
+const age=parseInt(document.getElementById('age').value);
+const gender=document.getElementById('gender').value;
+let weightKg;
+if(weightUnit==='kg')weightKg=parseFloat(document.getElementById('weight').value);
+else weightKg=parseFloat(document.getElementById('weight').value)*0.453592;
+let heightCm;
+if(heightUnit==='cm')heightCm=parseFloat(document.getElementById('heightCmVal').value);
+else{
+const ft=parseInt(document.getElementById('heightFt').value)||0;
+const inc=parseInt(document.getElementById('heightIn').value)||0;
+heightCm=(ft*30.48)+(inc*2.54);
+}
+if(!age||!weightKg||!heightCm||age<1){alert('Please fill in all fields');return;}
+let msjBmr,hbBmr;
+if(gender==='male'){
+msjBmr=(10*weightKg)+(6.25*heightCm)-(5*age)+5;
+hbBmr=66.5+(13.75*weightKg)+(5.003*heightCm)-(6.75*age);
+}else{
+msjBmr=(10*weightKg)+(6.25*heightCm)-(5*age)-161;
+hbBmr=655.1+(9.563*weightKg)+(1.85*heightCm)-(4.676*age);
+}
+document.getElementById('msjResult').textContent=Math.round(msjBmr).toLocaleString()+' cal/day';
+document.getElementById('hbResult').textContent=Math.round(hbBmr).toLocaleString()+' cal/day';
+const levels=[
+{name:'Sedentary (little/no exercise)',mult:1.2},
+{name:'Light (1-3 days/week)',mult:1.375},
+{name:'Moderate (3-5 days/week)',mult:1.55},
+{name:'Active (6-7 days/week)',mult:1.725},
+{name:'Very Active (intense daily)',mult:1.9}
+];
+const table=document.getElementById('activityTable');
+table.innerHTML='';
+levels.forEach(l=>{
+const row=document.createElement('div');
+row.className='activity-row';
+const msjCal=Math.round(msjBmr*l.mult);
+const hbCal=Math.round(hbBmr*l.mult);
+row.innerHTML='<span class="name">'+l.name+'</span><span class="cals">MSJ: '+msjCal.toLocaleString()+' · HB: '+hbCal.toLocaleString()+'</span>';
+table.appendChild(row);
+});
+document.getElementById('results').classList.remove('hidden');
+};
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+      <a href="/ovulation-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Ovulation Calculator — Fertility Window & Ovulation Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Meta Tag Generator — Generate & Preview Meta Tags</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --radius: 8px;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px 16px; width: 100%; flex: 1; display: flex; flex-direction: column; }
+  header { text-align: center; padding: 32px 0 24px; }
+  header h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+  header p { color: var(--text-muted); margin-top: 6px; font-size: 0.925rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--accent); }
+  .form-group { margin-bottom: 16px; }
+  .form-group:last-child { margin-bottom: 0; }
+  .form-group label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 4px; color: var(--text-muted); }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 44px; }
+  .form-group select { cursor: pointer; }
+  .char-counter { display: flex; justify-content: space-between; font-size: 0.78rem; margin-top: 4px; }
+  .char-counter .count { font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-weight: 600; transition: color 0.2s; }
+  .counter-optimal { color: var(--green); }
+  .counter-warn { color: var(--yellow); }
+  .counter-bad { color: var(--red); }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+  .btn {
+    flex: 1; min-width: 140px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #4c97e6; }
+  .btn-secondary {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: #30363d; }
+  .btn-copied {
+    background: var(--green) !important;
+    color: #fff !important;
+    border-color: var(--green) !important;
+    position: relative;
+  }
+  .btn-copied::after {
+    content: '✓ Copied!';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--green);
+    border-radius: 6px;
+    animation: popIn 0.3s ease;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    60% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .preview-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 0.82rem;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    word-break: break-all;
+    min-height: 80px;
+    white-space: pre-wrap;
+    line-height: 1.55;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  .preview-card .tag { color: #7ee787; }
+  .preview-card .attr { color: #79c0ff; }
+  .preview-card .val { color: #a5d6ff; }
+  .code-output {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    font-size: 0.82rem;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    line-height: 1.55;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .code-output .comment { color: #8b949e; }
+  .code-output .tag { color: #ff7b72; }
+  .code-output .attr { color: #79c0ff; }
+  .code-output .val { color: #a5d6ff; }
+  .code-output .eq { color: #d2a8ff; }
+  footer {
+    text-align: center;
+    padding: 24px 16px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border); }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--green); color: #fff; padding: 10px 24px; border-radius: 6px;
+    font-weight: 600; font-size: 0.9rem;
+    opacity: 0; transition: all 0.35s ease; pointer-events: none; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .hidden { display: none; }
+  .section-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+  #output-section { scroll-margin-top: 16px; }
+  .char-help { font-size: 0.78rem; color: var(--text-muted); }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "SEO Meta Tag Generator \u2014 Generate & Preview Meta Tags",
+  "description": "Generate SEO meta tags with live preview. Title, description, Open Graph, and Twitter Cards with character counters.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🔍 SEO Meta Tag Generator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p>Generate clean, optimized meta tags for your web pages — all in your browser.</p>
+  </header>
+
+  <div class="grid">
+    <!-- Left column: Form -->
+    <div class="card">
+      <h2>Page Settings</h2>
+      <div class="form-group">
+        <label for="title">Page Title</label>
+        <input type="text" id="title" placeholder="Home | My Awesome Site" maxlength="500" autocomplete="off">
+        <div class="char-counter">
+          <span class="char-help">Ideal: 50–60 characters</span>
+          <span class="count" id="title-count">0</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="desc">Meta Description</label>
+        <textarea id="desc" rows="2" placeholder="A compelling description of your page content..." maxlength="500"></textarea>
+        <div class="char-counter">
+          <span class="char-help">Ideal: 150–160 characters</span>
+          <span class="count" id="desc-count">0</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="keywords">Keywords (comma separated)</label>
+        <input type="text" id="keywords" placeholder="seo, meta tags, web development" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="canonical">Canonical URL</label>
+        <input type="url" id="canonical" placeholder="https://example.com/page" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Right column: Social + Robots -->
+    <div class="card">
+      <h2>Social &amp; Robots</h2>
+      <div class="form-group">
+        <label for="og-title">OG Title</label>
+        <input type="text" id="og-title" placeholder="Override title for social shares" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="og-desc">OG Description</label>
+        <textarea id="og-desc" rows="2" placeholder="Override description for social shares"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="og-image">OG Image URL</label>
+        <input type="url" id="og-image" placeholder="https://example.com/social-image.jpg" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="twitter-card">Twitter Card Type</label>
+        <select id="twitter-card">
+          <option value="summary">summary</option>
+          <option value="summary_large_image" selected>summary_large_image</option>
+          <option value="app">app</option>
+          <option value="player">player</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="robots">Robots Meta</label>
+        <select id="robots">
+          <option value="index,follow">index, follow</option>
+          <option value="noindex,follow">noindex, follow</option>
+          <option value="index,nofollow">index, nofollow</option>
+          <option value="noindex,nofollow">noindex, nofollow</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <button class="btn btn-primary" id="generate-btn">⚡ Generate Tags</button>
+    <button class="btn btn-secondary" id="clear-btn">Clear All</button>
+  </div>
+
+  <!-- Live Preview -->
+  <div class="card" style="margin-top:20px;">
+    <h2>Live Preview</h2>
+    <div class="preview-card" id="preview">&lt;!-- Fill in the fields above to see a live preview --&gt;</div>
+  </div>
+
+  <!-- Output -->
+  <div class="card" style="margin-top:20px;" id="output-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+      <h2 style="margin:0;">Generated HTML</h2>
+      <button class="btn btn-secondary" id="copy-btn" style="flex:0;min-width:auto;padding:8px 16px;font-size:0.85rem;">📋 Copy</button>
+    </div>
+    <div class="code-output" id="output">&lt;!-- Click "Generate Tags" to build your meta tags --&gt;</div>
+  </div>
+
+  <footer>Free SEO Meta Tag Generator — No server, no tracking</footer>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // DOM refs
+  const $ = id => document.getElementById(id);
+  const titleIn      = $('title');
+  const descIn       = $('desc');
+  const keywordsIn   = $('keywords');
+  const canonicalIn  = $('canonical');
+  const ogTitleIn    = $('og-title');
+  const ogDescIn     = $('og-desc');
+  const ogImageIn    = $('og-image');
+  const twitterIn    = $('twitter-card');
+  const robotsIn     = $('robots');
+  const titleCount   = $('title-count');
+  const descCount    = $('desc-count');
+  const previewEl    = $('preview');
+  const outputEl     = $('output');
+  const generateBtn  = $('generate-btn');
+  const clearBtn     = $('clear-btn');
+  const copyBtn      = $('copy-btn');
+  const toast        = $('toast');
+
+  // --- Character counters ---
+  function updateCounter(inputEl, countEl, idealMin, idealMax) {
+    const len = inputEl.value.length;
+    countEl.textContent = len;
+    countEl.className = 'count';
+    if (len === 0) {
+      // neutral
+    } else if (len >= idealMin && len <= idealMax) {
+      countEl.classList.add('counter-optimal');
+    } else if (len < idealMin && len >= idealMin - 15) {
+      countEl.classList.add('counter-warn');
+    } else if (len > idealMax && len <= idealMax + 20) {
+      countEl.classList.add('counter-warn');
+    } else {
+      countEl.classList.add('counter-bad');
+    }
+  }
+
+  titleIn.addEventListener('input', function() {
+    updateCounter(titleIn, titleCount, 50, 60);
+    updatePreview();
+  });
+  descIn.addEventListener('input', function() {
+    updateCounter(descIn, descCount, 150, 160);
+    updatePreview();
+  });
+
+  // --- Live preview ---
+  function esc(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function hlTag(name) { return '<span class="tag">&lt;' + name + '&gt;</span>'; }
+  function hlClose(name) { return '<span class="tag">&lt;/' + name + '&gt;</span>'; }
+  function hlMetaTag() { return '<span class="tag">&lt;meta</span>'; }
+  function hlSelfClose() { return '<span class="tag">/&gt;</span>'; }
+  function hlLinkTag() { return '<span class="tag">&lt;link</span>'; }
+  function hlAttr(n) { return '<span class="attr">' + esc(n) + '</span>'; }
+  function hlVal(v) { return '<span class="val">"' + esc(v) + '"</span>'; }
+
+  function buildPreviewLines() {
+    const lines = [];
+    const title = titleIn.value.trim();
+    const desc = descIn.value.trim();
+    const keywords = keywordsIn.value.trim();
+    const canonical = canonicalIn.value.trim();
+    const ogTitle = ogTitleIn.value.trim();
+    const ogDesc = ogDescIn.value.trim();
+    const ogImage = ogImageIn.value.trim();
+    const twitter = twitterIn.value;
+    const robots = robotsIn.value;
+
+    if (title) {
+      lines.push(hlTag('title') + esc(title) + hlClose('title'));
+    }
+    if (desc) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('name') + '=' + hlVal('description') + ' ' + hlAttr('content') + '=' + hlVal(desc) + ' ' + hlSelfClose());
+    }
+    if (keywords) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('name') + '=' + hlVal('keywords') + ' ' + hlAttr('content') + '=' + hlVal(keywords) + ' ' + hlSelfClose());
+    }
+    if (canonical) {
+      lines.push(hlLinkTag() + ' ' + hlAttr('rel') + '=' + hlVal('canonical') + ' ' + hlAttr('href') + '=' + hlVal(canonical) + ' ' + hlSelfClose());
+    }
+    if (robots) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('name') + '=' + hlVal('robots') + ' ' + hlAttr('content') + '=' + hlVal(robots) + ' ' + hlSelfClose());
+    }
+
+    // OG tags
+    const ogTitleVal = ogTitle || title;
+    const ogDescVal = ogDesc || desc;
+    if (ogTitleVal) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('property') + '=' + hlVal('og:title') + ' ' + hlAttr('content') + '=' + hlVal(ogTitleVal) + ' ' + hlSelfClose());
+    }
+    if (ogDescVal) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('property') + '=' + hlVal('og:description') + ' ' + hlAttr('content') + '=' + hlVal(ogDescVal) + ' ' + hlSelfClose());
+    }
+    if (ogImage) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('property') + '=' + hlVal('og:image') + ' ' + hlAttr('content') + '=' + hlVal(ogImage) + ' ' + hlSelfClose());
+    }
+    if (title) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('property') + '=' + hlVal('og:title') + ' ' + hlAttr('content') + '=' + hlVal(title) + ' ' + hlSelfClose());
+    }
+    if (desc) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('property') + '=' + hlVal('og:description') + ' ' + hlAttr('content') + '=' + hlVal(desc) + ' ' + hlSelfClose());
+    }
+    // Twitter
+    lines.push(hlMetaTag() + ' ' + hlAttr('name') + '=' + hlVal('twitter:card') + ' ' + hlAttr('content') + '=' + hlVal(twitter) + ' ' + hlSelfClose());
+    if (ogTitleVal) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('name') + '=' + hlVal('twitter:title') + ' ' + hlAttr('content') + '=' + hlVal(ogTitleVal) + ' ' + hlSelfClose());
+    }
+    if (ogDescVal) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('name') + '=' + hlVal('twitter:description') + ' ' + hlAttr('content') + '=' + hlVal(ogDescVal) + ' ' + hlSelfClose());
+    }
+    if (ogImage) {
+      lines.push(hlMetaTag() + ' ' + hlAttr('name') + '=' + hlVal('twitter:image') + ' ' + hlAttr('content') + '=' + hlVal(ogImage) + ' ' + hlSelfClose());
+    }
+    return lines;
+  }
+
+  function updatePreview() {
+    const lines = buildPreviewLines();
+    if (lines.length === 0) {
+      previewEl.innerHTML = '&lt;!-- Fill in the fields above to see a live preview --&gt;';
+    } else {
+      previewEl.innerHTML = lines.join('\n');
+    }
+  }
+
+  // --- Form inputs → live preview ---
+  [titleIn, descIn, keywordsIn, canonicalIn, ogTitleIn, ogDescIn, ogImageIn, twitterIn, robotsIn].forEach(el => {
+    el.addEventListener('input', updatePreview);
+    el.addEventListener('change', updatePreview);
+  });
+
+  // --- Generate full HTML ---
+  function escPlain(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function hlPlain(text) {
+    // Simple syntax highlight: comments, tags, attrs, values
+    return text
+      .replace(/(&lt;!--.*?--&gt;)/g, '<span class="comment">$1</span>')
+      .replace(/(&lt;\/?)(\w+)/g, '$1<span class="tag">$2</span>')
+      .replace(/\b(name|property|content|rel|href)\s*(=)/g, '<span class="attr">$1</span><span class="eq">$2</span>')
+      .replace(/(&quot;[^&]*&quot;)/g, '<span class="val">$1</span>');
+  }
+
+  function generateTags() {
+    const title = titleIn.value.trim();
+    const desc = descIn.value.trim();
+    const keywords = keywordsIn.value.trim();
+    const canonical = canonicalIn.value.trim();
+    const ogTitle = ogTitleIn.value.trim();
+    const ogDesc = ogDescIn.value.trim();
+    const ogImage = ogImageIn.value.trim();
+    const twitter = twitterIn.value;
+    const robots = robotsIn.value;
+
+    let lines = [];
+    lines.push('<!-- SEO Meta Tags -->');
+    if (title) {
+      lines.push('<title>' + title + '</title>');
+    }
+    if (desc) {
+      lines.push('<meta name="description" content="Generate SEO meta tags with live preview. Title, description, Open Graph, and Twitter Cards with character counters.">/g,'&quot;') + '" />');
+    }
+    if (keywords) {
+      lines.push('<meta name="keywords" content="' + keywords.replace(/"/g,'&quot;') + '" />');
+    }
+    if (canonical) {
+      lines.push('<link rel="canonical" href="' + canonical.replace(/"/g,'&quot;') + '" />');
+    }
+    if (robots) {
+      lines.push('<meta name="robots" content="' + robots + '" />');
+    }
+    lines.push('');
+    lines.push('<!-- Open Graph -->');
+    const ogTitleVal = ogTitle || title;
+    const ogDescVal = ogDesc || desc;
+    if (ogTitleVal) {
+      lines.push('<meta property="og:title" content="' + ogTitleVal.replace(/"/g,'&quot;') + '" />');
+    }
+    if (ogDescVal) {
+      lines.push('<meta property="og:description" content="' + ogDescVal.replace(/"/g,'&quot;') + '" />');
+    }
+    if (ogImage) {
+      lines.push('<meta property="og:image" content="' + ogImage.replace(/"/g,'&quot;') + '" />');
+    }
+    if (title) {
+      lines.push('<meta property="og:title" content="' + title.replace(/"/g,'&quot;') + '" />');
+    }
+    if (desc) {
+      lines.push('<meta property="og:description" content="' + desc.replace(/"/g,'&quot;') + '" />');
+    }
+    lines.push('');
+    lines.push('<!-- Twitter Card -->');
+    lines.push('<meta name="twitter:card" content="' + twitter + '" />');
+    if (ogTitleVal) {
+      lines.push('<meta name="twitter:title" content="' + ogTitleVal.replace(/"/g,'&quot;') + '" />');
+    }
+    if (ogDescVal) {
+      lines.push('<meta name="twitter:description" content="' + ogDescVal.replace(/"/g,'&quot;') + '" />');
+    }
+    if (ogImage) {
+      lines.push('<meta name="twitter:image" content="' + ogImage.replace(/"/g,'&quot;') + '" />');
+    }
+
+    const raw = lines.join('\n');
+    const highlighted = hlPlain(escPlain(raw));
+    outputEl.innerHTML = highlighted;
+    document.getElementById('output-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  generateBtn.addEventListener('click', generateTags);
+
+  // --- Copy to clipboard ---
+  function getRawOutput() {
+    // Reconstruct plain text from current output
+    const title = titleIn.value.trim();
+    const desc = descIn.value.trim();
+    const keywords = keywordsIn.value.trim();
+    const canonical = canonicalIn.value.trim();
+    const ogTitle = ogTitleIn.value.trim();
+    const ogDesc = ogDescIn.value.trim();
+    const ogImage = ogImageIn.value.trim();
+    const twitter = twitterIn.value;
+    const robots = robotsIn.value;
+
+    let lines = [];
+    lines.push('<!-- SEO Meta Tags -->');
+    if (title) lines.push('<title>' + title + '</title>');
+    if (desc) lines.push('<meta name="description" content="' + desc.replace(/"/g,'&quot;') + '" />');
+    if (keywords) lines.push('<meta name="keywords" content="' + keywords.replace(/"/g,'&quot;') + '" />');
+    if (canonical) lines.push('<link rel="canonical" href="' + canonical.replace(/"/g,'&quot;') + '" />');
+    if (robots) lines.push('<meta name="robots" content="' + robots + '" />');
+    lines.push('');
+    lines.push('<!-- Open Graph -->');
+    const ogTitleVal = ogTitle || title;
+    const ogDescVal = ogDesc || desc;
+    if (ogTitleVal) lines.push('<meta property="og:title" content="' + ogTitleVal.replace(/"/g,'&quot;') + '" />');
+    if (ogDescVal) lines.push('<meta property="og:description" content="' + ogDescVal.replace(/"/g,'&quot;') + '" />');
+    if (ogImage) lines.push('<meta property="og:image" content="' + ogImage.replace(/"/g,'&quot;') + '" />');
+    if (title) lines.push('<meta property="og:title" content="' + title.replace(/"/g,'&quot;') + '" />');
+    if (desc) lines.push('<meta property="og:description" content="' + desc.replace(/"/g,'&quot;') + '" />');
+    lines.push('');
+    lines.push('<!-- Twitter Card -->');
+    lines.push('<meta name="twitter:card" content="' + twitter + '" />');
+    if (ogTitleVal) lines.push('<meta name="twitter:title" content="' + ogTitleVal.replace(/"/g,'&quot;') + '" />');
+    if (ogDescVal) lines.push('<meta name="twitter:description" content="' + ogDescVal.replace(/"/g,'&quot;') + '" />');
+    if (ogImage) lines.push('<meta name="twitter:image" content="' + ogImage.replace(/"/g,'&quot;') + '" />');
+    return lines.join('\n');
+  }
+
+  copyBtn.addEventListener('click', function() {
+    const text = getRawOutput();
+    if (!text.trim() || text === '<!-- SEO Meta Tags -->\n\n<!-- Open Graph -->\n\n<!-- Twitter Card -->') {
+      toast.textContent = 'Nothing to copy — generate tags first!';
+      toast.style.background = 'var(--yellow)';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+      return;
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        showCopiedAnimation();
+      }).catch(() => {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  });
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showCopiedAnimation();
+    } catch (e) {
+      toast.textContent = 'Copy failed — select the code manually.';
+      toast.style.background = 'var(--red)';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+    document.body.removeChild(ta);
+  }
+
+  function showCopiedAnimation() {
+    copyBtn.classList.add('btn-copied');
+    toast.textContent = 'Copied to clipboard!';
+    toast.style.background = 'var(--green)';
+    toast.classList.add('show');
+    setTimeout(() => {
+      copyBtn.classList.remove('btn-copied');
+      toast.classList.remove('show');
+    }, 1800);
+  }
+
+  // --- Clear ---
+  clearBtn.addEventListener('click', function() {
+    [titleIn, descIn, keywordsIn, canonicalIn, ogTitleIn, ogDescIn, ogImageIn].forEach(el => el.value = '');
+    twitterIn.value = 'summary_large_image';
+    robotsIn.value = 'index,follow';
+    titleCount.textContent = '0';
+    titleCount.className = 'count';
+    descCount.textContent = '0';
+    descCount.className = 'count';
+    previewEl.innerHTML = '&lt;!-- Fill in the fields above to see a live preview --&gt;';
+    outputEl.innerHTML = '&lt;!-- Click "Generate Tags" to build your meta tags --&gt;';
+    titleIn.focus();
+  });
+
+  // --- Keyboard shortcut: Ctrl+Enter to generate ---
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      generateBtn.click();
+    }
+  });
+
+  // --- Init char counters ---
+  updateCounter(titleIn, titleCount, 50, 60);
+  updateCounter(descIn, descCount, 150, 160);
+})();
+</script>
+
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/mime-types" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">MIME Type Reference — Complete Content-Type Lookup</a>
+      <a href="/country-lookup" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Country Lookup — Find Country Information & Flags</a>
+      <a href="/world-clock" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">World Clock — Current Time in Cities Worldwide</a>
+      <a href="/html-entity-reference" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">HTML Entity Reference — Complete Character Entities</a>
+      <a href="/browser-info" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Browser Info — See Your Browser & Device Details</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

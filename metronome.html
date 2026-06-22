@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Metronome — Adjustable BPM & Time Signature</title>
+<meta name="description" content="Free online metronome with adjustable BPM (20-300) and time signatures. Visual beat indicator with accent on beat one.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:system-ui,-apple-system,sans-serif;padding:20px;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.container{max-width:450px;width:100%;text-align:center}
+h1{color:#58a6ff;margin-bottom:8px;font-size:1.5rem}
+.subtitle{color:#8b949e;margin-bottom:24px;font-size:.9rem}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:28px 24px}
+.bpm-display{font-size:3rem;font-weight:700;color:#f0883e;line-height:1;margin-bottom:4px}
+.bpm-label{color:#8b949e;font-size:.85rem;margin-bottom:16px}
+.slider-wrap{position:relative;margin-bottom:20px}
+input[type="range"]{width:100%;-webkit-appearance:none;appearance:none;background:#30363d;height:6px;border-radius:3px;outline:none}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#58a6ff;cursor:pointer;border:2px solid #1f6feb}
+input[type="range"]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#58a6ff;cursor:pointer;border:2px solid #1f6feb}
+.bpm-input-wrap{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px}
+.bpm-input-wrap input[type="number"]{width:80px;padding:8px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:1.1rem;text-align:center;outline:none}
+.bpm-input-wrap input:focus{border-color:#58a6ff}
+.beat-indicator{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px;height:50px}
+.beat-dot{width:32px;height:32px;border-radius:50%;background:#30363d;transition:all .08s ease;border:2px solid #21262d}
+.beat-dot.active{background:#f0883e;border-color:#f0883e;transform:scale(1.2);box-shadow:0 0 12px rgba(240,136,62,.5)}
+.beat-dot.accent{background:#58a6ff;border-color:#58a6ff}
+.beat-dot.accent.active{background:#58a6ff;border-color:#58a6ff;transform:scale(1.2);box-shadow:0 0 12px rgba(88,166,255,.5)}
+.time-sig-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}
+.time-sig-row label{color:#8b949e;font-size:.85rem}
+.time-sig-row select{padding:6px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:.9rem;outline:none;cursor:pointer}
+.btn-start{width:80px;height:80px;border-radius:50%;border:none;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
+.btn-start.play{background:#238636;color:#fff}
+.btn-start.play:hover{background:#2ea043;transform:scale(1.05)}
+.btn-start.stop{background:#da3633;color:#fff}
+.btn-start.stop:hover{background:#f85149}
+.beat-count{color:#8b949e;font-size:.85rem;margin-top:12px}
+@media(max-width:400px){.bpm-display{font-size:2.5rem}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Online Metronome \u2014 Adjustable BPM & Time Signature",
+  "description": "Free online metronome with adjustable BPM (20-300) and time signatures. Visual beat indicator with accent on beat one.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🎵 Metronome</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Keep time with precision</p>
+
+<div class="card">
+<div class="bpm-display" id="bpmDisplay">120</div>
+<div class="bpm-label">BPM</div>
+
+<div class="slider-wrap">
+<input type="range" id="bpmSlider" min="20" max="300" value="120" step="1">
+</div>
+
+<div class="bpm-input-wrap">
+<button class="filter-btn" onclick="adjustBpm(-10)" style="background:#21262d;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;padding:6px 14px;cursor:pointer;font-size:.9rem">−10</button>
+<button class="filter-btn" onclick="adjustBpm(-1)" style="background:#21262d;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;padding:6px 14px;cursor:pointer;font-size:.9rem">−1</button>
+<input type="number" id="bpmInput" value="120" min="20" max="300">
+<button class="filter-btn" onclick="adjustBpm(1)" style="background:#21262d;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;padding:6px 14px;cursor:pointer;font-size:.9rem">+1</button>
+<button class="filter-btn" onclick="adjustBpm(10)" style="background:#21262d;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;padding:6px 14px;cursor:pointer;font-size:.9rem">+10</button>
+</div>
+
+<div class="time-sig-row">
+<label>Time Signature:</label>
+<select id="timeSig">
+<option value="4">4/4</option>
+<option value="3">3/4</option>
+<option value="2">2/4</option>
+<option value="6">6/8</option>
+</select>
+</div>
+
+<div class="beat-indicator" id="beatIndicator"></div>
+
+<button id="startBtn" class="btn-start play">▶</button>
+<div class="beat-count" id="beatCount">Beat: 0</div>
+</div>
+</div>
+
+<script>
+let isPlaying = false;
+let audioCtx = null;
+let currentBeat = 0;
+let beatsPerMeasure = 4;
+let timerId = null;
+let nextTime = 0;
+let scheduleAhead = 0.05;
+let lookAhead = 25;
+
+const bpmSlider = document.getElementById('bpmSlider');
+const bpmInput = document.getElementById('bpmInput');
+const bpmDisplay = document.getElementById('bpmDisplay');
+const timeSig = document.getElementById('timeSig');
+const startBtn = document.getElementById('startBtn');
+const beatIndicator = document.getElementById('beatIndicator');
+const beatCount = document.getElementById('beatCount');
+
+function getBpm() { return parseInt(bpmSlider.value); }
+
+function setBpm(val) {
+val = Math.min(300, Math.max(20, Math.round(val)));
+bpmSlider.value = val;
+bpmInput.value = val;
+bpmDisplay.textContent = val;
+}
+
+bpmSlider.addEventListener('input', () => setBpm(bpmSlider.value));
+bpmInput.addEventListener('change', () => {
+const v = parseInt(bpmInput.value);
+if (v >= 20 && v <= 300) setBpm(v);
+else bpmInput.value = getBpm();
+});
+
+function adjustBpm(delta) {
+setBpm(getBpm() + delta);
+}
+
+timeSig.addEventListener('change', () => {
+const val = timeSig.value;
+beatsPerMeasure = parseInt(val);
+if (val === '6') beatsPerMeasure = 6;
+updateBeatDots();
+});
+
+function updateBeatDots() {
+beatIndicator.innerHTML = '';
+for (let i = 0; i < beatsPerMeasure; i++) {
+const dot = document.createElement('div');
+dot.className = 'beat-dot' + (i === 0 ? ' accent' : '');
+dot.id = 'dot-' + i;
+beatIndicator.appendChild(dot);
+}
+}
+
+function initAudio() {
+if (!audioCtx) {
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+}
+
+function playClick(beatNum) {
+const isAccent = beatNum === 0;
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+
+osc.frequency.value = isAccent ? 880 : 660;
+osc.type = 'sine';
+gain.gain.setValueAtTime(isAccent ? 0.5 : 0.3, audioCtx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+osc.start(audioCtx.currentTime);
+osc.stop(audioCtx.currentTime + 0.05);
+}
+
+function scheduler() {
+while (nextTime < audioCtx.currentTime + lookAhead / 1000) {
+const beat = currentBeat % beatsPerMeasure;
+const isAccent = beat === 0;
+const time = nextTime;
+
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+osc.frequency.value = isAccent ? 880 : 660;
+osc.type = 'sine';
+gain.gain.setValueAtTime(isAccent ? 0.5 : 0.3, time);
+gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+osc.start(time);
+osc.stop(time + 0.05);
+
+const beatNum = currentBeat;
+scheduleVisual(beatNum, time);
+
+currentBeat++;
+nextTime += 60.0 / getBpm();
+}
+timerId = setTimeout(scheduler, lookAhead);
+}
+
+function scheduleVisual(beatNum, time) {
+const delay = (time - audioCtx.currentTime) * 1000;
+setTimeout(() => {
+const beatInMeasure = beatNum % beatsPerMeasure;
+document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('active'));
+const dot = document.getElementById('dot-' + beatInMeasure);
+if (dot) dot.classList.add('active');
+beatCount.textContent = 'Beat: ' + (beatNum + 1);
+}, Math.max(0, delay));
+}
+
+function stopMetronome() {
+isPlaying = false;
+startBtn.textContent = '▶';
+startBtn.className = 'btn-start play';
+clearTimeout(timerId);
+document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('active'));
+currentBeat = 0;
+}
+
+function startMetronome() {
+initAudio();
+if (audioCtx.state === 'suspended') audioCtx.resume();
+isPlaying = true;
+startBtn.textContent = '■';
+startBtn.className = 'btn-start stop';
+currentBeat = 0;
+nextTime = audioCtx.currentTime;
+scheduler();
+}
+
+startBtn.addEventListener('click', () => {
+if (isPlaying) stopMetronome();
+else startMetronome();
+});
+
+updateBeatDots();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/running-pace-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Running Pace Calculator — Pace, Speed & Finish Time</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

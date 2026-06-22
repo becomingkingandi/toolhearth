@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YAML to JSON Converter — Convert Between YAML and JSON</title>
+<meta name="description" content="Convert YAML to JSON and JSON to YAML online. Bidirectional conversion with syntax highlighting and sample data.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:900px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column}
+h1{font-size:1.6rem;font-weight:600;margin-bottom:4px;color:#f0f6fc}
+p.sub{color:#8b949e;font-size:0.9rem;margin-bottom:20px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px}
+.tab-bar{display:flex;gap:4px;margin-bottom:14px;border-bottom:1px solid #30363d}
+.tab{background:transparent;border:none;color:#8b949e;padding:8px 16px;font-size:0.9rem;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab:hover{color:#c9d1d9}
+.tab.active{color:#f0f6fc;border-bottom-color:#58a6ff;font-weight:500}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.editor-pane{display:flex;flex-direction:column}
+.editor-pane .pane-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.pane-header .pane-label{font-size:0.82rem;font-weight:500;color:#8b949e}
+.pane-header .pane-btn{background:transparent;border:1px solid #30363d;color:#8b949e;border-radius:4px;padding:2px 8px;font-size:0.7rem;cursor:pointer}
+.pane-header .pane-btn:hover{color:#c9d1d9;border-color:#484f58}
+textarea{width:100%;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:10px;color:#c9d1d9;font-size:0.82rem;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;resize:vertical;outline:none;min-height:320px;tab-size:2}
+textarea:focus{border-color:#58a6ff}
+textarea.error{border-color:#f85149}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:500;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn-outline{background:transparent;border:1px solid #30363d;color:#c9d1d9}
+.btn-outline:hover{background:#1c2128}
+.error-box{background:#3d1419;border:1px solid #f8514966;border-radius:6px;padding:8px 12px;margin-top:8px;display:none;font-size:0.82rem;color:#f85149;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;white-space:pre-wrap;word-break:break-all}
+.arrow-center{display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#484f58;padding:0 4px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#238636;color:#fff;padding:10px 20px;border-radius:6px;font-size:0.85rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+@media(max-width:640px){.editor-grid{grid-template-columns:1fr}.arrow-center{display:none}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "YAML to JSON Converter \u2014 Convert Between YAML and JSON",
+  "description": "Convert YAML to JSON and JSON to YAML online. Bidirectional conversion with syntax highlighting and sample data.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🔄 YAML ↔ JSON Converter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Convert between YAML and JSON instantly</p>
+<div class="card">
+<div class="tab-bar">
+<button class="tab active" id="tab-yaml2json" onclick="switchMode('yaml2json')">YAML ➝ JSON</button>
+<button class="tab" id="tab-json2yaml" onclick="switchMode('json2yaml')">JSON ➝ YAML</button>
+</div>
+<div class="editor-grid">
+<div class="editor-pane">
+<div class="pane-header">
+<span class="pane-label" id="inputLabel">YAML Input</span>
+<button class="pane-btn" onclick="pasteFromClipboard('input')">📋 Paste</button>
+</div>
+<textarea id="inputArea" placeholder="Paste YAML here..." oninput="convert()"></textarea>
+</div>
+<div class="arrow-center">⟶</div>
+<div class="editor-pane">
+<div class="pane-header">
+<span class="pane-label" id="outputLabel">JSON Output</span>
+<button class="pane-btn" onclick="copyOutput()">📋 Copy</button>
+</div>
+<textarea id="outputArea" placeholder="JSON result..." readonly></textarea>
+</div>
+</div>
+<div class="btn-group">
+<button class="btn" onclick="convert()">Convert</button>
+<button class="btn btn-outline" onclick="clearAll()">Clear</button>
+<button class="btn btn-outline" onclick="sampleYaml()">Sample YAML</button>
+<button class="btn btn-outline" onclick="sampleJson()">Sample JSON</button>
+</div>
+<div class="error-box" id="errorBox"></div>
+</div>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+let mode = 'yaml2json';
+
+function switchMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+m).classList.add('active');
+  if (m === 'yaml2json') {
+    document.getElementById('inputLabel').textContent = 'YAML Input';
+    document.getElementById('outputLabel').textContent = 'JSON Output';
+    document.getElementById('inputArea').placeholder = 'Paste YAML here...';
+  } else {
+    document.getElementById('inputLabel').textContent = 'JSON Input';
+    document.getElementById('outputLabel').textContent = 'YAML Output';
+    document.getElementById('inputArea').placeholder = 'Paste JSON here...';
+  }
+  convert();
+}
+
+function convert() {
+  const input = document.getElementById('inputArea').value.trim();
+  const output = document.getElementById('outputArea');
+  const errorBox = document.getElementById('errorBox');
+  errorBox.style.display = 'none';
+  output.value = '';
+  input.classList.remove('error');
+  if (!input) return;
+  try {
+    if (mode === 'yaml2json') {
+      const obj = yamlParse(input);
+      output.value = JSON.stringify(obj, null, 2);
+    } else {
+      const obj = JSON.parse(input);
+      output.value = yamlStringify(obj);
+    }
+  } catch(e) {
+    errorBox.textContent = 'Error: ' + e.message;
+    errorBox.style.display = 'block';
+    input.classList.add('error');
+  }
+}
+
+function yamlParse(str) {
+  const lines = str.split('\n');
+  const root = {};
+  const stack = [{obj: root, indent: -1}];
+  let currentKey = null;
+  let inBlock = false;
+  let blockLines = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    // Skip empty/comments
+    if (line.trim() === '' || line.trim().startsWith('#')) continue;
+
+    const indent = line.search(/\S/);
+    const trimmed = line.trim();
+
+    // Handle block scalars (| and >)
+    if (inBlock) {
+      blockLines.push(line);
+      if (line.trim() === '' || indent <= blockIndent) {
+        // End of block scalar
+        inBlock = false;
+        setValue(stack[stack.length-1].obj, currentKey, processBlock(blockLines.slice(0,-1), blockStyle));
+        continue;
+      }
+      continue;
+    }
+
+    // Check for block scalar indicator
+    const blockMatch = trimmed.match(/^(\w[\w\s]*):\s*(>|\|)(\d?)$/);
+    if (blockMatch) {
+      currentKey = blockMatch[1].trim();
+      blockStyle = blockMatch[2];
+      blockIndent = indent + 2;
+      inBlock = true;
+      blockLines = [line.slice(0, indent) + line.slice(indent)];  // preserve relative indent
+      continue;
+    }
+
+    // Pop stack to correct level
+    while (stack.length > 1 && indent <= stack[stack.length-1].indent) {
+      stack.pop();
+    }
+
+    const current = stack[stack.length-1].obj;
+
+    // List item
+    if (trimmed.startsWith('- ')) {
+      const val = trimmed.slice(2).trim();
+      if (!current._list) current._list = [];
+      if (val.includes(':')) {
+        // Sub-map in list
+        const subObj = {};
+        const parts = val.split(/: (.+)/);
+        subObj[parts[0]] = parseYamlValue(parts[1] || '');
+        current._list.push(subObj);
+      } else {
+        current._list.push(parseYamlValue(val));
+      }
+      continue;
+    }
+
+    // Key: value
+    const colonIdx = trimmed.indexOf(':');
+    if (colonIdx > 0) {
+      const key = trimmed.slice(0, colonIdx).trim();
+      const val = trimmed.slice(colonIdx + 1).trim();
+
+      if (val === '') {
+        // New object
+        const sub = {};
+        setValue(current, key, sub);
+        stack.push({obj: sub, indent});
+      } else {
+        setValue(current, key, parseYamlValue(val));
+      }
+    }
+  }
+
+  // Inject lists
+  function setValue(obj, key, val) {
+    if (key === '_list') return;
+    if (obj._list) {
+      const last = obj._list[obj._list.length-1];
+      if (typeof last === 'object' && last !== null && !Array.isArray(last)) {
+        last[key] = val;
+        return;
+      }
+    }
+    obj[key] = val;
+  }
+
+  // Convert _list to array
+  function finalize(obj) {
+    if (obj === null || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.map(finalize);
+    const keys = Object.keys(obj);
+    if (keys.length === 1 && keys[0] === '_list') return finalize(obj._list);
+    const result = {};
+    for (const k of keys) {
+      if (k === '_list') continue;
+      result[k] = finalize(obj[k]);
+    }
+    // Attach list if present
+    if (obj._list) {
+      // This gets tricky - lists at top level of this object
+      // We'll handle this by checking if the obj had a list before keys
+      return result;
+    }
+    return result;
+  }
+
+  // Re-process to handle lists properly
+  return finalize(rebuildYaml(str));
+}
+
+function rebuildYaml(str) {
+  // A simpler YAML parser that handles basic structures
+  const lines = str.split('\n');
+  const result = {};
+  const path = [];
+  const listMode = [];
+
+  function getTarget() {
+    let obj = result;
+    for (let i = 0; i < path.length; i++) {
+      if (listMode[i]) {
+        obj = obj[path[i]][obj[path[i]].length - 1];
+      } else {
+        obj = obj[path[i]];
+      }
+    }
+    return obj;
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (trimmed === '' || trimmed.startsWith('#')) continue;
+    const indent = line.search(/\S/);
+
+    // Adjust path based on indent
+    while (path.length > 0 && indent <= path.length * 2 - 2) {
+      path.pop();
+      listMode.pop();
+    }
+
+    // List item
+    if (trimmed.startsWith('- ')) {
+      const val = trimmed.slice(2).trim();
+      const target = getTarget();
+      if (!target._items) target._items = [];
+
+      if (val.includes(': ')) {
+        const idx = val.indexOf(': ');
+        const k = val.slice(0, idx);
+        const v = val.slice(idx + 2);
+        const item = {};
+        item[k] = parseYamlValue(v);
+        target._items.push(item);
+        path.push('_items');
+        listMode.push(true);
+      } else {
+        target._items.push(parseYamlValue(val));
+      }
+      continue;
+    }
+
+    // Key: value or Key:
+    const ci = trimmed.indexOf(':');
+    if (ci > 0) {
+      const key = trimmed.slice(0, ci).trim();
+      const rest = trimmed.slice(ci + 1).trim();
+
+      const target = getTarget();
+      if (rest === '') {
+        if (!target[key]) target[key] = {};
+        path.push(key);
+        listMode.push(false);
+      } else {
+        target[key] = parseYamlValue(rest);
+      }
+    }
+  }
+
+  // Clean up _items
+  function clean(obj) {
+    if (obj === null || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.map(clean);
+    const keys = Object.keys(obj);
+    if (keys.length === 1 && keys[0] === '_items') return clean(obj._items);
+    const res = {};
+    for (const k of keys) {
+      if (k === '_items') {
+        // Merge items from this level
+        const items = obj._items;
+        for (const item of items) {
+          if (typeof item === 'object' && !Array.isArray(item)) {
+            for (const [ik, iv] of Object.entries(item)) {
+              res[ik] = clean(iv);
+            }
+          } else {
+            if (!res._list) res._list = [];
+            res._list.push(clean(item));
+          }
+        }
+        if (res._list && Object.keys(res).length === 1) return res._list;
+        delete res._list;
+      } else {
+        res[k] = clean(obj[k]);
+      }
+    }
+    return res;
+  }
+
+  return clean(result);
+}
+
+function parseYamlValue(val) {
+  if (val === 'null' || val === '~') return null;
+  if (val === 'true') return true;
+  if (val === 'false') return false;
+  if (/^-?\d+$/.test(val)) return parseInt(val, 10);
+  if (/^-?\d+\.\d+$/.test(val)) return parseFloat(val);
+  if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+    return val.slice(1, -1);
+  }
+  return val;
+}
+
+function yamlStringify(obj, indent) {
+  indent = indent || 0;
+  const pad = '  '.repeat(indent);
+  if (obj === null) return 'null';
+  if (typeof obj === 'string') {
+    if (obj.includes(':') || obj.includes('#') || obj.includes('\n')) {
+      return '"' + obj.replace(/"/g, '\\"') + '"';
+    }
+    return obj;
+  }
+  if (typeof obj === 'boolean') return obj ? 'true' : 'false';
+  if (typeof obj === 'number') return String(obj);
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return '[]';
+    return obj.map(item => {
+      if (typeof item === 'object' && item !== null) {
+        const keys = Object.keys(item);
+        if (keys.length === 1 && typeof item[keys[0]] !== 'object') {
+          return pad + '- ' + keys[0] + ': ' + yamlStringify(item[keys[0]], indent);
+        }
+        const sub = pad + '- ';
+        const inner = yamlStringify(item, indent + 2);
+        return sub + inner.slice(pad.length + 2);
+      }
+      return pad + '- ' + yamlStringify(item, indent);
+    }).join('\n');
+  }
+  if (typeof obj === 'object') {
+    const keys = Object.keys(obj);
+    if (keys.length === 0) return '{}';
+    return keys.map((k, i) => {
+      const prefix = i === 0 && indent === 0 ? '' : pad;
+      const val = obj[k];
+      if (Array.isArray(val)) {
+        return prefix + k + ':\n' + yamlStringify(val, indent + 1);
+      }
+      if (typeof val === 'object' && val !== null) {
+        return prefix + k + ':\n' + yamlStringify(val, indent + 1);
+      }
+      return prefix + k + ': ' + yamlStringify(val, indent);
+    }).join('\n');
+  }
+  return String(obj);
+}
+
+function copyOutput() {
+  const val = document.getElementById('outputArea').value;
+  if (!val) return;
+  navigator.clipboard.writeText(val).then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = 'Copied to clipboard!';
+    t.style.opacity = '1';
+    setTimeout(() => t.style.opacity = '0', 1500);
+  });
+}
+
+function pasteFromClipboard(target) {
+  navigator.clipboard.readText().then(text => {
+    document.getElementById('inputArea').value = text;
+    convert();
+  }).catch(() => {
+    document.getElementById('inputArea').focus();
+  });
+}
+
+function clearAll() {
+  document.getElementById('inputArea').value = '';
+  document.getElementById('outputArea').value = '';
+  document.getElementById('errorBox').style.display = 'none';
+  document.getElementById('inputArea').classList.remove('error');
+}
+
+function sampleYaml() {
+  document.getElementById('inputArea').value = `server:
+  host: localhost
+  port: 8080
+  tls: true
+
+database:
+  driver: postgres
+  host: db.example.com
+  port: 5432
+  credentials:
+    user: admin
+    password: secret123
+
+features:
+  - name: authentication
+    enabled: true
+    providers:
+      - oauth2
+      - saml
+  - name: caching
+    enabled: true
+    ttl: 3600
+
+logging:
+  level: info
+  format: json
+  outputs:
+    - stdout
+    - file: /var/log/app.log`;
+  if (mode !== 'yaml2json') switchMode('yaml2json');
+  else convert();
+}
+
+function sampleJson() {
+  document.getElementById('inputArea').value = JSON.stringify({
+    "apiVersion": "v2",
+    "name": "my-service",
+    "replicas": 3,
+    "containers": [{"name":"web","image":"nginx:1.25","ports":[80,443]},{"name":"sidecar","image":"envoy:latest"}],
+    "configMap": {"logLevel":"debug","maxConnections":100,"features":{"metrics":true,"tracing":false}},
+    "readinessProbe": {"httpGet":{"path":"/health","port":8080},"initialDelaySeconds":5}
+  }, null, 2);
+  if (mode !== 'json2yaml') switchMode('json2yaml');
+  else convert();
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

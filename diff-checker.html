@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diff Checker — Compare Text Differences Online</title>
+<meta name="description" content="Compare two texts and see the differences highlighted. Side-by-side diff view with add/remove line counts.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:900px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column}
+h1{font-size:1.6rem;font-weight:600;margin-bottom:4px;color:#f0f6fc}
+p.sub{color:#8b949e;font-size:0.9rem;margin-bottom:20px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:0.8rem;font-weight:500;color:#8b949e;margin-bottom:4px}
+textarea{width:100%;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:10px;color:#c9d1d9;font-size:0.82rem;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;resize:vertical;outline:none;min-height:200px;tab-size:2}
+textarea:focus{border-color:#58a6ff}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;margin-bottom:14px}
+.btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:500;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn-outline{background:transparent;border:1px solid #30363d;color:#c9d1d9}
+.btn-outline:hover{background:#1c2128}
+.btn-danger{background:#da3633}
+.btn-danger:hover{background:#f85149}
+.diff-output{background:#0d1117;border:1px solid #30363d;border-radius:6px;overflow:hidden;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;font-size:0.82rem;line-height:1.6;white-space:pre;overflow-x:auto}
+.diff-line{display:flex;padding:0 12px;border-bottom:1px solid #161b22}
+.diff-line:last-child{border-bottom:none}
+.diff-ln{color:#484f58;width:40px;flex-shrink:0;text-align:right;padding-right:10px;user-select:none}
+.diff-add{background:#0f3d1f;color:#7ee787}
+.diff-remove{background:#3d1419;color:#f85149}
+.diff-equal{color:#c9d1d9}
+.diff-header{background:#1c2128;color:#8b949e;padding:4px 12px;font-weight:600;border-bottom:1px solid #30363d}
+.stats{display:flex;gap:16px;margin-bottom:10px;font-size:0.85rem}
+.stat-add{color:#7ee787}
+.stat-remove{color:#f85149}
+.stat-equal{color:#8b949e}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Diff Checker \u2014 Compare Text Differences Online",
+  "description": "Compare two texts and see the differences highlighted. Side-by-side diff view with add/remove line counts.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>📊 Diff Checker</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Compare two texts and see what changed — line by line</p>
+<div class="card">
+<div class="editor-grid">
+<div>
+<label for="textA">Original (A)</label>
+<textarea id="textA" placeholder="Original text…"></textarea>
+</div>
+<div>
+<label for="textB">Modified (B)</label>
+<textarea id="textB" placeholder="Modified text…"></textarea>
+</div>
+</div>
+<div class="btn-group">
+<button class="btn" onclick="diff()">Compare</button>
+<button class="btn btn-outline" onclick="swap()">⇄ Swap</button>
+<button class="btn btn-outline" onclick="clearAll()">Clear</button>
+<button class="btn btn-outline" onclick="sample()">Sample</button>
+</div>
+<div id="stats" class="stats"></div>
+<div id="output" class="diff-output"></div>
+</div>
+</div>
+<script>
+function diff() {
+  const a = document.getElementById('textA').value;
+  const b = document.getElementById('textB').value;
+  const output = document.getElementById('output');
+  const stats = document.getElementById('stats');
+  const linesA = a.split('\n');
+  const linesB = b.split('\n');
+  const lcs = computeLCS(linesA, linesB);
+  let html = '';
+  let adds = 0, removes = 0, equals = 0;
+  let ai = 0, bi = 0;
+  for (const c of lcs) {
+    while (ai < linesA.length && linesA[ai] !== c) {
+      html += '<div class="diff-line diff-remove"><span class="diff-ln">' + (ai+1) + '</span><span>− ' + esc(linesA[ai]) + '</span></div>';
+      removes++; ai++;
+    }
+    while (bi < linesB.length && linesB[bi] !== c) {
+      html += '<div class="diff-line diff-add"><span class="diff-ln">' + (bi+1) + '</span><span>+ ' + esc(linesB[bi]) + '</span></div>';
+      adds++; bi++;
+    }
+    if (ai < linesA.length && bi < linesB.length) {
+      html += '<div class="diff-line diff-equal"><span class="diff-ln">' + (ai+1) + '</span><span>  ' + esc(linesA[ai]) + '</span></div>';
+      equals++; ai++; bi++;
+    }
+  }
+  while (ai < linesA.length) {
+    html += '<div class="diff-line diff-remove"><span class="diff-ln">' + (ai+1) + '</span><span>− ' + esc(linesA[ai]) + '</span></div>';
+    removes++; ai++;
+  }
+  while (bi < linesB.length) {
+    html += '<div class="diff-line diff-add"><span class="diff-ln">' + (bi+1) + '</span><span>+ ' + esc(linesB[bi]) + '</span></div>';
+    adds++; bi++;
+  }
+  stats.innerHTML = '<span class="stat-add">+' + adds + ' added</span> <span class="stat-remove">−' + removes + ' removed</span> <span class="stat-equal">' + equals + ' unchanged</span>';
+  output.innerHTML = html || '<div style="padding:12px;color:#8b949e">Identical — no differences found.</div>';
+}
+function computeLCS(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] + 1 : Math.max(dp[i-1][j], dp[i][j-1]);
+  const result = [];
+  let i = m, j = n;
+  while (i > 0 && j > 0) {
+    if (a[i-1] === b[j-1]) { result.unshift(a[i-1]); i--; j--; }
+    else if (dp[i-1][j] > dp[i][j-1]) i--;
+    else j--;
+  }
+  return result;
+}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'\u00a0'); }
+function swap() {
+  const a = document.getElementById('textA'), b = document.getElementById('textB');
+  [a.value, b.value] = [b.value, a.value];
+  diff();
+}
+function clearAll() {
+  document.getElementById('textA').value = '';
+  document.getElementById('textB').value = '';
+  document.getElementById('output').innerHTML = '';
+  document.getElementById('stats').innerHTML = '';
+}
+function sample() {
+  document.getElementById('textA').value = 'function greet(name) {\n  return "Hello, " + name;\n}\n\nconsole.log(greet("World"));\n\n// Old version';
+  document.getElementById('textB').value = 'function greet(name, title) {\n  return `Hello, ${title} ${name}`;\n}\n\nconsole.log(greet("Dr.", "Smith"));\n\n// New version with title';
+  diff();
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

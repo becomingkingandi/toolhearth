@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Entity Encoder & Decoder: Quick Reference Guide</title>
+    <meta name="description" content="A complete reference for HTML entity encoding and decoding. Learn when and why to escape special characters in web development, email templates, and XML documents.">
+    <link rel="canonical" href="https://toolhearth.com/blog/html-entity-encoder-quick-reference.html">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"HTML Entity Encoder & Decoder: Quick Reference Guide","description":"A complete reference for HTML entity encoding and decoding. Learn when and why to escape special characters in web development.","author":{"@type":"Organization","name":"CheatSheet Tools"},"publisher":{"@type":"Organization","name":"CheatSheet Tools"},"datePublished":"2026-06-18","dateModified":"2026-06-18"}</script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.8; }
+        .container { max-width: 760px; margin: 0 auto; padding: 32px 20px; }
+        h1 { color: #f0f6fc; font-size: 1.9rem; margin-bottom: 8px; line-height: 1.3; }
+        h2 { color: #f0f6fc; font-size: 1.45rem; margin: 32px 0 12px; border-bottom: 1px solid #30363d; padding-bottom: 6px; }
+        h3 { color: #f0f6fc; font-size: 1.15rem; margin: 24px 0 8px; }
+        p { margin-bottom: 16px; }
+        a { color: #58a6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .meta { color: #8b949e; font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 16px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #58a6ff; font-size: 0.9rem; }
+        blockquote { background: #161b22; border-left: 3px solid #58a6ff; padding: 12px 16px; margin: 16px 0; border-radius: 0 6px 6px 0; }
+        ul, ol { margin: 0 0 16px 24px; }
+        li { margin-bottom: 6px; }
+        code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th, td { border: 1px solid #30363d; padding: 8px 12px; text-align: left; }
+        th { background: #161b22; color: #f0f6fc; font-weight: 600; }
+        td { color: #c9d1d9; }
+        .tip { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+        .tip strong { color: #58a6ff; }
+        .related-box { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin: 32px 0; }
+        .related-box h3 { margin-top: 0; margin-bottom: 12px; }
+        .related-box ul { margin-bottom: 0; }
+        footer { border-top: 1px solid #30363d; padding: 24px 0; margin-top: 40px; text-align: center; color: #8b949e; font-size: 0.85rem; }
+        footer a { color: #58a6ff; }
+        @media (max-width: 600px) { h1 { font-size: 1.5rem; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/blog/" class="back-link">&larr; Back to Blog</a>
+    <h1>HTML Entity Encoder &amp; Decoder: Quick Reference Guide</h1>
+    <div class="meta">Published Jun 18, 2026 &middot; 5 min read</div>
+    <p>HTML entities are a fundamental part of web development that every developer encounters. They're how you display reserved characters (&lt;, &gt;, &amp;, &quot;) in HTML without breaking the page structure. A good <a href="/html-entity-encoder.html">HTML entity encoder/decoder</a> makes working with these characters effortless.</p>
+
+    <h2>What Are HTML Entities?</h2>
+    <p>HTML entities are codes that represent special characters. They always start with <code>&amp;</code> and end with <code>;</code>. There are two types:</p>
+    <ul>
+        <li><strong>Named entities:</strong> <code>&amp;lt;</code> for &lt;, <code>&amp;gt;</code> for &gt;</li>
+        <li><strong>Numeric entities:</strong> <code>&amp;#60;</code> for &lt;, <code>&amp;#62;</code> for &gt;</li>
+    </ul>
+
+    <h2>When You Need to Encode HTML</h2>
+
+    <h3>User-Generated Content</h3>
+    <p>If your app accepts user input and displays it on a web page, you <em>must</em> HTML-encode that content. Failure to do so creates cross-site scripting (XSS) vulnerabilities. A user could submit <code>&lt;script&gt;...&lt;/script&gt;</code> that executes on your site.</p>
+
+    <h3>Code Examples in Blog Posts</h3>
+    <p>When showing HTML code in a blog post (like this one), you need to encode the angle brackets so they display as text rather than being interpreted as HTML tags.</p>
+
+    <h3>Email Templates</h3>
+    <p>HTML email clients require encoding for special characters. Many email rendering engines are stricter than browsers about unescaped characters.</p>
+
+    <h3>XML and RSS Feeds</h3>
+    <p>XML uses the same encoding rules as HTML. Any content that contains &lt;, &gt;, or &amp; must be encoded.</p>
+
+    <h2>Common HTML Entities Reference</h2>
+    <table>
+        <thead><tr><th>Character</th><th>Named Entity</th><th>Numeric Entity</th></tr></thead>
+        <tbody>
+            <tr><td>&lt; (less than)</td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td></tr>
+            <tr><td>&gt; (greater than)</td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td></tr>
+            <tr><td>&amp; (ampersand)</td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td></tr>
+            <tr><td>&quot; (double quote)</td><td><code>&amp;quot;</code></td><td><code>&amp;#34;</code></td></tr>
+            <tr><td>' (single quote)</td><td><code>&amp;apos;</code></td><td><code>&amp;#39;</code></td></tr>
+            <tr><td>&copy; (copyright)</td><td><code>&amp;copy;</code></td><td><code>&amp;#169;</code></td></tr>
+            <tr><td>&reg; (registered)</td><td><code>&amp;reg;</code></td><td><code>&amp;#174;</code></td></tr>
+            <tr><td>&nbsp; (non-breaking space)</td><td><code>&amp;nbsp;</code></td><td><code>&amp;#160;</code></td></tr>
+            <tr><td>&mdash; (em dash)</td><td><code>&amp;mdash;</code></td><td><code>&amp;#8212;</code></td></tr>
+            <tr><td>&hellip; (ellipsis)</td><td><code>&amp;hellip;</code></td><td><code>&amp;#8230;</code></td></tr>
+        </tbody>
+    </table>
+
+    <h2>Using an HTML Entity Encoder/Decoder</h2>
+    <p>Rather than memorizing every entity code, use an <a href="/html-entity-encoder.html">HTML entity encoder and decoder tool</a>. Paste in your text, click encode, and all special characters are converted to their entity equivalents instantly. The decoder does the reverse — turn encoded text back into readable characters.</p>
+
+    <p>For related developer utilities, check out our <a href="/json-formatter.html">JSON formatter</a> for formatting API data that may contain HTML content.</p>
+
+    <h2>Encoding in Practice</h2>
+    <p>Most modern frameworks (React, Vue, Angular) handle HTML entity encoding automatically when you use templates properly. However, when you're working with raw HTML strings, inserting content via <code>innerHTML</code>, or building email templates manually, you still need to encode explicitly.</p>
+
+    <div class="tip"><strong>Security note:</strong> Never insert user-generated content into a page without HTML encoding it first. This is the most common source of XSS vulnerabilities on the web.</div>
+
+    <div class="related-box">
+        <h3>🔗 Related Tools</h3>
+        <ul>
+            <li><a href="/html-entity-encoder.html">HTML Entity Encoder/Decoder</a> — Encode and decode HTML entities instantly</li>
+            <li><a href="/json-formatter.html">JSON Formatter & Validator</a> — Format and validate API data</li>
+        </ul>
+    </div>
+    <footer><p><a href="/blog/">&larr; Back to Blog</a> &middot; &copy; 2026 CheatSheet Tools</p></footer>
+</div>
+</body>
+</html>

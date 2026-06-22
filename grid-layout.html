@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Grid Layout Builder — Design Responsive Grids</title>
+<meta name="description" content="Design CSS grid layouts visually. Configure columns, rows, gaps, and alignment with a live preview of your grid.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0b0d14; color: #e4e6ef; min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+    .back { display: inline-flex; align-items: center; gap: 6px; color: #8b8fa4; text-decoration: none; font-size: 0.9rem; margin-bottom: 24px; }
+    .back:hover { color: #818cf8; }
+    h1 { font-size: 2rem; font-weight: 700; }
+    .sub { color: #8b8fa4; margin-bottom: 32px; }
+    .layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; }
+    .sidebar { background: #141824; border: 1px solid #1f2335; border-radius: 16px; padding: 20px; }
+    .sidebar label { display: block; font-size: 0.75rem; font-weight: 600; color: #8b8fa4; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; margin-top: 14px; }
+    .sidebar label:first-child { margin-top: 0; }
+    .sidebar input, .sidebar select { width: 100%; margin-top: 4px; background: #1a1e2e; color: #e4e6ef; border: 1px solid #1f2335; border-radius: 6px; padding: 8px; font-family: inherit; font-size: 0.85rem; }
+    .sidebar input[type="number"] { padding: 8px; }
+    .sidebar input[type="range"] { padding: 0; accent-color: #818cf8; border: none; background: none; }
+    .sidebar .value-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: #8b8fa4; margin-top: 2px; }
+    .preview-area { background: #141824; border: 1px solid #1f2335; border-radius: 16px; padding: 24px; min-height: 420px; }
+    .grid-container { width: 100%; height: 370px; border-radius: 8px; background: #0d0f17; padding: 4px; position: relative; }
+    .grid-container .grid-cell { background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.7); min-height: 28px; }
+    .grid-container .grid-cell:nth-child(even) { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+    .code-panel { grid-column: 1 / -1; background: #0d0f17; border: 1px solid #1f2335; border-radius: 12px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.7; position: relative; margin-top: 0; }
+    .copy-btn { position: absolute; top: 12px; right: 12px; background: #1f2335; border: 1px solid #2a2e44; color: #e4e6ef; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-family: inherit; }
+    .copy-btn:hover { background: #2a2e44; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1f2335; padding: 10px 24px; border-radius: 8px; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CSS Grid Layout Builder \u2014 Design Responsive Grids",
+  "description": "Design CSS grid layouts visually. Configure columns, rows, gaps, and alignment with a live preview of your grid.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="index.html">← Back to Toolkit</a>
+    <h1>📐 Grid Layout Builder</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p class="sub">Design CSS Grid layouts visually and export the code.</p>
+    <div class="layout">
+      <div class="sidebar">
+        <label>Columns</label>
+        <input type="range" id="colsSlider" min="1" max="8" value="3" />
+        <div class="value-label"><span id="colsLabel">3</span></div>
+
+        <label>Rows</label>
+        <input type="range" id="rowsSlider" min="1" max="8" value="3" />
+        <div class="value-label"><span id="rowsLabel">3</span></div>
+
+        <label>Column Gap</label>
+        <input type="range" id="colGapSlider" min="0" max="32" value="8" />
+        <div class="value-label"><span id="colGapLabel">8</span><span>px</span></div>
+
+        <label>Row Gap</label>
+        <input type="range" id="rowGapSlider" min="0" max="32" value="8" />
+        <div class="value-label"><span id="rowGapLabel">8</span><span>px</span></div>
+
+        <label>Column Size</label>
+        <select id="colSizeSelect">
+          <option value="1fr">1fr (equal)</option>
+          <option value="auto">Auto</option>
+          <option value="100px">100px</option>
+          <option value="minmax(100px, 1fr)">MinMax</option>
+        </select>
+
+        <label>Row Size</label>
+        <select id="rowSizeSelect">
+          <option value="auto">Auto</option>
+          <option value="1fr">1fr (equal)</option>
+          <option value="80px">80px</option>
+          <option value="minmax(60px, 1fr)">MinMax</option>
+        </select>
+
+        <label>Justify Items</label>
+        <select id="justifySelect">
+          <option value="stretch">Stretch</option>
+          <option value="start">Start</option>
+          <option value="center">Center</option>
+          <option value="end">End</option>
+        </select>
+
+        <label>Align Items</label>
+        <select id="alignSelect">
+          <option value="stretch">Stretch</option>
+          <option value="start">Start</option>
+          <option value="center">Center</option>
+          <option value="end">End</option>
+        </select>
+      </div>
+      <div>
+        <div class="preview-area">
+          <div class="grid-container" id="gridContainer"></div>
+        </div>
+      </div>
+      <div class="code-panel">
+        <button class="copy-btn" onclick="copyCode()">Copy CSS</button>
+        <pre id="cssOutput">/* CSS Grid */</pre>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Copied!</div>
+  <script>
+    function updateGrid() {
+      const cols = document.getElementById('colsSlider').value;
+      const rows = document.getElementById('rowsSlider').value;
+      const colGap = document.getElementById('colGapSlider').value;
+      const rowGap = document.getElementById('rowGapSlider').value;
+      const colSize = document.getElementById('colSizeSelect').value;
+      const rowSize = document.getElementById('rowSizeSelect').value;
+      const justify = document.getElementById('justifySelect').value;
+      const align = document.getElementById('alignSelect').value;
+
+      document.getElementById('colsLabel').textContent = cols;
+      document.getElementById('rowsLabel').textContent = rows;
+      document.getElementById('colGapLabel').textContent = colGap;
+      document.getElementById('rowGapLabel').textContent = rowGap;
+
+      const container = document.getElementById('gridContainer');
+      const total = cols * rows;
+
+      const colTemplate = Array(Number(cols)).fill(colSize).join(' ');
+      const rowTemplate = Array(Number(rows)).fill(rowSize).join(' ');
+
+      container.style.display = 'grid';
+      container.style.gridTemplateColumns = colTemplate;
+      container.style.gridTemplateRows = rowTemplate;
+      container.style.gap = `${rowGap}px ${colGap}px`;
+      container.style.justifyItems = justify;
+      container.style.alignItems = align;
+
+      container.innerHTML = '';
+      for (let i = 0; i < total; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.textContent = i + 1;
+        container.appendChild(cell);
+      }
+
+      const code = `.grid-container {\n  display: grid;\n  grid-template-columns: ${colTemplate};\n  grid-template-rows: ${rowTemplate};\n  gap: ${rowGap}px ${colGap}px;\n  justify-items: ${justify};\n  align-items: ${align};\n}`;
+      document.getElementById('cssOutput').textContent = code;
+    }
+
+    function copyCode() {
+      const code = document.getElementById('cssOutput').textContent;
+      navigator.clipboard.writeText(code);
+      const toast = document.getElementById('toast');
+      toast.textContent = 'CSS copied!';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1500);
+    }
+
+    document.querySelectorAll('.sidebar input, .sidebar select').forEach(el => {
+      el.addEventListener('input', updateGrid);
+      el.addEventListener('change', updateGrid);
+    });
+
+    updateGrid();
+  </script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/color-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Color Converter — HEX to RGB to HSL Converter</a>
+      <a href="/color-palette" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Color Palette Generator — Create Color Schemes</a>
+      <a href="/gradient-builder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Gradient Builder — Create Linear & Radial Gradients</a>
+      <a href="/typography-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Typography Tester — Preview Fonts & Text Styles</a>
+      <a href="/box-shadow" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">CSS Box Shadow Generator — Create Shadow Effects</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

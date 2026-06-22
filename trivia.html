@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trivia Questions — Test Your Knowledge</title>
+<meta name="description" content="Answer random trivia questions from multiple categories. Multiple choice quiz with score tracking. Free trivia game.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px}
+.container{background:#1a1a2e;border-radius:16px;padding:32px;max-width:640px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+h1{text-align:center;margin-bottom:24px;font-size:1.8rem;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.score{text-align:center;font-size:1.2rem;margin-bottom:16px;color:#a0a0c0}
+.category{font-size:.85rem;color:#8888aa;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.difficulty{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;text-transform:capitalize;margin-bottom:12px}
+.easy{background:#1b4332;color:#52b788}
+.medium{background:#4a3000;color:#ffd60a}
+.hard{background:#4a0e0e;color:#ff6b6b}
+.question{font-size:1.15rem;line-height:1.5;margin-bottom:20px;min-height:60px}
+.answers{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.answer{background:#252545;border:2px solid #333366;border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .2s;font-size:1rem;text-align:left;color:#e0e0e0}
+.answer:hover:not(.disabled){background:#2e2e5e;border-color:#667eea}
+.answer.disabled{cursor:default;opacity:.85}
+.answer.correct{background:#1b4332;border-color:#52b788}
+.answer.wrong{background:#4a0e0e;border-color:#ff6b6b}
+.next-btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:1.1rem;cursor:pointer;transition:opacity .2s;font-weight:600}
+.next-btn:hover{opacity:.9}
+.spinner{display:none;width:40px;height:40px;border:4px solid #333366;border-top:4px solid #667eea;border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
+@keyframes spin{to{transform:rotate(360deg)}
+}
+.status{text-align:center;margin:10px 0;font-size:.9rem;min-height:24px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Trivia Questions \u2014 Test Your Knowledge",
+  "description": "Answer random trivia questions from multiple categories. Multiple choice quiz with score tracking. Free trivia game.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Trivia Quiz</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="score">Score: <span id="score">0</span></div>
+<div class="spinner" id="spinner"></div>
+<div id="questionArea">
+<div class="category" id="category"></div>
+<div id="difficulty"></div>
+<div class="question" id="question"></div>
+<div class="answers" id="answers"></div>
+</div>
+<div class="status" id="status"></div>
+<button class="next-btn" id="nextBtn">Next Question</button>
+</div>
+<script>
+let score=0,answered=false;
+const catEl=document.getElementById('category'),diffEl=document.getElementById('difficulty'),
+qEl=document.getElementById('question'),ansEl=document.getElementById('answers'),
+spinner=document.getElementById('spinner'),statusEl=document.getElementById('status'),
+scoreEl=document.getElementById('score'),nextBtn=document.getElementById('nextBtn');
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+async function fetchQuestion(){
+  answered=false;spinner.style.display='block';statusEl.textContent='';
+  catEl.textContent='';diffEl.textContent='';qEl.textContent='';ansEl.innerHTML='';
+  nextBtn.textContent='Loading...';nextBtn.disabled=true;
+  try{
+    const r=await fetch('https://opentdb.com/api.php?amount=1');
+    const d=await r.json();
+    if(d.response_code!==0||!d.results||!d.results[0])throw new Error('No data');
+    const q=d.results[0];
+    catEl.textContent=q.category;
+    diffEl.innerHTML=`<span class="difficulty ${q.difficulty}">${q.difficulty}</span>`;
+    qEl.innerHTML=decode(q.question);
+    const answers=shuffle([...q.incorrect_answers.map(a=>decode(a)),{text:decode(q.correct_answer),correct:true}]);
+    ansEl.innerHTML='';
+    answers.forEach(a=>{
+      const btn=document.createElement('button');
+      btn.className='answer';
+      const text=typeof a==='string'?a:a.text;
+      btn.textContent=text;
+      btn.dataset.correct=typeof a==='string'?'false':'true';
+      btn.addEventListener('click',()=>selectAnswer(btn,q.correct_answer));
+      ansEl.appendChild(btn);
+    });
+    nextBtn.textContent='Next Question';nextBtn.disabled=false;
+  }catch(e){
+    statusEl.textContent='Failed to load question. Try again.';
+    nextBtn.textContent='Retry';nextBtn.disabled=false;
+  }finally{spinner.style.display='none'}
+}
+
+function decode(html){
+  const t=document.createElement('textarea');t.innerHTML=html;return t.value
+}
+
+function selectAnswer(el,correct){
+  if(answered)return;
+  answered=true;
+  const buttons=ansEl.querySelectorAll('.answer');
+  buttons.forEach(b=>{
+    b.classList.add('disabled');
+    if(b.dataset.correct==='true')b.classList.add('correct');
+    else if(b===el)b.classList.add('wrong');
+  });
+  if(el.dataset.correct==='true'){
+    score++;statusEl.textContent='Correct!';statusEl.style.color='#52b788';
+  }else{
+    statusEl.innerHTML=`Wrong! Answer: ${decode(correct)}`;statusEl.style.color='#ff6b6b';
+  }
+  scoreEl.textContent=score;
+}
+
+nextBtn.addEventListener('click',fetchQuestion);
+fetchQuestion();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

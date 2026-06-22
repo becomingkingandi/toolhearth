@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Grade Calculator — What You Need on Your Final Exam</title>
+<meta name="description" content="Calculate the grade you need on your final exam to achieve your desired course grade. Two modes: what you need and what-if scoring.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    .container { max-width: 500px; width: 100%; }
+    h1 { color: #58a6ff; text-align: center; margin-bottom: 24px; font-size: 1.5rem; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .card h2 { color: #8b949e; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 16px; }
+    .tab { flex: 1; padding: 10px; text-align: center; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; cursor: pointer; color: #8b949e; font-weight: 600; font-size: 0.85rem; }
+    .tab.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+    .mode-content { display: none; }
+    .mode-content.active { display: block; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; color: #8b949e; font-size: 0.85rem; margin-bottom: 4px; }
+    .input-group input { width: 100%; padding: 10px 12px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; font-size: 1rem; }
+    .input-group input:focus { outline: none; border-color: #58a6ff; }
+    .result-box { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 16px; text-align: center; margin-top: 12px; }
+    .result-box .label { color: #8b949e; font-size: 0.75rem; text-transform: uppercase; }
+    .result-box .value { color: #58a6ff; font-size: 2rem; font-weight: 700; margin-top: 4px; }
+    .result-box .value.fail { color: #f85149; }
+    .result-box .sub { color: #8b949e; font-size: 0.85rem; margin-top: 6px; }
+    .footer { text-align: center; color: #484f58; font-size: 0.75rem; padding: 20px 0; }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Final Grade Calculator \u2014 What You Need on Your Final Exam",
+  "description": "Calculate the grade you need on your final exam to achieve your desired course grade. Two modes: what you need and what-if scoring.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Final Grade Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active" onclick="switchMode('need', this)">What I Need</div>
+        <div class="tab" onclick="switchMode('overall', this)">What If Score</div>
+      </div>
+      <div id="mode-need" class="mode-content active">
+        <div class="input-group"><label>Current Grade (%)</label><input type="number" id="current1" value="85" min="0" max="100" step="0.1" oninput="calcNeed()"></div>
+        <div class="input-group"><label>Desired Grade (%)</label><input type="number" id="desired" value="90" min="0" max="100" step="0.1" oninput="calcNeed()"></div>
+        <div class="input-group"><label>Final Exam Weight (%)</label><input type="number" id="weight1" value="30" min="0" max="100" step="0.1" oninput="calcNeed()"></div>
+        <div class="result-box" id="needResult">
+          <div class="label">You Need on the Final</div>
+          <div class="value" id="needValue">101.7%</div>
+          <div class="sub" id="needSub">Study hard!</div>
+        </div>
+      </div>
+      <div id="mode-overall" class="mode-content">
+        <div class="input-group"><label>Current Grade (%)</label><input type="number" id="current2" value="85" min="0" max="100" step="0.1" oninput="calcOverall()"></div>
+        <div class="input-group"><label>Final Exam Score (%)</label><input type="number" id="examScore" value="90" min="0" max="100" step="0.1" oninput="calcOverall()"></div>
+        <div class="input-group"><label>Final Exam Weight (%)</label><input type="number" id="weight2" value="30" min="0" max="100" step="0.1" oninput="calcOverall()"></div>
+        <div class="result-box">
+          <div class="label">Your Overall Grade</div>
+          <div class="value" id="overallValue">86.5%</div>
+          <div class="sub" id="overallSub">Letter: B</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">Final Grade Calculator &mdash; Free Tool</div>
+  </div>
+  <script>
+    function switchMode(mode, el) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      document.querySelectorAll('.mode-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('mode-' + mode).classList.add('active');
+    }
+
+    function letter(pct) {
+      if (pct >= 97) return 'A+';
+      if (pct >= 93) return 'A';
+      if (pct >= 90) return 'A-';
+      if (pct >= 87) return 'B+';
+      if (pct >= 83) return 'B';
+      if (pct >= 80) return 'B-';
+      if (pct >= 77) return 'C+';
+      if (pct >= 73) return 'C';
+      if (pct >= 70) return 'C-';
+      if (pct >= 67) return 'D+';
+      if (pct >= 60) return 'D';
+      return 'F';
+    }
+
+    function calcNeed() {
+      const cur = parseFloat(document.getElementById('current1').value) || 0;
+      const des = parseFloat(document.getElementById('desired').value) || 0;
+      const w = (parseFloat(document.getElementById('weight1').value) || 0) / 100;
+      const needed = (des - cur * (1 - w)) / w;
+      const valEl = document.getElementById('needValue');
+      valEl.textContent = (needed > 0 ? needed : 0).toFixed(1) + '%';
+      valEl.className = 'value' + (needed > 100 ? ' fail' : '');
+      document.getElementById('needSub').textContent = needed > 100 ? 'Almost impossible — consider dropping the course' : needed < 0 ? 'You already have it! Relax 😊' : 'Study hard!';
+    }
+
+    function calcOverall() {
+      const cur = parseFloat(document.getElementById('current2').value) || 0;
+      const exam = parseFloat(document.getElementById('examScore').value) || 0;
+      const w = (parseFloat(document.getElementById('weight2').value) || 0) / 100;
+      const overall = cur * (1 - w) + exam * w;
+      const valEl = document.getElementById('overallValue');
+      valEl.textContent = overall.toFixed(1) + '%';
+      valEl.className = 'value' + (overall < 60 ? ' fail' : '');
+      document.getElementById('overallSub').textContent = 'Letter: ' + letter(overall);
+    }
+
+    calcNeed();
+    calcOverall();
+  </script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/salary-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Salary Calculator — Hourly to Annual Wage Converter</a>
+      <a href="/gpa-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GPA Calculator — Calculate Your Grade Point Average</a>
+      <a href="/investment-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Investment Calculator — Project Investment Growth Over Time</a>
+      <a href="/savings-goal-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Savings Goal Calculator — Time to Reach Your Savings Target</a>
+      <a href="/mortgage-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Mortgage Calculator — Monthly Payment with Amortization</a>
+      <a href="/budget-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Budget Calculator — Track Income, Expenses & Savings</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

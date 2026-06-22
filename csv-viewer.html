@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSV Viewer — View and Search CSV Data Online</title>
+<meta name="description" content="Paste CSV data or upload a file to view it as a formatted table. Search, filter, and sort your CSV data online.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:system-ui,-apple-system,sans-serif;padding:16px;min-height:100vh}
+.container{max-width:1200px;margin:0 auto}
+h1{color:#58a6ff;margin-bottom:8px;font-size:1.4rem;text-align:center}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:16px;font-size:.9rem}
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.toolbar .btn{background:#238636;color:#fff;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600;transition:background .2s}
+.toolbar .btn:hover{background:#2ea043}
+.toolbar .btn.secondary{background:#21262d;border:1px solid #30363d;color:#c9d1d9}
+.toolbar .btn.secondary:hover{background:#30363d}
+.toolbar .btn.danger{background:#da3633}
+.toolbar .btn.danger:hover{background:#f85149}
+.panes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.pane{display:flex;flex-direction:column;border:1px solid #30363d;border-radius:8px;overflow:hidden}
+.pane-header{background:#161b22;padding:8px 12px;font-size:.8rem;color:#8b949e;border-bottom:1px solid #30363d;display:flex;justify-content:space-between;align-items:center}
+textarea{flex:1;min-height:280px;background:#0d1117;color:#c9d1d9;border:none;padding:12px;font-family:'Cascadia Code','Fira Code','Courier New',monospace;font-size:.82rem;resize:vertical;outline:none;line-height:1.5}
+textarea:focus{background:#010409}
+.file-upload{display:flex;align-items:center;gap:8px}
+.file-upload label{padding:6px 12px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;cursor:pointer;font-size:.8rem}
+.file-upload label:hover{background:#30363d}
+.file-upload input[type="file"]{display:none}
+.search-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.search-row input{flex:1;min-width:180px;padding:8px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:.85rem;outline:none}
+.search-row input:focus{border-color:#58a6ff}
+.search-row .info{color:#8b949e;font-size:.82rem}
+.table-wrap{overflow-x:auto;border:1px solid #30363d;border-radius:8px;max-height:600px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:#161b22;color:#8b949e;font-weight:600;padding:8px 10px;text-align:left;border-bottom:2px solid #30363d;position:sticky;top:0;z-index:2;white-space:nowrap}
+td{padding:6px 10px;border-bottom:1px solid #21262d;color:#c9d1d9;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tr:hover td{background:#1c2128}
+.empty-state{text-align:center;padding:40px;color:#484f58;font-size:.9rem}
+.toast{position:fixed;bottom:24px;right:24px;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;font-size:.85rem;opacity:0;transition:opacity .3s;z-index:100}
+.toast.show{opacity:1}
+@media(max-width:768px){.panes{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CSV Viewer \u2014 View and Search CSV Data Online",
+  "description": "Paste CSV data or upload a file to view it as a formatted table. Search, filter, and sort your CSV data online.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>📊 CSV Viewer</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Paste or upload CSV data and view it as a table</p>
+
+<div class="toolbar">
+<button class="btn" onclick="parseCSV()">▶ Parse</button>
+<button class="btn secondary" onclick="loadSample()">📄 Sample</button>
+<button class="btn danger" onclick="clearAll()">🗑️ Clear</button>
+<div class="file-upload">
+<label for="fileInput">📁 Upload CSV</label>
+<input type="file" id="fileInput" accept=".csv,.tsv,.txt">
+</div>
+</div>
+
+<div class="panes">
+<div class="pane">
+<div class="pane-header"><span>CSV Input</span><span id="inputStats">0 chars</span></div>
+<textarea id="csvInput" placeholder="Paste CSV data here...&#10;&#10;name,email,age&#10;Alice,alice@example.com,30&#10;Bob,bob@example.com,25" spellcheck="false"></textarea>
+</div>
+<div class="pane">
+<div class="pane-header"><span>Preview</span><span id="previewInfo">No data</span></div>
+<div id="previewArea" style="display:flex;align-items:center;justify-content:center;min-height:280px;background:#0d1117">
+<div class="empty-state">Paste CSV data and click Parse</div>
+</div>
+</div>
+</div>
+
+<div class="search-row">
+<input type="text" id="searchInput" placeholder="🔍 Search/filter rows..." oninput="renderTable()">
+<span class="info" id="rowCount">Rows: 0</span>
+<span class="info" id="colCount">Cols: 0</span>
+</div>
+
+<div class="table-wrap" id="tableWrap">
+<div class="empty-state" style="display:block">No CSV data loaded</div>
+</div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+let parsedData = { headers: [], rows: [] };
+let filteredRows = [];
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+const file = e.target.files[0];
+if (!file) return;
+const reader = new FileReader();
+reader.onload = function(ev) {
+document.getElementById('csvInput').value = ev.target.result;
+document.getElementById('inputStats').textContent = ev.target.result.length + ' chars';
+parseCSV();
+};
+reader.readAsText(file);
+document.getElementById('fileInput').value = '';
+});
+
+function showToast(msg) {
+const t = document.getElementById('toast');
+t.textContent = msg;
+t.classList.add('show');
+setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function parseCSVEntry(line) {
+const result = [];
+let current = '';
+let inQuotes = false;
+for (let i = 0; i < line.length; i++) {
+const ch = line[i];
+if (inQuotes) {
+if (ch === '"') {
+if (i + 1 < line.length && line[i + 1] === '"') {
+current += '"';
+i++;
+} else {
+inQuotes = false;
+}
+} else {
+current += ch;
+}
+} else {
+if (ch === '"') {
+inQuotes = true;
+} else if (ch === ',') {
+result.push(current.trim());
+current = '';
+} else {
+current += ch;
+}
+}
+}
+result.push(current.trim());
+return result;
+}
+
+function parseCSV() {
+const text = document.getElementById('csvInput').value.trim();
+const previewArea = document.getElementById('previewArea');
+const tableWrap = document.getElementById('tableWrap');
+
+if (!text) {
+previewArea.innerHTML = '<div class="empty-state">Paste CSV data and click Parse</div>';
+tableWrap.innerHTML = '<div class="empty-state">No CSV data loaded</div>';
+document.getElementById('rowCount').textContent = 'Rows: 0';
+document.getElementById('colCount').textContent = 'Cols: 0';
+document.getElementById('previewInfo').textContent = 'No data';
+return;
+}
+
+const lines = text.split('\n').filter(l => l.trim());
+if (lines.length < 1) return;
+
+const headers = parseCSVEntry(lines[0]);
+const rows = [];
+for (let i = 1; i < lines.length; i++) {
+const vals = parseCSVEntry(lines[i]);
+if (vals.length > 0 && vals.some(v => v !== '')) {
+rows.push(vals);
+}
+}
+
+parsedData = { headers, rows };
+
+// Preview first 3 rows
+const previewHeaders = headers.slice(0, 4).join(' | ');
+const previewRows = rows.slice(0, 3).map(r => r.slice(0, 4).join(' | ')).join('<br>');
+previewArea.innerHTML = `<div style="padding:12px;font-size:.82rem;text-align:center;color:#8b949e">
+<div style="color:#58a6ff;margin-bottom:4px">${previewHeaders}</div>
+<div>${previewRows}</div>
+<div style="color:#484f58;margin-top:8px">${rows.length} rows × ${headers.length} columns</div>
+</div>`;
+
+document.getElementById('previewInfo').textContent = rows.length + ' rows parsed';
+document.getElementById('inputStats').textContent = text.length + ' chars';
+renderTable();
+showToast('✅ Parsed ' + rows.length + ' rows');
+}
+
+function renderTable() {
+const query = document.getElementById('searchInput').value.toLowerCase().trim();
+const tableWrap = document.getElementById('tableWrap');
+
+if (parsedData.rows.length === 0) {
+tableWrap.innerHTML = '<div class="empty-state">No CSV data loaded</div>';
+document.getElementById('rowCount').textContent = 'Rows: 0';
+document.getElementById('colCount').textContent = 'Cols: 0';
+return;
+}
+
+if (query) {
+filteredRows = parsedData.rows.filter(row => {
+const rowText = row.join(' ').toLowerCase();
+return rowText.includes(query);
+});
+} else {
+filteredRows = parsedData.rows;
+}
+
+let html = '<table><thead><tr>';
+parsedData.headers.forEach(h => {
+html += '<th>' + h.replace(/</g, '&lt;') + '</th>';
+});
+html += '</tr></thead><tbody>';
+
+if (filteredRows.length === 0) {
+html += '<tr><td colspan="' + parsedData.headers.length + '" style="text-align:center;padding:20px;color:#484f58">No matching rows found</td></tr>';
+} else {
+filteredRows.forEach(row => {
+html += '<tr>';
+for (let i = 0; i < parsedData.headers.length; i++) {
+const val = row[i] || '';
+html += '<td title="' + val.replace(/</g, '&lt;').replace(/"/g, '&quot;') + '">' + val.replace(/</g, '&lt;') + '</td>';
+}
+html += '</tr>';
+});
+}
+
+html += '</tbody></table>';
+tableWrap.innerHTML = html;
+
+document.getElementById('rowCount').textContent = 'Rows: ' + filteredRows.length + (query ? ' (filtered from ' + parsedData.rows.length + ')' : '');
+document.getElementById('colCount').textContent = 'Cols: ' + parsedData.headers.length;
+}
+
+function loadSample() {
+document.getElementById('csvInput').value = `Name,Email,Age,City,Department,Salary,Join Date
+Alice Johnson,alice@example.com,30,New York,Engineering,95000,2021-03-15
+Bob Smith,bob@example.com,25,San Francisco,Marketing,72000,2022-07-01
+Charlie Brown,charlie@example.com,35,Chicago,Sales,88000,2020-11-20
+Diana Prince,diana@example.com,28,Los Angeles,Engineering,92000,2023-01-10
+Eve Wilson,eve@example.com,32,Seattle,Design,78000,2021-06-05
+Frank Miller,frank@example.com,45,Boston,Management,110000,2019-09-12
+Grace Lee,grace@example.com,29,Austin,Marketing,71000,2022-04-18
+Henry Davis,henry@example.com,38,Denver,Engineering,98000,2020-02-28
+Iris Taylor,iris@example.com,27,Portland,Design,76000,2023-08-14
+Jack Zhang,jack@example.com,41,Miami,Sales,85000,2018-12-01`;
+document.getElementById('inputStats').textContent = document.getElementById('csvInput').value.length + ' chars';
+parseCSV();
+}
+
+function clearAll() {
+document.getElementById('csvInput').value = '';
+document.getElementById('inputStats').textContent = '0 chars';
+document.getElementById('searchInput').value = '';
+parsedData = { headers: [], rows: [] };
+filteredRows = [];
+document.getElementById('previewArea').innerHTML = '<div class="empty-state">Paste CSV data and click Parse</div>';
+document.getElementById('tableWrap').innerHTML = '<div class="empty-state">No CSV data loaded</div>';
+document.getElementById('rowCount').textContent = 'Rows: 0';
+document.getElementById('colCount').textContent = 'Cols: 0';
+document.getElementById('previewInfo').textContent = 'No data';
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

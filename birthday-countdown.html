@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Countdown — Days Until Your Birthday</title>
+<meta name="description" content="Count down the days, weeks, and hours until your next birthday. See what age you'll turn. Confetti on your birthday.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.container{max-width:500px;width:100%}
+h1{text-align:center;color:#ffd700;margin:24px 0 20px;font-size:1.6rem}
+.setup{background:#1e1e1e;border-radius:12px;padding:20px;margin-bottom:16px}
+.setup label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:#aaa;margin-bottom:12px}
+.setup input[type=date]{padding:10px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:#e0e0e0;font-size:1rem;width:100%}
+.setup input[type=text]{padding:10px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:#e0e0e0;font-size:1rem;width:100%}
+.btn{background:#ffd700;color:#111;border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:.15s;width:100%;margin-top:8px}
+.btn:hover{background:#ffed4a;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.countdown-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.cd-item{background:#1a1a2e;border-radius:12px;padding:20px 10px;text-align:center}
+.cd-item .num{font-size:2rem;font-weight:700;color:#ffd700}
+.cd-item .lbl{font-size:.75rem;color:#888;margin-top:4px}
+.age-display{text-align:center;padding:16px;background:#1e1e1e;border-radius:12px;margin-bottom:16px;font-size:1.1rem}
+.age-display .num{color:#ffd700;font-weight:700;font-size:1.4rem}
+.celebration{display:none;position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;overflow:hidden}
+.celebration.active{display:block}
+.confetti-piece{position:absolute;width:10px;height:10px;opacity:.9;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.actions{display:flex;gap:10px;margin-top:12px}
+.actions .btn-sm{flex:1;background:#2a2a2a;color:#e0e0e0;border:1px solid #444;border-radius:8px;padding:10px;font-size:.85rem;cursor:pointer;transition:.15s}
+.actions .btn-sm:hover{background:#333}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Birthday Countdown \u2014 Days Until Your Birthday",
+  "description": "Count down the days, weeks, and hours until your next birthday. See what age you'll turn. Confetti on your birthday.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🎂 Birthday Countdown</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="setup">
+<label>Your Birthday
+<input type="date" id="birthdayInput">
+</label>
+<label>Name (optional)
+<input type="text" id="nameInput" placeholder="Enter your name" maxlength="50">
+</label>
+<div class="actions">
+<button class="btn-sm" id="saveBtn">💾 Save</button>
+<button class="btn-sm" id="resetBtn">🗑️ Reset</button>
+</div>
+</div>
+<div class="countdown-grid">
+<div class="cd-item"><div class="num" id="daysNum">—</div><div class="lbl">Days</div></div>
+<div class="cd-item"><div class="num" id="weeksNum">—</div><div class="lbl">Weeks</div></div>
+<div class="cd-item"><div class="num" id="hoursNum">—</div><div class="lbl">Hours</div></div>
+</div>
+<div class="age-display" id="ageDisplay">You'll turn <span class="num" id="ageNum">—</span></div>
+<div class="celebration" id="celebration"></div>
+</div>
+<script>
+const birthdayInput=document.getElementById('birthdayInput');
+const nameInput=document.getElementById('nameInput');
+const daysNum=document.getElementById('daysNum');
+const weeksNum=document.getElementById('weeksNum');
+const hoursNum=document.getElementById('hoursNum');
+const ageNum=document.getElementById('ageNum');
+const ageDisplay=document.getElementById('ageDisplay');
+const celebration=document.getElementById('celebration');
+
+let saved=JSON.parse(localStorage.getItem('birthdayData')||'{}');
+if(saved.date){birthdayInput.value=saved.date}
+if(saved.name){nameInput.value=saved.name}
+
+function update(){
+const dateStr=birthdayInput.value;
+if(!dateStr){daysNum.textContent='—';weeksNum.textContent='—';hoursNum.textContent='—';ageNum.textContent='—';return}
+const now=new Date();
+const bday=new Date(dateStr);
+const birthMonth=bday.getMonth();
+const birthDay=bday.getDate();
+const thisYear=new Date(now.getFullYear(),birthMonth,birthDay);
+let nextBday=new Date(thisYear);
+if(thisYear<now.setHours(0,0,0,0)){nextBday=new Date(now.getFullYear()+1,birthMonth,birthDay)}
+const diff=nextBday.getTime()-Date.now();
+const days=Math.floor(diff/(86400000));
+const weeks=Math.floor(days/7);
+const hours=Math.floor(diff/3600000);
+daysNum.textContent=days;
+weeksNum.textContent=weeks;
+hoursNum.textContent=hours;
+// Age
+const ageNext=nextBday.getFullYear()-bday.getFullYear();
+ageNum.textContent=`${ageNext}`;
+// Celebration check
+const today=new Date();
+if(today.getMonth()===birthMonth&&today.getDate()===birthDay){
+celebration.classList.add('active');
+ageDisplay.innerHTML=`🎉 Happy Birthday${nameInput.value?', '+nameInput.value:''}! 🎉`;
+launchConfetti();
+}else{
+celebration.classList.remove('active');
+ageDisplay.innerHTML=`You'll turn <span class="num">${ageNext}</span>`;
+}
+}
+function launchConfetti(){
+celebration.innerHTML='';
+const colors=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6b9d','#c084fc','#fb923c','#34d399'];
+const shapes=['circle','square'];
+for(let i=0;i<80;i++){
+const el=document.createElement('div');el.className='confetti-piece';
+el.style.left=Math.random()*100+'%';
+el.style.background=colors[Math.floor(Math.random()*colors.length)];
+el.style.width=(6+Math.random()*8)+'px';el.style.height=(6+Math.random()*8)+'px';
+el.style.borderRadius=Math.random()>.5?'50%':'0';
+el.style.animationDuration=(2+Math.random()*3)+'s';
+el.style.animationDelay=Math.random()*2+'s';
+celebration.appendChild(el);
+}
+setTimeout(()=>{celebration.classList.remove('active');celebration.innerHTML=''},6000);
+}
+document.getElementById('saveBtn').addEventListener('click',()=>{
+const data={};
+if(birthdayInput.value)data.date=birthdayInput.value;
+if(nameInput.value)data.name=nameInput.value;
+localStorage.setItem('birthdayData',JSON.stringify(data));
+update();
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+localStorage.removeItem('birthdayData');
+birthdayInput.value='';nameInput.value='';
+update();
+});
+birthdayInput.addEventListener('change',update);
+nameInput.addEventListener('input',update);
+update();
+// Auto-update every hour
+setInterval(update,3600000);
+</script>
+</div>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

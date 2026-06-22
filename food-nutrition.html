@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food Nutrition Lookup — Calorie & Macro Database</title>
+<meta name="description" content="Look up nutritional information for 60+ common foods. See calories, protein, fat, carbs, and fiber with visual macros.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:#0d0d0d;color:#e0e0e0;min-height:100vh;padding:20px;display:flex;justify-content:center}
+.container{max-width:720px;width:100%;padding:20px 0}
+h1{text-align:center;margin-bottom:24px;font-size:1.8rem;background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+h1::before{content:'🥗';-webkit-text-fill-color:initial}
+.search-box{display:flex;gap:8px;margin-bottom:24px}
+.search-box input{flex:1;padding:12px 16px;border:2px solid #333;border-radius:10px;background:#1a1a1a;color:#e0e0e0;font-size:1rem;outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:#f59e0b}
+.search-box input::placeholder{color:#666}
+.count{text-align:center;margin-bottom:16px;color:#888;font-size:.9rem}
+.food-list{display:flex;flex-direction:column;gap:10px}
+.food-item{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.food-item:hover{border-color:#f59e0b}
+.food-header{padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+.food-name{font-weight:600;font-size:1.05rem;color:#fff}
+.food-cals{color:#f59e0b;font-weight:600}
+.nutrition-card{padding:0 18px 18px;display:none}
+.food-item.open .nutrition-card{display:block}
+.nutrition-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.9rem;border-bottom:1px solid #2a2a2a}
+.nutrition-row:last-child{border:none}
+.nutrition-label{color:#999}
+.nutrition-value{font-weight:600;color:#e0e0e0}
+.bar-chart{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.bar-row{display:flex;align-items:center;gap:8px}
+.bar-label{width:60px;font-size:.8rem;color:#aaa;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:14px;background:#2a2a2a;border-radius:7px;overflow:hidden}
+.bar-fill{height:100%;border-radius:7px;transition:width .4s ease}
+.bar-protein{background:#22c55e}
+.bar-fat{background:#ef4444}
+.bar-carbs{background:#3b82f6}
+.bar-fiber{background:#a855f7}
+.bar-sugar{background:#f59e0b}
+.bar-val{font-size:.8rem;color:#aaa;width:36px;text-align:right}
+.no-results{text-align:center;padding:40px;color:#666;font-size:1.1rem}
+.macro-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.macro-box{text-align:center;padding:8px;border-radius:8px;background:#252525}
+.macro-box .num{font-size:1.1rem;font-weight:700}
+.macro-box .lbl{font-size:.7rem;color:#888;margin-top:2px}
+.cal{color:#f59e0b}
+.pro{color:#22c55e}
+.fat{color:#ef4444}
+.carb{color:#3b82f6}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Food Nutrition Lookup \u2014 Calorie & Macro Database",
+  "description": "Look up nutritional information for 60+ common foods. See calories, protein, fat, carbs, and fiber with visual macros.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Food Nutrition</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Search food..." autofocus />
+</div>
+<div class="count" id="count">50+ foods in database</div>
+<div id="foodList" class="food-list"></div>
+</div>
+<script>
+const foods=[
+{name:"Apple",cal:52,pro:0.3,fat:0.2,carbs:14,fiber:2.4,sugar:10.4},
+{name:"Banana",cal:89,pro:1.1,fat:0.3,carbs:23,fiber:2.6,sugar:12.2},
+{name:"Orange",cal:47,pro:0.9,fat:0.1,carbs:12,fiber:2.4,sugar:9.4},
+{name:"Grapes",cal:69,pro:0.7,fat:0.2,carbs:18,fiber:0.9,sugar:15.5},
+{name:"Strawberries",cal:32,pro:0.7,fat:0.3,carbs:8,fiber:2,sugar:4.9},
+{name:"Blueberries",cal:57,pro:0.7,fat:0.3,carbs:14,fiber:2.4,sugar:10},
+{name:"Watermelon",cal:30,pro:0.6,fat:0.2,carbs:8,fiber:0.4,sugar:6.2},
+{name:"Mango",cal:60,pro:0.8,fat:0.4,carbs:15,fiber:1.6,sugar:13.7},
+{name:"Avocado",cal:160,pro:2,fat:15,carbs:9,fiber:6.7,sugar:0.7},
+{name:"Pineapple",cal:50,pro:0.5,fat:0.1,carbs:13,fiber:1.4,sugar:9.9},
+{name:"Broccoli",cal:34,pro:2.8,fat:0.4,carbs:7,fiber:2.6,sugar:1.7},
+{name:"Spinach",cal:23,pro:2.9,fat:0.4,carbs:3.6,fiber:2.2,sugar:0.4},
+{name:"Carrot",cal:41,pro:0.9,fat:0.2,carbs:10,fiber:2.8,sugar:4.7},
+{name:"Tomato",cal:18,pro:0.9,fat:0.2,carbs:3.9,fiber:1.2,sugar:2.6},
+{name:"Cucumber",cal:15,pro:0.7,fat:0.1,carbs:3.6,fiber:0.5,sugar:1.7},
+{name:"Bell Pepper",cal:31,pro:1,fat:0.3,carbs:6,fiber:2.1,sugar:4.2},
+{name:"Kale",cal:49,pro:4.3,fat:0.9,carbs:9,fiber:3.6,sugar:1.3},
+{name:"Sweet Potato",cal:86,pro:1.6,fat:0.1,carbs:20,fiber:3,sugar:4.2},
+{name:"Potato",cal:77,pro:2,fat:0.1,carbs:17,fiber:2.2,sugar:0.8},
+{name:"Onion",cal:40,pro:1.1,fat:0.1,carbs:9.3,fiber:1.7,sugar:4.2},
+{name:"Garlic",cal:149,pro:6.4,fat:0.5,carbs:33,fiber:2.1,sugar:1},
+{name:"Chicken Breast",cal:165,pro:31,fat:3.6,carbs:0,fiber:0,sugar:0},
+{name:"Chicken Thigh",cal:209,pro:26,fat:11,carbs:0,fiber:0,sugar:0},
+{name:"Ground Beef 80/20",cal:254,pro:17,fat:20,carbs:0,fiber:0,sugar:0},
+{name:"Ground Beef 93/7",cal:176,pro:21,fat:10,carbs:0,fiber:0,sugar:0},
+{name:"Salmon",cal:208,pro:20,fat:13,carbs:0,fiber:0,sugar:0},
+{name:"Tuna (canned)",cal:132,pro:28,fat:1,carbs:0,fiber:0,sugar:0},
+{name:"Shrimp",cal:85,pro:20,fat:0.5,carbs:0,fiber:0,sugar:0},
+{name:"Egg",cal:155,pro:13,fat:11,carbs:1.1,fiber:0,sugar:1.1},
+{name:"Milk (whole)",cal:61,pro:3.3,fat:3.3,carbs:4.8,fiber:0,sugar:4.8},
+{name:"Milk (skim)",cal:34,pro:3.4,fat:0.1,carbs:5,fiber:0,sugar:5},
+{name:"Greek Yogurt",cal:59,pro:10,fat:0.7,carbs:3.6,fiber:0,sugar:3.6},
+{name:"Cheddar Cheese",cal:404,pro:25,fat:33,carbs:1.3,fiber:0,sugar:0.5},
+{name:"Mozzarella",cal:280,pro:28,fat:17,carbs:3.1,fiber:0,sugar:1},
+{name:"Rice (white)",cal:130,pro:2.7,fat:0.3,carbs:28,fiber:0.4,sugar:0.1},
+{name:"Rice (brown)",cal:111,pro:2.6,fat:0.9,carbs:23,fiber:1.8,sugar:0.4},
+{name:"Pasta (cooked)",cal:131,pro:5,fat:1.1,carbs:25,fiber:1.8,sugar:0.6},
+{name:"Bread (whole wheat)",cal:247,pro:13,fat:3.4,carbs:41,fiber:7,sugar:5},
+{name:"Bread (white)",cal:265,pro:9,fat:3.2,carbs:49,fiber:2.7,sugar:5},
+{name:"Oatmeal",cal:389,pro:17,fat:6.9,carbs:66,fiber:10.6,sugar:0},
+{name:"Quinoa",cal:120,pro:4.4,fat:1.9,carbs:21,fiber:2.8,sugar:0.9},
+{name:"Lentils",cal:116,pro:9,fat:0.4,carbs:20,fiber:7.9,sugar:1.8},
+{name:"Black Beans",cal:132,pro:8.9,fat:0.5,carbs:24,fiber:8.7,sugar:0.3},
+{name:"Chickpeas",cal:139,pro:7.6,fat:2.6,carbs:23,fiber:7.6,sugar:4},
+{name:"Almonds",cal:579,pro:21,fat:50,carbs:22,fiber:12.5,sugar:4.4},
+{name:"Walnuts",cal:654,pro:15,fat:65,carbs:14,fiber:6.7,sugar:2.6},
+{name:"Peanuts",cal:567,pro:26,fat:49,carbs:16,fiber:8.5,sugar:4.7},
+{name:"Cashews",cal:553,pro:18,fat:44,carbs:30,fiber:3.3,sugar:5},
+{name:"Sunflower Seeds",cal:584,pro:21,fat:51,carbs:20,fiber:8.6,sugar:2.6},
+{name:"Olive Oil",cal:884,pro:0,fat:100,carbs:0,fiber:0,sugar:0},
+{name:"Butter",cal:717,pro:0.9,fat:81,carbs:0.1,fiber:0,sugar:0.1},
+{name:"Peanut Butter",cal:588,pro:25,fat:50,carbs:20,fiber:6,sugar:9},
+{name:"Honey",cal:304,pro:0.3,fat:0,carbs:82,fiber:0.2,sugar:82},
+{name:"Dark Chocolate (70%)",cal:598,pro:7.8,fat:43,carbs:46,fiber:11,sugar:24},
+{name:"Tofu",cal:76,pro:8,fat:4.8,carbs:1.9,fiber:0.3,sugar:0.6},
+{name:"Edamame",cal:121,pro:12,fat:5,carbs:9,fiber:5,sugar:2.2},
+{name:"Mushrooms",cal:22,pro:3.1,fat:0.3,carbs:3.3,fiber:1,sugar:1.6},
+{name:"Corn",cal:86,pro:3.3,fat:1.4,carbs:19,fiber:2.4,sugar:3.2},
+{name:"Green Beans",cal:31,pro:1.8,fat:0.2,carbs:7,fiber:2.7,sugar:3.3},
+{name:"Cauliflower",cal:25,pro:1.9,fat:0.3,carbs:5,fiber:2,sugar:1.9},
+{name:"Cottage Cheese",cal:98,pro:11,fat:4.3,carbs:3.4,fiber:0,sugar:2.7},
+{name:"Turkey Breast",cal:135,pro:30,fat:0.7,carbs:0,fiber:0,sugar:0},
+{name:"Bacon",cal:541,pro:37,fat:42,carbs:1.4,fiber:0,sugar:0},
+{name:"Pork Chop",cal:242,pro:25,fat:15,carbs:0,fiber:0,sugar:0},
+{name:"Lamb Chop",cal:294,pro:25,fat:21,carbs:0,fiber:0,sugar:0},
+{name:"Coconut Oil",cal:862,pro:0,fat:100,carbs:0,fiber:0,sugar:0},
+{name:"Avocado Oil",cal:884,pro:0,fat:100,carbs:0,fiber:0,sugar:0},
+];
+
+function renderFoods(query){
+  const list=document.getElementById('foodList');
+  const q=query.toLowerCase().trim();
+  const filtered=q?foods.filter(f=>f.name.toLowerCase().includes(q)):foods;
+  document.getElementById('count').textContent=`${filtered.length} food${filtered.length===1?'':'s'} found`;
+  if(filtered.length===0){
+    list.innerHTML='<div class="no-results">No foods found. Try a different search.</div>';return
+  }
+  list.innerHTML=filtered.map((f,i)=>`
+    <div class="food-item" data-idx="${i}">
+      <div class="food-header">
+        <span class="food-name">${highlight(f.name,q)}</span>
+        <span class="food-cals">${f.cal} kcal</span>
+      </div>
+      <div class="nutrition-card">
+        <div class="nutrition-row"><span class="nutrition-label">Calories</span><span class="nutrition-value">${f.cal} kcal / 100g</span></div>
+        <div class="macro-summary">
+          <div class="macro-box"><div class="num pro">${f.pro}g</div><div class="lbl">Protein</div></div>
+          <div class="macro-box"><div class="num fat">${f.fat}g</div><div class="lbl">Fat</div></div>
+          <div class="macro-box"><div class="num carb">${f.carbs}g</div><div class="lbl">Carbs</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><span class="bar-label">Protein</span><div class="bar-track"><div class="bar-fill bar-protein" style="width:${Math.min(f.pro*3,100)}%"></div></div><span class="bar-val">${f.pro}g</span></div>
+          <div class="bar-row"><span class="bar-label">Fat</span><div class="bar-track"><div class="bar-fill bar-fat" style="width:${Math.min(f.fat*1.5,100)}%"></div></div><span class="bar-val">${f.fat}g</span></div>
+          <div class="bar-row"><span class="bar-label">Carbs</span><div class="bar-track"><div class="bar-fill bar-carbs" style="width:${Math.min(f.carbs*2,100)}%"></div></div><span class="bar-val">${f.carbs}g</span></div>
+          <div class="bar-row"><span class="bar-label">Fiber</span><div class="bar-track"><div class="bar-fill bar-fiber" style="width:${Math.min(f.fiber*5,100)}%"></div></div><span class="bar-val">${f.fiber}g</span></div>
+          <div class="bar-row"><span class="bar-label">Sugar</span><div class="bar-track"><div class="bar-fill bar-sugar" style="width:${Math.min(f.sugar*2,100)}%"></div></div><span class="bar-val">${f.sugar}g</span></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.food-item').forEach(el=>{
+    el.addEventListener('click',()=>el.classList.toggle('open'))
+  });
+}
+
+function highlight(name,q){
+  if(!q)return name;
+  const idx=name.toLowerCase().indexOf(q);
+  if(idx===-1)return name;
+  return name.slice(0,idx)+'<span style="color:#f59e0b;font-weight:700">'+name.slice(idx,idx+q.length)+'</span>'+name.slice(idx+q.length)
+}
+
+const searchInput=document.getElementById('searchInput');
+searchInput.addEventListener('input',()=>renderFoods(searchInput.value));
+renderFoods('');
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

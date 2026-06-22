@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leap Year Checker — Is It a Leap Year?</title>
+<meta name="description" content="Check if any year is a leap year with full explanation. Shows the divisibility rules and historical fun facts.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:system-ui,-apple-system,sans-serif;padding:20px;min-height:100vh}
+.container{max-width:700px;margin:0 auto}
+h1{color:#58a6ff;margin-bottom:8px;font-size:1.5rem;text-align:center}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:24px;font-size:.9rem}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px;margin-bottom:16px}
+.input-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.input-row input{flex:1;min-width:180px;padding:12px 16px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:1.1rem;outline:none}
+.input-row input:focus{border-color:#58a6ff}
+.input-row input::placeholder{color:#484f58}
+.btn{background:#238636;color:#fff;border:none;padding:12px 24px;border-radius:6px;cursor:pointer;font-size:1rem;font-weight:600;transition:background .2s}
+.btn:hover{background:#2ea043}
+.result-card{text-align:center;padding:32px 24px;border-radius:12px;transition:all .3s}
+.result-card.leap{background:#0d2818;border:2px solid #238636}
+.result-card.not-leap{background:#281010;border:2px solid #da3633}
+.result-icon{font-size:3rem;margin-bottom:12px}
+.result-text{font-size:1.5rem;font-weight:700;margin-bottom:8px}
+.result-card.leap .result-text{color:#3fb950}
+.result-card.not-leap .result-text{color:#f85149}
+.result-detail{color:#8b949e;font-size:.9rem;line-height:1.5}
+.rule-box{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:14px;margin-top:20px;text-align:left}
+.rule-box h3{color:#58a6ff;font-size:.9rem;margin-bottom:8px}
+.rule-box ul{list-style:none;padding:0}
+.rule-box li{padding:4px 0;color:#c9d1d9;font-size:.85rem}
+.rule-box li::before{content:'• ';color:#58a6ff}
+.rule-box li.pass{color:#3fb950}
+.rule-box li.fail{color:#f85149}
+.rule-box li.pass::before{content:'✓ ';color:#3fb950}
+.rule-box li.fail::before{content:'✗ ';color:#f85149}
+.fun-fact{background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:16px;margin-top:16px;display:none}
+.fun-fact h3{color:#d2a8ff;font-size:.9rem;margin-bottom:6px}
+.fun-fact p{color:#8b949e;font-size:.85rem;line-height:1.5}
+.history-link{color:#58a6ff;font-size:.85rem;cursor:pointer;text-decoration:underline}
+.history-link:hover{color:#79c0ff}
+#presets{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.preset-btn{padding:5px 12px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#8b949e;cursor:pointer;font-size:.8rem;transition:all .2s}
+.preset-btn:hover{background:#30363d;color:#c9d1d9}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Leap Year Checker \u2014 Is It a Leap Year?",
+  "description": "Check if any year is a leap year with full explanation. Shows the divisibility rules and historical fun facts.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>📅 Leap Year Checker</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Check if a year is a leap year and learn why</p>
+
+<div class="card">
+<div class="input-row">
+<input type="number" id="yearInput" placeholder="Enter a year (e.g. 2024)" min="1" max="9999">
+<button class="btn" onclick="checkYear()">Check</button>
+</div>
+<div id="presets">
+<button class="preset-btn" onclick="setYear(2024)">2024</button>
+<button class="preset-btn" onclick="setYear(2025)">2025</button>
+<button class="preset-btn" onclick="setYear(2000)">2000</button>
+<button class="preset-btn" onclick="setYear(1900)">1900</button>
+<button class="preset-btn" onclick="setYear(2400)">2400</button>
+</div>
+</div>
+
+<div id="resultContainer" style="display:none">
+<div class="result-card" id="resultCard">
+<div class="result-icon" id="resultIcon">✅</div>
+<div class="result-text" id="resultText">2024 is a leap year!</div>
+<div class="result-detail" id="resultDetail">There are 366 days in the year 2024.</div>
+
+<div class="rule-box">
+<h3>How it's determined:</h3>
+<ul id="ruleList"></ul>
+</div>
+</div>
+
+<div class="fun-fact" id="funFact">
+<h3>🎉 Fun Fact</h3>
+<p id="funFactText"></p>
+</div>
+</div>
+</div>
+
+<script>
+const funFacts = [
+"Julius Caesar introduced the leap year in 46 BC with the Julian calendar.",
+"People born on February 29 are called 'leaplings' or 'leapers'.",
+"The chance of being born on a leap day is about 1 in 1,461.",
+"February 29 is also known as 'Bachelor's Day' in some European traditions.",
+"In some countries, February 29 is when women can propose to men.",
+"The Gregorian calendar's leap year rule was established by Pope Gregory XIII in 1582.",
+"Leap years always have an extra day—February 29—making 366 days total.",
+"A year is NOT a leap year if it's divisible by 100 but NOT by 400.",
+"2000 was a special leap year because it was divisible by 400, one of the rare century leaps.",
+"The next century leap year (divisible by 400) after 2000 is 2400.",
+"Microsoft Excel famously bugged and treated 1900 as a leap year (it wasn't).",
+"In the Chinese calendar, a leap month is added 7 times every 19 years.",
+"The Hebrew calendar adds a leap month 7 times in a 19-year cycle.",
+"Without leap years, our calendar would drift by about 1 day every 4 years."
+];
+
+function isLeapYear(year) {
+if (year % 400 === 0) return true;
+if (year % 100 === 0) return false;
+if (year % 4 === 0) return true;
+return false;
+}
+
+function setYear(y) {
+document.getElementById('yearInput').value = y;
+checkYear();
+}
+
+function checkYear() {
+const input = document.getElementById('yearInput');
+const year = parseInt(input.value);
+const container = document.getElementById('resultContainer');
+const card = document.getElementById('resultCard');
+const icon = document.getElementById('resultIcon');
+const text = document.getElementById('resultText');
+const detail = document.getElementById('resultDetail');
+const ruleList = document.getElementById('ruleList');
+const funFact = document.getElementById('funFact');
+const funFactText = document.getElementById('funFactText');
+
+if (!year || isNaN(year) || year < 1 || year > 9999) {
+input.style.borderColor = '#f85149';
+return;
+}
+input.style.borderColor = '#30363d';
+
+const leap = isLeapYear(year);
+container.style.display = 'block';
+card.className = 'result-card ' + (leap ? 'leap' : 'not-leap');
+icon.textContent = leap ? '✅' : '❌';
+text.textContent = year + (leap ? ' is a leap year!' : ' is not a leap year.');
+detail.textContent = 'There ' + (leap ? 'are 366' : 'are 365') + ' days in the year ' + year + '.';
+
+const rules = [
+{ text: 'Divisible by 4', pass: year % 4 === 0 },
+{ text: 'Not divisible by 100 (or divisible by 400)', pass: !(year % 100 === 0 && year % 400 !== 0) },
+{ text: 'Divisible by 400 if century year', pass: year % 100 !== 0 || year % 400 === 0 }
+];
+
+ruleList.innerHTML = rules.map(r => `<li class="${r.pass ? 'pass' : 'fail'}">${r.text}</li>`).join('');
+
+// Fun fact
+const factIdx = Math.abs(year * 7 + 13) % funFacts.length;
+funFact.style.display = 'block';
+funFactText.textContent = funFacts[factIdx];
+
+input.focus();
+input.select();
+}
+
+document.getElementById('yearInput').addEventListener('keydown', e => {
+if (e.key === 'Enter') checkYear();
+});
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/unit-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Unit Converter — Length, Mass, Volume, Temperature & More</a>
+      <a href="/currency-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Currency Converter — Live Exchange Rates (USD, EUR, GBP, JPY)</a>
+      <a href="/inches-to-feet" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Inches to Feet Converter — Convert Inches to Feet+Inches</a>
+      <a href="/km-to-miles" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Kilometers to Miles Converter — KM to MI</a>
+      <a href="/mm-to-inches" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Millimeters to Inches Converter — MM to IN</a>
+      <a href="/timezone-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Time Zone Converter — Convert Time Between Timezones</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

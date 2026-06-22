@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Text Case Converter — UPPERCASE, lowercase, Title Case & More</title>
+<meta name="description" content="Convert text between uppercase, lowercase, title case, camelCase, PascalCase, snake_case, and more. Free online text tool.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;padding:16px}
+.container{max-width:800px;margin:0 auto;width:100%;flex:1}
+h1{font-size:1.5rem;margin-bottom:8px;color:#f0f6fc}
+p.sub{color:#8b949e;margin-bottom:20px;font-size:0.9rem}
+textarea{width:100%;min-height:180px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;color:#c9d1d9;font-size:1rem;font-family:inherit;resize:vertical;outline:none;transition:border-color .2s}
+textarea:focus{border-color:#58a6ff}
+.btn-group{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.btn{padding:8px 16px;border:1px solid #30363d;border-radius:6px;background:#21262d;color:#c9d1d9;cursor:pointer;font-size:0.85rem;transition:all .15s;user-select:none;white-space:nowrap}
+.btn:hover{background:#30363d;border-color:#8b949e}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:#238636;border-color:#2ea043;color:#fff}
+.btn.primary:hover{background:#2ea043}
+#result{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;min-height:60px;word-break:break-word;margin-top:16px;position:relative}
+#result.empty{color:#8b949e;display:flex;align-items:center;justify-content:center}
+.copy-btn{position:absolute;top:8px;right:8px;padding:4px 10px;font-size:0.75rem;background:#21262d;border:1px solid #30363d;border-radius:4px;color:#8b949e;cursor:pointer;transition:all .15s}
+.copy-btn:hover{background:#30363d;color:#c9d1d9}
+.copy-btn.copied{background:#238636;border-color:#2ea043;color:#fff}
+footer{margin-top:auto;padding:20px 0;text-align:center;color:#8b949e;font-size:0.8rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Text Case Converter \u2014 UPPERCASE, lowercase, Title Case & More",
+  "description": "Convert text between uppercase, lowercase, title case, camelCase, PascalCase, snake_case, and more. Free online text tool.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Text Case Converter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Paste or type text and choose a case transformation</p>
+<textarea id="input" placeholder="Type or paste your text here..."></textarea>
+<div class="btn-group">
+<button class="btn" onclick="convert('upper')">UPPERCASE</button>
+<button class="btn" onclick="convert('lower')">lowercase</button>
+<button class="btn" onclick="convert('title')">Title Case</button>
+<button class="btn" onclick="convert('camel')">camelCase</button>
+<button class="btn" onclick="convert('pascal')">PascalCase</button>
+<button class="btn" onclick="convert('snake')">snake_case</button>
+<button class="btn" onclick="convert('kebab')">kebab-case</button>
+<button class="btn" onclick="convert('spaced')">s p a c e d  o u t</button>
+</div>
+<div id="result" class="empty">Result will appear here</div>
+</div>
+<footer>Text Case Converter &mdash; Free Online Tool</footer>
+<script>
+function convert(type){
+  const input=document.getElementById('input').value;
+  const resultEl=document.getElementById('result');
+  if(!input.trim()){resultEl.className='empty';resultEl.innerHTML='Please enter some text';return}
+  let out='';
+  switch(type){
+    case 'upper':out=input.toUpperCase();break;
+    case 'lower':out=input.toLowerCase();break;
+    case 'title':out=input.replace(/\w\S*/g,w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase());break;
+    case 'camel':{
+      const cleaned=input.replace(/[^a-zA-Z0-9\s]/g,' ');
+      const words=cleaned.split(/\s+/).filter(Boolean);
+      if(!words.length){out='';break}
+      out=words[0].toLowerCase()+words.slice(1).map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join('');
+      break;
+    }
+    case 'pascal':{
+      const cleaned=input.replace(/[^a-zA-Z0-9\s]/g,' ');
+      const words=cleaned.split(/\s+/).filter(Boolean);
+      out=words.map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join('');
+      break;
+    }
+    case 'snake':out=input.toLowerCase().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,'_');break;
+    case 'kebab':out=input.toLowerCase().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,'-');break;
+    case 'spaced':out=input.trim().split('').join(' ');break;
+  }
+  resultEl.className='';
+  resultEl.innerHTML='<button class="copy-btn" onclick="copyResult(this)">Copy</button><span style="padding-right:50px;display:block">'+escapeHtml(out)+'</span>';
+}
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function copyResult(btn){
+  const text=btn.parentElement.querySelector('span').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!';btn.className='copy-btn copied';
+    setTimeout(()=>{btn.textContent='Copy';btn.className='copy-btn'},1500);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='Copied!';btn.className='copy-btn copied';
+    setTimeout(()=>{btn.textContent='Copy';btn.className='copy-btn'},1500);
+  });
+}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

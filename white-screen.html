@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>White Screen Tool — Full Screen Color Display</title>
+<meta name="description" content="Display any color full-screen on your monitor. Preset colors, custom color picker, and automatic slideshow mode.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: #fff;
+    transition: background 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  #panel {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #0d1117;
+    color: #e6edf3;
+    padding: 16px 20px;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  #panel-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  #panel-inner .section { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  #panel-inner .label { font-size: 13px; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px; }
+  .clr-btn {
+    padding: 6px 14px;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    background: #161b22;
+    color: #e6edf3;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .clr-btn:hover { background: #21262d; border-color: #58a6ff; }
+  .clr-btn:active { transform: scale(0.96); }
+  #color-picker { width: 36px; height: 36px; border: 1px solid #30363d; border-radius: 6px; padding: 0; cursor: pointer; background: none; vertical-align: middle; }
+  #hex-display {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    color: #f0f6fc;
+    min-width: 90px;
+    letter-spacing: 0.5px;
+  }
+  .action-btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .action-btn:active { transform: scale(0.96); }
+  #copy-btn { background: #238636; color: #fff; }
+  #copy-btn:hover { opacity: 0.85; }
+  #copy-btn.copied { background: #1e6a31; }
+  #slideshow-btn { background: #1f6feb; color: #fff; }
+  #slideshow-btn:hover { opacity: 0.85; }
+  #slideshow-btn.active { background: #da3633; }
+  .separator { width: 1px; height: 28px; background: #30363d; }
+  footer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    text-align: center;
+    padding: 12px;
+    font-size: 13px;
+    color: #8b949e;
+    background: #0d1117;
+    z-index: 100;
+    border-top: 1px solid #21262d;
+  }
+  @media (max-width: 680px) {
+    #panel { padding: 12px 14px; }
+    #panel-inner { gap: 8px; }
+    .clr-btn { padding: 5px 10px; font-size: 12px; }
+    #hex-display { font-size: 17px; min-width: 70px; }
+    .action-btn { padding: 5px 12px; font-size: 12px; }
+    .separator { display: none; }
+    #panel-inner .section { width: 100%; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "White Screen Tool \u2014 Full Screen Color Display",
+  "description": "Display any color full-screen on your monitor. Preset colors, custom color picker, and automatic slideshow mode.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<div id="panel">
+  <div id="panel-inner">
+    <div class="section">
+      <span class="label">Presets</span>
+      <button class="clr-btn" data-color="#ffffff">White</button>
+      <button class="clr-btn" data-color="#000000">Black</button>
+      <button class="clr-btn" data-color="#ff0000">Red</button>
+      <button class="clr-btn" data-color="#00ff00">Green</button>
+      <button class="clr-btn" data-color="#0000ff">Blue</button>
+      <button class="clr-btn" data-color="#ffff00">Yellow</button>
+      <button class="clr-btn" data-color="#800080">Purple</button>
+      <button class="clr-btn" data-color="#ffa500">Orange</button>
+      <button class="clr-btn" data-color="#ff69b4">Pink</button>
+      <button class="clr-btn" data-color="#808080">Gray</button>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="section">
+      <span class="label">Pick</span>
+      <input type="color" id="color-picker" value="#ffffff">
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="section">
+      <span id="hex-display">#FFFFFF</span>
+      <button class="action-btn" id="copy-btn">Copy Hex</button>
+      <button class="action-btn" id="slideshow-btn">Start Slideshow</button>
+    </div>
+  </div>
+</div>
+
+<footer>Free Full-Screen Color Tool — Great for monitors, testing, pranks</footer>
+
+<script>
+(function() {
+  const body = document.body;
+  const hexDisplay = document.getElementById('hex-display');
+  const colorPicker = document.getElementById('color-picker');
+  const copyBtn = document.getElementById('copy-btn');
+  const slideshowBtn = document.getElementById('slideshow-btn');
+
+  let slideshowTimer = null;
+  let slideshowColors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#800080', '#ffa500', '#ff69b4', '#ffffff', '#000000', '#808080'];
+  let slideshowIndex = 0;
+  let slideshowActive = false;
+
+  function setColor(hex) {
+    body.style.background = hex;
+    hexDisplay.textContent = hex.toUpperCase();
+    colorPicker.value = hex;
+  }
+
+  // render hex value used by the page: strip # from display
+  function setColorFromPicker(hex) {
+    body.style.background = hex;
+    hexDisplay.textContent = hex.toUpperCase();
+  }
+
+  // preset button clicks
+  document.querySelectorAll('.clr-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (slideshowActive) stopSlideshow();
+      setColor(this.getAttribute('data-color'));
+    });
+  });
+
+  // color picker
+  colorPicker.addEventListener('input', function() {
+    if (slideshowActive) stopSlideshow();
+    setColorFromPicker(this.value);
+  });
+
+  // copy hex
+  copyBtn.addEventListener('click', function() {
+    var hex = hexDisplay.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(hex).then(function() {
+        flashCopied();
+      }).catch(function() {
+        fallbackCopy(hex);
+      });
+    } else {
+      fallbackCopy(hex);
+    }
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); flashCopied(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  function flashCopied() {
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    copyBtn.classList.add('copied');
+    setTimeout(function() {
+      copyBtn.textContent = orig;
+      copyBtn.classList.remove('copied');
+    }, 1500);
+  }
+
+  // slideshow
+  slideshowBtn.addEventListener('click', function() {
+    if (slideshowActive) {
+      stopSlideshow();
+    } else {
+      startSlideshow();
+    }
+  });
+
+  function startSlideshow() {
+    slideshowActive = true;
+    slideshowBtn.textContent = 'Stop Slideshow';
+    slideshowBtn.classList.add('active');
+    slideshowIndex = 0;
+    setColor(slideshowColors[slideshowIndex]);
+    slideshowTimer = setInterval(function() {
+      slideshowIndex = (slideshowIndex + 1) % slideshowColors.length;
+      setColor(slideshowColors[slideshowIndex]);
+    }, 3000);
+  }
+
+  function stopSlideshow() {
+    slideshowActive = false;
+    slideshowBtn.textContent = 'Start Slideshow';
+    slideshowBtn.classList.remove('active');
+    if (slideshowTimer) {
+      clearInterval(slideshowTimer);
+      slideshowTimer = null;
+    }
+  }
+
+  // init
+  setColor('#ffffff');
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+      <a href="/event-countdown" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Event Countdown — Count Down to Any Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

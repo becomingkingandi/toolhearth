@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lorem Ipsum Generator — Generate Placeholder Text</title>
+<meta name="description" content="Generate lorem ipsum placeholder text for your designs. Choose paragraph count, word count, and HTML tag wrapping.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:680px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;justify-content:center}
+h1{font-size:1.6rem;font-weight:600;margin-bottom:8px;color:#f0f6fc}
+p.sub{color:#8b949e;font-size:0.9rem;margin-bottom:24px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px}
+.controls{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px}
+.controls .group{flex:1;min-width:140px}
+.controls .group label{display:block;font-size:0.82rem;color:#8b949e;margin-bottom:6px;font-weight:500}
+.controls .group select,.controls .group input[type="number"]{width:100%;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:8px 12px;color:#c9d1d9;font-size:0.9rem;outline:none}
+.controls .group select:focus,.controls .group input[type="number"]:focus{border-color:#58a6ff}
+.radio-group{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.radio-group label{display:flex;align-items:center;gap:6px;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:0.85rem;color:#8b949e;transition:all .2s;user-select:none}
+.radio-group label.active{border-color:#238636;color:#f0f6fc;background:#23863620}
+.radio-group input[type="radio"]{display:none}
+.check-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.check-row input[type="checkbox"]{accent-color:#238636;width:16px;height:16px;cursor:pointer}
+.check-row label{font-size:0.85rem;color:#c9d1d9;cursor:pointer}
+.output-area{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:16px;min-height:160px;max-height:320px;overflow-y:auto;font-size:0.9rem;line-height:1.6;color:#c9d1d9;white-space:pre-wrap;word-break:break-word;margin-bottom:12px}
+.output-area p{margin-bottom:10px}
+.output-area p:last-child{margin-bottom:0}
+.output-area .placeholder{color:#484f58;text-align:center;padding:40px 0}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:10px 24px;font-size:0.95rem;font-weight:500;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn-outline{background:transparent;border:1px solid #30363d;color:#c9d1d9}
+.btn-outline:hover{background:#1c2128}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#238636;color:#fff;padding:10px 20px;border-radius:6px;font-size:0.85rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+footer{text-align:center;padding:20px;color:#484f58;font-size:0.8rem;margin-top:20px}
+@media(max-width:480px){.card{padding:16px}.controls{flex-direction:column;gap:12px}.controls .group{min-width:100%}.radio-group{justify-content:flex-start}.btn-group{flex-direction:column}.btn{width:100%}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Lorem Ipsum Generator \u2014 Generate Placeholder Text",
+  "description": "Generate lorem ipsum placeholder text for your designs. Choose paragraph count, word count, and HTML tag wrapping.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Lorem Ipsum Generator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Generate placeholder text for your designs</p>
+<div class="card">
+<div class="controls">
+<div class="group">
+<label>Paragraphs</label>
+<select id="paragraphsSelect">
+<option value="1">1</option>
+<option value="2" selected>2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+<option value="9">9</option>
+<option value="10">10</option>
+</select>
+</div>
+<div class="group">
+<label>Words per paragraph</label>
+<div class="radio-group" id="wordCountGroup">
+<label class="active"><input type="radio" name="words" value="50" checked> 50</label>
+<label><input type="radio" name="words" value="100"> 100</label>
+<label><input type="radio" name="words" value="200"> 200</label>
+</div>
+</div>
+</div>
+<div class="check-row">
+<input type="checkbox" id="htmlTagsCheck">
+<label for="htmlTagsCheck">Wrap in &lt;p&gt; tags</label>
+</div>
+<div class="output-area" id="outputArea"><div class="placeholder">Click Generate to create lorem ipsum text</div></div>
+<div class="btn-group">
+<button class="btn" id="generateBtn">Generate</button>
+<button class="btn btn-outline" id="copyBtn">Copy</button>
+</div>
+</div>
+</div>
+<footer>Lorem Ipsum Generator</footer>
+<div class="toast" id="toast"></div>
+<script>
+const loremWords=[
+'lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit','sed','do','eiusmod','tempor','incididunt','ut','labore','et','dolore','magna','aliqua','enim','ad','minim','veniam','quis','nostrud','exercitation','ullamco','laboris','nisi','aliquip','ex','ea','commodo','consequat','duis','aute','irure','in','reprehenderit','voluptate','velit','esse','cillum','eu','fugiat','nulla','pariatur','excepteur','sint','occaecat','cupidatat','non','proident','sunt','culpa','qui','officia','deserunt','mollit','anim','id','est','laborum','a','ac','accumsan','aliquam','ante','arcu','augue','bibendum','blandit','class','commodo','convallis','cras','cubilia','curabitur','cursus','dapibus','diam','dictum','dictumst','dignissim','dis','donec','dui','egestas','eleifend','elementum','erat','erat','eros','facilisi','facilisis','fames','faucibus','felis','fermentum','feugiat','finibus','fringilla','fusce','gravida','habitasse','hac','hendrerit','hymenaeos','iaculis','integer','interdum','justo','lacinia','laoreet','lectus','leo','libero','ligula','litora','lobortis','luctus','maecenas','malesuada','massa','mattis','mauris','maximus','metus','mi','molestie','montes','morbi','mus','nam','nascetur','natoque','nec','neque','netus','nibh','nisi','odio','orci','ornare','pellentesque','penatibus','per','pharetra','phasellus','placerat','platea','porta','porttitor','posuere','potenti','praesent','pretium','primis','purus','quam','rhoncus','ridiculus','risus','rutrum','sagittis','sapien','scelerisque','sem','semper','senectus','sodales','sollicitudin','suscipit','suspendisse','tellus','tempus','tincidunt','tortor','tristique','turpis','ultrices','ultricies','urna','varius','vehicula','viverra','volutpat','vulputate'
+];
+
+const paragraphsSelect=document.getElementById('paragraphsSelect');
+const outputArea=document.getElementById('outputArea');
+const generateBtn=document.getElementById('generateBtn');
+const copyBtn=document.getElementById('copyBtn');
+const htmlTagsCheck=document.getElementById('htmlTagsCheck');
+const toast=document.getElementById('toast');
+
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2000)}
+
+function getWordCount(){
+const checked=document.querySelector('input[name="words"]:checked');
+return checked?parseInt(checked.value):50;
+}
+
+function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+
+function generateLorem(){
+const paragraphs=parseInt(paragraphsSelect.value);
+const wordsPerPara=getWordCount();
+const useHtml=htmlTagsCheck.checked;
+const result=[];
+const totalWords=loremWords.length;
+
+for(let p=0;p<paragraphs;p++){
+const words=[];
+const startIdx=Math.floor(Math.random()*totalWords);
+for(let i=0;i<wordsPerPara;i++){
+const word=loremWords[(startIdx+i)%totalWords];
+if(i===0)words.push(capitalize(word));
+else words.push(word);
+}
+let para=words.join(' ')+'.';
+if(useHtml)result.push('<p>'+para+'</p>');
+else result.push(para);
+}
+let output=result.join(useHtml?'\n':'\n\n');
+outputArea.innerHTML=useHtml?output:'<div>'+output.replace(/\n\n/g,'<br><br>')+'</div>';
+showToast('Generated!');
+}
+
+function copyText(){
+let text;
+const useHtml=htmlTagsCheck.checked;
+if(useHtml){
+text=outputArea.innerHTML;
+// strip outer wrapper if needed
+if(text.startsWith('<div>')&&text.endsWith('</div>'))text=text.slice(5,-6);
+}else{
+text=outputArea.textContent;
+}
+if(!text||outputArea.querySelector('.placeholder')){showToast('Nothing to copy');return}
+navigator.clipboard.writeText(text).then(()=>showToast('Copied!')).catch(()=>showToast('Copied!'))
+}
+
+// radio click styling
+document.querySelectorAll('.radio-group label').forEach(label=>{
+label.addEventListener('click',function(){
+document.querySelectorAll('.radio-group label').forEach(l=>l.classList.remove('active'));
+this.classList.add('active');
+this.querySelector('input[type="radio"]').checked=true;
+});
+});
+
+generateBtn.addEventListener('click',generateLorem);
+copyBtn.addEventListener('click',copyText);
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+      <a href="/diff-checker" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Diff Checker — Compare Text Differences Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

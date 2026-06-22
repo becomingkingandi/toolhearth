@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit Converter — Length, Mass, Volume, Temperature & More</title>
+  <meta name="description" content="Convert between hundreds of units across 32 categories including length, mass, volume, temperature, speed, and area.">>
+  <meta name="keywords" content="unit converter, length converter, weight converter, temperature converter, volume converter, area converter, speed converter, time converter, pressure converter, energy converter, data converter, metric conversion, calculator">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="UnitConverterPro">
+  <link rel="canonical" href="https://www.unitconverterpro.com/">
+  <meta property="og:title" content="Unit Converter Pro — Quick & Accurate Conversions">
+  <meta property="og:description" content="Free online unit converter with 10 categories. Instant bidirectional conversion. Dark theme. Mobile-friendly.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.unitconverterpro.com/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Unit Converter Pro">
+  <meta name="twitter:description" content="Free online unit converter — length, weight, temp, volume, area, speed, time, pressure, energy, data.">
+
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a23;
+      --surface2: #24243a;
+      --border: #2e2e4a;
+      --text: #e4e4ed;
+      --text2: #9898b3;
+      --accent: #7c6cf0;
+      --accent-hover: #968af5;
+      --accent-glow: rgba(124,108,240,.25);
+      --green: #34d399;
+      --radius: 10px;
+      --shadow: 0 4px 24px rgba(0,0,0,.4);
+      font-size: 16px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+    /* ── Layout ── */
+    .container { max-width: 820px; margin: 0 auto; padding: 0 16px; width: 100%; }
+    header, footer { text-align: center; padding: 16px 0; }
+    main { flex: 1; padding: 8px 0 32px; }
+
+    /* ── Ad placeholders ── */
+    .ad-slot {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      font-size: .75rem;
+      color: var(--text2);
+      text-align: center;
+      margin: 12px auto;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 728px;
+    }
+    .ad-slot.header-ad { min-height: 90px; }
+
+    /* ── Title ── */
+    .app-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -.5px;
+    }
+    .app-sub { font-size: .85rem; color: var(--text2); margin-top: 2px; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 18px 0 14px;
+      justify-content: center;
+    }
+    .tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: .8rem;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all .18s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    /* ── Converter Card ── */
+    .converter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 18px;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+    .converter-card.active { display: block; }
+    .conv-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    /* ── Dual inputs ── */
+    .dual-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .dual-row .side { flex: 1; }
+    .side label {
+      display: block;
+      font-size: .72rem;
+      color: var(--text2);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .side select, .side input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: .9rem;
+      color: var(--text);
+      transition: border-color .18s;
+    }
+    .side select:focus, .side input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .side select { cursor: pointer; }
+    .side input { font-variant-numeric: tabular-nums; }
+    .side input::placeholder { color: var(--text2); opacity: .6; }
+
+    /* ── Swap ── */
+    .swap-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 0;
+    }
+    .swap-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      color: var(--text2);
+      font-size: 1.2rem;
+    }
+    .swap-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      transform: rotate(180deg);
+    }
+
+    /* ── Result rows ── */
+    .result-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .result-item {
+      background: var(--surface2);
+      border-radius: 6px;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    .result-item .val { font-size: 1rem; font-weight: 600; color: var(--green); }
+    .result-item .unit { font-size: .7rem; color: var(--text2); }
+
+    /* ── Temperature special ── */
+    .temp-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .temp-row .temp-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .temp-row .temp-item label { min-width: 28px; font-weight: 600; color: var(--accent); }
+    .temp-row .temp-item input { flex: 1; }
+
+    /* ── Affiliate ── */
+    .affiliate-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 18px auto 0;
+      text-align: center;
+      max-width: 480px;
+    }
+    .affiliate-box p { font-size: .8rem; color: var(--text2); }
+    .affiliate-box a {
+      display: inline-block;
+      margin-top: 6px;
+      background: var(--accent);
+      color: #fff;
+      padding: 7px 20px;
+      border-radius: 6px;
+      font-size: .85rem;
+      font-weight: 500;
+      transition: background .2s;
+    }
+    .affiliate-box a:hover { background: var(--accent-hover); text-decoration: none; }
+
+    /* ── Footer ── */
+    footer { font-size: .75rem; color: var(--text2); border-top: 1px solid var(--border); margin-top: 20px; padding: 14px 0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      :root { font-size: 14px; }
+      .container { padding: 0 10px; }
+      .converter-card { padding: 14px 12px; }
+      .dual-row { flex-direction: column; gap: 12px; }
+      .swap-area { padding: 8px 0; }
+      .swap-btn { width: 38px; height: 38px; font-size: 1rem; }
+      .tab-btn { font-size: .72rem; padding: 5px 10px; }
+      .app-title { font-size: 1.3rem; }
+      .result-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 400px) {
+      .tabs { gap: 3px; }
+      .tab-btn { font-size: .65rem; padding: 4px 7px; }
+      .result-row { grid-template-columns: 1fr; }
+    }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Unit Converter \u2014 Length, Mass, Volume, Temperature & More",
+  "description": "Convert between hundreds of units across 32 categories including length, mass, volume, temperature, speed, and area.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="ad-slot header-ad">📢 AdSense — Header Banner (728×90)</div>
+    <h1 class="app-title">⚡ Unit Converter Pro</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+    <p class="app-sub">Free — Fast — Accurate — 10 Categories</p>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <!-- Tabs -->
+    <nav class="tabs" id="tabs" aria-label="Conversion categories">
+      <button class="tab-btn active" data-cat="length">Length</button>
+      <button class="tab-btn" data-cat="weight">Weight</button>
+      <button class="tab-btn" data-cat="temperature">Temp</button>
+      <button class="tab-btn" data-cat="volume">Volume</button>
+      <button class="tab-btn" data-cat="area">Area</button>
+      <button class="tab-btn" data-cat="speed">Speed</button>
+      <button class="tab-btn" data-cat="time">Time</button>
+      <button class="tab-btn" data-cat="pressure">Pressure</button>
+      <button class="tab-btn" data-cat="energy">Energy</button>
+      <button class="tab-btn" data-cat="data">Data</button>
+    </nav>
+
+    <!-- ========== LENGTH ========== -->
+    <section class="converter-card active" id="card-length" role="tabpanel">
+      <h2 class="conv-title">📏 Length Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="len-from-val">From</label>
+          <input type="number" id="len-from-val" placeholder="0" step="any">
+          <select id="len-from-unit" style="margin-top:6px">
+            <option value="mm">Millimeter (mm)</option>
+            <option value="cm" selected>Centimeter (cm)</option>
+            <option value="m">Meter (m)</option>
+            <option value="km">Kilometer (km)</option>
+            <option value="in">Inch (in)</option>
+            <option value="ft">Foot (ft)</option>
+            <option value="yd">Yard (yd)</option>
+            <option value="mi">Mile (mi)</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="len-to-val">To</label>
+          <input type="number" id="len-to-val" placeholder="0" step="any">
+          <select id="len-to-unit" style="margin-top:6px">
+            <option value="mm">Millimeter (mm)</option>
+            <option value="cm">Centimeter (cm)</option>
+            <option value="m" selected>Meter (m)</option>
+            <option value="km">Kilometer (km)</option>
+            <option value="in">Inch (in)</option>
+            <option value="ft">Foot (ft)</option>
+            <option value="yd">Yard (yd)</option>
+            <option value="mi">Mile (mi)</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="len" title="Swap units">⇄</button></div>
+      <div class="result-row" id="len-results"></div>
+    </section>
+
+    <!-- ========== WEIGHT ========== -->
+    <section class="converter-card" id="card-weight" role="tabpanel">
+      <h2 class="conv-title">⚖️ Weight Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="wt-from-val">From</label>
+          <input type="number" id="wt-from-val" placeholder="0" step="any">
+          <select id="wt-from-unit" style="margin-top:6px">
+            <option value="mg">Milligram (mg)</option>
+            <option value="g" selected>Gram (g)</option>
+            <option value="kg">Kilogram (kg)</option>
+            <option value="ton">Tonne (t)</option>
+            <option value="lb">Pound (lb)</option>
+            <option value="oz">Ounce (oz)</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="wt-to-val">To</label>
+          <input type="number" id="wt-to-val" placeholder="0" step="any">
+          <select id="wt-to-unit" style="margin-top:6px">
+            <option value="mg">Milligram (mg)</option>
+            <option value="g">Gram (g)</option>
+            <option value="kg" selected>Kilogram (kg)</option>
+            <option value="ton">Tonne (t)</option>
+            <option value="lb">Pound (lb)</option>
+            <option value="oz">Ounce (oz)</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="wt" title="Swap units">⇄</button></div>
+      <div class="result-row" id="wt-results"></div>
+    </section>
+
+    <!-- ========== TEMPERATURE ========== -->
+    <section class="converter-card" id="card-temperature" role="tabpanel">
+      <h2 class="conv-title">🌡️ Temperature Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="temp-val">Value</label>
+          <input type="number" id="temp-val" placeholder="0" step="any">
+        </div>
+      </div>
+      <div class="temp-row" id="temp-results"></div>
+    </section>
+
+    <!-- ========== VOLUME ========== -->
+    <section class="converter-card" id="card-volume" role="tabpanel">
+      <h2 class="conv-title">🧪 Volume Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="vol-from-val">From</label>
+          <input type="number" id="vol-from-val" placeholder="0" step="any">
+          <select id="vol-from-unit" style="margin-top:6px">
+            <option value="ml">Milliliter (ml)</option>
+            <option value="l" selected>Liter (L)</option>
+            <option value="gal">Gallon (gal)</option>
+            <option value="qt">Quart (qt)</option>
+            <option value="cup">Cup</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="vol-to-val">To</label>
+          <input type="number" id="vol-to-val" placeholder="0" step="any">
+          <select id="vol-to-unit" style="margin-top:6px">
+            <option value="ml">Milliliter (ml)</option>
+            <option value="l">Liter (L)</option>
+            <option value="gal" selected>Gallon (gal)</option>
+            <option value="qt">Quart (qt)</option>
+            <option value="cup">Cup</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="vol" title="Swap units">⇄</button></div>
+      <div class="result-row" id="vol-results"></div>
+    </section>
+
+    <!-- ========== AREA ========== -->
+    <section class="converter-card" id="card-area" role="tabpanel">
+      <h2 class="conv-title">📐 Area Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="area-from-val">From</label>
+          <input type="number" id="area-from-val" placeholder="0" step="any">
+          <select id="area-from-unit" style="margin-top:6px">
+            <option value="sqm" selected>Square meter (m²)</option>
+            <option value="sqft">Square foot (ft²)</option>
+            <option value="acre">Acre</option>
+            <option value="ha">Hectare (ha)</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="area-to-val">To</label>
+          <input type="number" id="area-to-val" placeholder="0" step="any">
+          <select id="area-to-unit" style="margin-top:6px">
+            <option value="sqm">Square meter (m²)</option>
+            <option value="sqft" selected>Square foot (ft²)</option>
+            <option value="acre">Acre</option>
+            <option value="ha">Hectare (ha)</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="area" title="Swap units">⇄</button></div>
+      <div class="result-row" id="area-results"></div>
+    </section>
+
+    <!-- ========== SPEED ========== -->
+    <section class="converter-card" id="card-speed" role="tabpanel">
+      <h2 class="conv-title">🚀 Speed Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="spd-from-val">From</label>
+          <input type="number" id="spd-from-val" placeholder="0" step="any">
+          <select id="spd-from-unit" style="margin-top:6px">
+            <option value="ms" selected>Meter/s (m/s)</option>
+            <option value="kmh">Kilometer/h (km/h)</option>
+            <option value="mph">Mile/h (mph)</option>
+            <option value="knot">Knot</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="spd-to-val">To</label>
+          <input type="number" id="spd-to-val" placeholder="0" step="any">
+          <select id="spd-to-unit" style="margin-top:6px">
+            <option value="ms">Meter/s (m/s)</option>
+            <option value="kmh" selected>Kilometer/h (km/h)</option>
+            <option value="mph">Mile/h (mph)</option>
+            <option value="knot">Knot</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="spd" title="Swap units">⇄</button></div>
+      <div class="result-row" id="spd-results"></div>
+    </section>
+
+    <!-- ========== TIME ========== -->
+    <section class="converter-card" id="card-time" role="tabpanel">
+      <h2 class="conv-title">⏱️ Time Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="time-from-val">From</label>
+          <input type="number" id="time-from-val" placeholder="0" step="any">
+          <select id="time-from-unit" style="margin-top:6px">
+            <option value="s" selected>Second (s)</option>
+            <option value="min">Minute (min)</option>
+            <option value="h">Hour (h)</option>
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="year">Year</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="time-to-val">To</label>
+          <input type="number" id="time-to-val" placeholder="0" step="any">
+          <select id="time-to-unit" style="margin-top:6px">
+            <option value="s">Second (s)</option>
+            <option value="min" selected>Minute (min)</option>
+            <option value="h">Hour (h)</option>
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="year">Year</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="time" title="Swap units">⇄</button></div>
+      <div class="result-row" id="time-results"></div>
+    </section>
+
+    <!-- ========== PRESSURE ========== -->
+    <section class="converter-card" id="card-pressure" role="tabpanel">
+      <h2 class="conv-title">💨 Pressure Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="pres-from-val">From</label>
+          <input type="number" id="pres-from-val" placeholder="0" step="any">
+          <select id="pres-from-unit" style="margin-top:6px">
+            <option value="pa" selected>Pascal (Pa)</option>
+            <option value="kpa">Kilopascal (kPa)</option>
+            <option value="bar">Bar</option>
+            <option value="psi">PSI</option>
+            <option value="atm">Atmosphere (atm)</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="pres-to-val">To</label>
+          <input type="number" id="pres-to-val" placeholder="0" step="any">
+          <select id="pres-to-unit" style="margin-top:6px">
+            <option value="pa">Pascal (Pa)</option>
+            <option value="kpa">Kilopascal (kPa)</option>
+            <option value="bar" selected>Bar</option>
+            <option value="psi">PSI</option>
+            <option value="atm">Atmosphere (atm)</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="pres" title="Swap units">⇄</button></div>
+      <div class="result-row" id="pres-results"></div>
+    </section>
+
+    <!-- ========== ENERGY ========== -->
+    <section class="converter-card" id="card-energy" role="tabpanel">
+      <h2 class="conv-title">⚡ Energy Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="en-from-val">From</label>
+          <input type="number" id="en-from-val" placeholder="0" step="any">
+          <select id="en-from-unit" style="margin-top:6px">
+            <option value="j" selected>Joule (J)</option>
+            <option value="kj">Kilojoule (kJ)</option>
+            <option value="cal">Calorie (cal)</option>
+            <option value="kcal">Kilocalorie (kcal)</option>
+            <option value="wh">Watt-hour (Wh)</option>
+            <option value="kwh">Kilowatt-hour (kWh)</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="en-to-val">To</label>
+          <input type="number" id="en-to-val" placeholder="0" step="any">
+          <select id="en-to-unit" style="margin-top:6px">
+            <option value="j">Joule (J)</option>
+            <option value="kj">Kilojoule (kJ)</option>
+            <option value="cal">Calorie (cal)</option>
+            <option value="kcal">Kilocalorie (kcal)</option>
+            <option value="wh" selected>Watt-hour (Wh)</option>
+            <option value="kwh">Kilowatt-hour (kWh)</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="en" title="Swap units">⇄</button></div>
+      <div class="result-row" id="en-results"></div>
+    </section>
+
+    <!-- ========== DATA ========== -->
+    <section class="converter-card" id="card-data" role="tabpanel">
+      <h2 class="conv-title">💾 Data Converter</h2>
+      <div class="dual-row">
+        <div class="side">
+          <label for="data-from-val">From</label>
+          <input type="number" id="data-from-val" placeholder="0" step="any">
+          <select id="data-from-unit" style="margin-top:6px">
+            <option value="B" selected>Byte (B)</option>
+            <option value="KB">Kilobyte (KB)</option>
+            <option value="MB">Megabyte (MB)</option>
+            <option value="GB">Gigabyte (GB)</option>
+            <option value="TB">Terabyte (TB)</option>
+          </select>
+        </div>
+        <div class="side">
+          <label for="data-to-val">To</label>
+          <input type="number" id="data-to-val" placeholder="0" step="any">
+          <select id="data-to-unit" style="margin-top:6px">
+            <option value="B">Byte (B)</option>
+            <option value="KB">Kilobyte (KB)</option>
+            <option value="MB" selected>Megabyte (MB)</option>
+            <option value="GB">Gigabyte (GB)</option>
+            <option value="TB">Terabyte (TB)</option>
+          </select>
+        </div>
+      </div>
+      <div class="swap-area"><button class="swap-btn" data-swap="data" title="Swap units">⇄</button></div>
+      <div class="result-row" id="data-results"></div>
+    </section>
+
+    <!-- Affiliate Link -->
+    <div class="affiliate-box">
+      <p>🔧 Need more advanced calculations? Try our powerful math tools.</p>
+      <a href="https://www.calculator.net/" target="_blank" rel="noopener sponsored">Visit Calculator.net ➜</a>
+    </div>
+
+    <!-- Footer Ad -->
+    <div class="ad-slot" style="margin-top:18px">📢 AdSense — Footer Banner (728×90)</div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    &copy; 2026 Unit Converter Pro &mdash; Fast, free unit conversions for everyone.
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Conversion Factors (to SI base) ──
+  const LENGTH = { mm:0.001, cm:0.01, m:1, km:1000, in:0.0254, ft:0.3048, yd:0.9144, mi:1609.344 };
+  const WEIGHT = { mg:1e-6, g:0.001, kg:1, ton:1000, lb:0.45359237, oz:0.028349523125 };
+  const VOLUME = { ml:0.001, l:1, gal:3.785411784, qt:0.946352946, cup:0.2365882365 };
+  const AREA   = { sqm:1, sqft:0.09290304, acre:4046.8564224, ha:10000 };
+  const SPEED  = { ms:1, kmh:0.2777777778, mph:0.44704, knot:0.5144444444 };
+  const TIME   = { s:1, min:60, h:3600, day:86400, week:604800, year:31536000 };
+  const PRESSURE = { pa:1, kpa:1000, bar:100000, psi:6894.757293, atm:101325 };
+  const ENERGY = { j:1, kj:1000, cal:4.184, kcal:4184, wh:3600, kwh:3600000 };
+  const DATA   = { B:1, KB:1024, MB:1048576, GB:1073741824, TB:1099511627776 };
+
+  // ── Category config ──
+  const CATEGORIES = {
+    length:   { factors: LENGTH,   resultId:'len-results',   prefix:'len' },
+    weight:   { factors: WEIGHT,   resultId:'wt-results',    prefix:'wt' },
+    volume:   { factors: VOLUME,   resultId:'vol-results',   prefix:'vol' },
+    area:     { factors: AREA,     resultId:'area-results',  prefix:'area' },
+    speed:    { factors: SPEED,    resultId:'spd-results',   prefix:'spd' },
+    time:     { factors: TIME,     resultId:'time-results',  prefix:'time' },
+    pressure: { factors: PRESSURE, resultId:'pres-results',  prefix:'pres' },
+    energy:   { factors: ENERGY,   resultId:'en-results',    prefix:'en' },
+    data:     { factors: DATA,     resultId:'data-results',  prefix:'data' }
+  };
+
+  // ── Temperature formulas ──
+  const TEMP_F = {
+    toC:  { C: v=>v, F:v=>(v-32)/1.8, K:v=>v-273.15 },
+    fromC: { C:v=>v, F:v=>v*1.8+32, K:v=>v+273.15 }
+  };
+
+  // ─── Round helper ──
+  function round(v, decimals=10) {
+    if (!isFinite(v)) return v;
+    const p = Math.pow(10, decimals);
+    return Math.round(v * p) / p;
+  }
+
+  // ─── Convert generic (factor-based) ──
+  function convertGeneric(factors, fromUnit, toUnit, value) {
+    if (value === '' || isNaN(value)) return '';
+    const v = parseFloat(value);
+    if (fromUnit === toUnit) return v;
+    const base = v * factors[fromUnit];
+    return base / factors[toUnit];
+  }
+
+  // ─── Convert temperature ──
+  function convertTemperature(fromUnit, toUnit, value) {
+    if (value === '' || isNaN(value)) return '';
+    const v = parseFloat(value);
+    if (fromUnit === toUnit) return v;
+    const c = TEMP_F.toC[fromUnit](v);
+    return TEMP_F.fromC[toUnit](c);
+  }
+
+  // ─── Update a generic converter ──
+  function updateGeneric(catKey) {
+    const cat = CATEGORIES[catKey];
+    const f = cat.factors;
+    const fromVal = document.getElementById(cat.prefix+'-from-val');
+    const toVal   = document.getElementById(cat.prefix+'-to-val');
+    const fromUnit = document.getElementById(cat.prefix+'-from-unit');
+    const toUnit   = document.getElementById(cat.prefix+'-to-unit');
+    const resDiv  = document.getElementById(cat.resultId);
+
+    const active = document.activeElement;
+    const activeIsFrom = (active === fromVal || active === fromUnit);
+    const activeIsTo   = (active === toVal || active === toUnit);
+
+    if (activeIsTo && fromVal.value !== '' && !isNaN(fromVal.value)) {
+      // convert TO -> FROM (reverse)
+      const revVal = convertGeneric(f, toUnit.value, fromUnit.value, toVal.value);
+      fromVal.value = revVal !== '' ? round(revVal) : '';
+    } else {
+      // forward: FROM -> TO
+      const fwdVal = convertGeneric(f, fromUnit.value, toUnit.value, fromVal.value);
+      toVal.value = fwdVal !== '' ? round(fwdVal) : '';
+    }
+
+    // Show all values in results
+    const fromV = parseFloat(fromVal.value);
+    const baseVal = !isNaN(fromV) ? fromV * f[fromUnit.value] : NaN;
+    if (isNaN(baseVal)) {
+      resDiv.innerHTML = '';
+      return;
+    }
+    let html = '';
+    for (const [unit, factor] of Object.entries(f)) {
+      const conv = baseVal / factor;
+      const label = fromUnit.value === unit ? `${unit} ← from` : toUnit.value === unit ? `${unit} ← to` : unit;
+      html += `<div class="result-item"><div class="val">${round(conv, 8)}</div><div class="unit">${label}</div></div>`;
+    }
+    // Limit to showing 6 most relevant to avoid clutter
+    const allUnits = Object.entries(f);
+    // reorder: put fromUnit first, toUnit second, then rest
+    const ordered = allUnits.sort(([a],[b]) => {
+      if (a === fromUnit.value) return -1;
+      if (b === fromUnit.value) return 1;
+      if (a === toUnit.value) return -1;
+      if (b === toUnit.value) return 1;
+      return 0;
+    });
+    html = '';
+    for (const [unit, factor] of ordered) {
+      const conv = baseVal / factor;
+      const isActive = (unit === fromUnit.value || unit === toUnit.value);
+      html += `<div class="result-item" style="${isActive ? 'border-left:3px solid var(--accent)' : ''}"><div class="val">${round(conv, 8)}</div><div class="unit">${unit}</div></div>`;
+    }
+    resDiv.innerHTML = html;
+  }
+
+  // ─── Update temperature ──
+  function updateTemperature() {
+    const val = document.getElementById('temp-val');
+    const resDiv = document.getElementById('temp-results');
+    const v = parseFloat(val.value);
+    if (isNaN(v) || val.value === '') {
+      resDiv.innerHTML = '<p style="color:var(--text2);font-size:.85rem">Enter a value above</p>';
+      return;
+    }
+    const units = ['C','F','K'];
+    const names = { C:'°C (Celsius)', F:'°F (Fahrenheit)', K:'K (Kelvin)' };
+    let html = '';
+    // Input is in Celsius; convert to all three scales
+    for (const u of units) {
+      const result = TEMP_F.fromC[u](v);
+      html += `<div class="temp-item"><label>${names[u]}</label><input type="text" value="${round(result, 4)}" readonly></div>`;
+    }
+    resDiv.innerHTML = html;
+  }
+
+  // ─── Wire generic converters ──
+  function wireGeneric(catKey) {
+    const cat = CATEGORIES[catKey];
+    const els = [
+      document.getElementById(cat.prefix+'-from-val'),
+      document.getElementById(cat.prefix+'-to-val'),
+      document.getElementById(cat.prefix+'-from-unit'),
+      document.getElementById(cat.prefix+'-to-unit')
+    ];
+    const handler = () => updateGeneric(catKey);
+    els.forEach(el => { if (el) { el.addEventListener('input', handler); el.addEventListener('change', handler); } });
+  }
+
+  // ─── Wire temperature ──
+  function wireTemperature() {
+    const el = document.getElementById('temp-val');
+    const handler = () => updateTemperature();
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
+  }
+
+  // ─── Swap handler ──
+  function swapUnits(catKey) {
+    if (catKey === 'temperature') return;
+    const cat = CATEGORIES[catKey];
+    const fromUnit = document.getElementById(cat.prefix+'-from-unit');
+    const toUnit   = document.getElementById(cat.prefix+'-to-unit');
+    const fromVal  = document.getElementById(cat.prefix+'-from-val');
+    const toVal    = document.getElementById(cat.prefix+'-to-val');
+    const tmpUnit = fromUnit.value;
+    fromUnit.value = toUnit.value;
+    toUnit.value = tmpUnit;
+    const tmpVal = fromVal.value;
+    fromVal.value = toVal.value;
+    toVal.value = tmpVal;
+    updateGeneric(catKey);
+  }
+
+  // ─── Tab switching ──
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.converter-card').forEach(c => c.classList.remove('active'));
+      const cat = btn.dataset.cat;
+      document.getElementById('card-'+cat).classList.add('active');
+    });
+  });
+
+  // ─── Swap buttons ──
+  document.querySelectorAll('.swap-btn').forEach(btn => {
+    btn.addEventListener('click', () => swapUnits(btn.dataset.swap));
+  });
+
+  // ─── Init all ──
+  function init() {
+    for (const key of Object.keys(CATEGORIES)) wireGeneric(key);
+    wireTemperature();
+
+    // Trigger initial conversion on visible card (length)
+    updateGeneric('length');
+    updateTemperature();
+
+    // Also update temp when switching to temp tab
+    document.querySelector('[data-cat="temperature"]').addEventListener('click', () => {
+      setTimeout(updateTemperature, 10);
+    });
+  }
+
+  // ─── Handle input event ordering for temperature when tab becomes visible ──
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+      if (cat === 'temperature') setTimeout(updateTemperature, 10);
+    });
+  });
+
+  // ─── Show extra results only for active tab periodically ──
+  // All categories auto-update on input; no extra tick needed.
+
+  init();
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/currency-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Currency Converter — Live Exchange Rates (USD, EUR, GBP, JPY)</a>
+      <a href="/inches-to-feet" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Inches to Feet Converter — Convert Inches to Feet+Inches</a>
+      <a href="/km-to-miles" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Kilometers to Miles Converter — KM to MI</a>
+      <a href="/mm-to-inches" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Millimeters to Inches Converter — MM to IN</a>
+      <a href="/timezone-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Time Zone Converter — Convert Time Between Timezones</a>
+      <a href="/binary-translator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Binary Translator — Convert Text to Binary & Binary to Text</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running Pace Calculator — Pace, Speed & Finish Time</title>
+<meta name="description" content="Calculate your running pace, speed, and finish times. Three modes: pace from time+distance, time from pace, etc.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:20px}
+.container{max-width:500px;width:100%}
+h1{text-align:center;color:#ffd700;margin:24px 0 20px;font-size:1.6rem}
+.mode-tabs{display:flex;gap:6px;margin-bottom:14px}
+.mode-tabs button{flex:1;padding:10px;border-radius:8px;border:1px solid #333;background:#1e1e1e;color:#aaa;font-size:.85rem;font-weight:600;cursor:pointer;transition:.15s}
+.mode-tabs button.active{background:#ffd700;color:#111;border-color:#ffd700}
+.mode-tabs button:hover:not(.active){background:#2a2a2a}
+.unit-toggle{display:flex;justify-content:center;gap:8px;margin-bottom:14px}
+.unit-toggle button{padding:6px 18px;border-radius:6px;border:1px solid #333;background:#1e1e1e;color:#aaa;font-size:.85rem;cursor:pointer;transition:.15s}
+.unit-toggle button.active{background:#4d96ff;color:#fff;border-color:#4d96ff}
+.inputs{background:#1e1e1e;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px;margin-bottom:14px}
+.inputs label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:#aaa}
+.inputs label .hint{font-size:.7rem;color:#666}
+.inputs input{padding:10px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:#e0e0e0;font-size:1rem}
+.btn{background:#ffd700;color:#111;border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:.15s;width:100%}
+.btn:hover{background:#ffed4a;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.result-card{background:#1a1a2e;border-radius:12px;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.result-item{text-align:center;padding:10px;background:#2a2a2a;border-radius:8px}
+.result-item .label{font-size:.7rem;color:#888;text-transform:uppercase;margin-bottom:4px}
+.result-item .value{font-size:1.2rem;font-weight:700;color:#ffd700}
+.result-item.full{grid-column:1/-1}
+#history{background:#1e1e1e;border-radius:12px;padding:16px}
+#history h3{font-size:.85rem;color:#aaa;margin-bottom:10px}
+#historyList{list-style:none;font-size:.8rem;max-height:150px;overflow-y:auto}
+#historyList li{padding:5px 0;border-bottom:1px solid #2a2a2a;color:#999}
+#historyList li:last-child{border-bottom:none}
+.clear-btn{background:transparent;color:#f55;border:1px solid #f55;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;float:right}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Running Pace Calculator \u2014 Pace, Speed & Finish Time",
+  "description": "Calculate your running pace, speed, and finish times. Three modes: pace from time+distance, time from pace, etc.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>🏃 Running Calculator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<div class="unit-toggle">
+<button id="unitMiles" class="active">Miles</button>
+<button id="unitKm">Kilometers</button>
+</div>
+<div class="mode-tabs">
+<button data-mode="pace" class="active">Pace</button>
+<button data-mode="time">Time</button>
+<button data-mode="distance">Distance</button>
+</div>
+<div class="inputs" id="inputs"></div>
+<button class="btn" id="calcBtn">Calculate</button>
+<div id="results" class="result-card" style="display:none"></div>
+<div id="history">
+<h3>📜 History <button class="clear-btn" id="clearHistory">Clear</button></h3>
+<ul id="historyList"></ul>
+</div>
+</div>
+<script>
+let mode='pace',unit='miles';
+let history=JSON.parse(localStorage.getItem('runHistory')||'[]');
+const inputsDiv=document.getElementById('inputs');
+const resultsDiv=document.getElementById('results');
+const historyList=document.getElementById('historyList');
+
+function buildInputs(){
+const isKm=unit==='km';
+const unitLabel=isKm?'km':'mi';
+const unitLabel2=isKm?'km/h':'mph';
+const speedLabel=isKm?'kmh':'mph';
+if(mode==='pace'){
+inputsDiv.innerHTML=`
+<label>Time (HH:MM:SS) <span class="hint">e.g. 0:45:00 for 45 min</span><input type="text" id="timeInput" placeholder="0:45:00"></label>
+<label>Distance (${unitLabel}) <input type="number" id="distInput" step=".01" placeholder="10" min="0"></label>`;
+}else if(mode==='time'){
+inputsDiv.innerHTML=`
+<label>Pace per ${unitLabel} (MM:SS) <span class="hint">e.g. 5:30</span><input type="text" id="paceInput" placeholder="5:30"></label>
+<label>Distance (${unitLabel}) <input type="number" id="distInput" step=".01" placeholder="10" min="0"></label>`;
+}else{
+inputsDiv.innerHTML=`
+<label>Pace per ${unitLabel} (MM:SS) <input type="text" id="paceInput" placeholder="5:30"></label>
+<label>Time (HH:MM:SS) <input type="text" id="timeInput" placeholder="0:45:00"></label>`;
+}
+}
+function timeToSec(t){
+const parts=t.split(':').map(Number);
+if(parts.length===3)return parts[0]*3600+parts[1]*60+parts[2];
+if(parts.length===2)return parts[0]*60+parts[1];
+if(parts.length===1)return parts[0];
+return NaN;
+}
+function secToHms(sec){
+sec=Math.round(sec);
+const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
+return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function secToMs(sec){
+const m=Math.floor(sec/60),s=Math.round(sec%60);
+return `${m}:${String(s).padStart(2,'0')}`;
+}
+function calculate(){
+const isKm=unit==='km';
+const unitLabel=isKm?'mi':'km'; // inverted for speed label
+const speedLabel=isKm?'km/h':'mph';
+let paceSec,timeSec,dist;
+if(mode==='pace'){
+timeSec=timeToSec(document.getElementById('timeInput').value);
+dist=parseFloat(document.getElementById('distInput').value);
+if(isNaN(timeSec)||isNaN(dist)||dist<=0||timeSec<=0){resultsDiv.style.display='none';return}
+paceSec=timeSec/dist;
+}else if(mode==='time'){
+const paceStr=document.getElementById('paceInput').value;
+dist=parseFloat(document.getElementById('distInput').value);
+paceSec=timeToSec(paceStr);
+if(isNaN(paceSec)||isNaN(dist)||dist<=0||paceSec<=0){resultsDiv.style.display='none';return}
+timeSec=paceSec*dist;
+}else{
+const paceStr=document.getElementById('paceInput').value;
+timeSec=timeToSec(document.getElementById('timeInput').value);
+paceSec=timeToSec(paceStr);
+if(isNaN(timeSec)||isNaN(paceSec)||timeSec<=0||paceSec<=0){resultsDiv.style.display='none';return}
+dist=timeSec/paceSec;
+}
+const speed=dist/(timeSec/3600);
+resultsDiv.style.display='grid';
+resultsDiv.innerHTML=`
+<div class="result-item"><div class="label">Pace (per ${unitLabel})</div><div class="value">${secToMs(paceSec)} /${unitLabel}</div></div>
+<div class="result-item"><div class="label">Speed (${speedLabel})</div><div class="value">${speed.toFixed(2)}</div></div>
+<div class="result-item"><div class="label">Distance</div><div class="value">${dist.toFixed(2)} ${isKm?'km':'mi'}</div></div>
+<div class="result-item"><div class="label">Time</div><div class="value">${secToHms(timeSec)}</div></div>
+`;
+const entry=`${mode}: pace ${secToMs(paceSec)}/${unitLabel}, ${dist.toFixed(2)} ${isKm?'km':'mi'}, ${secToHms(timeSec)}`;
+history.push(entry);
+if(history.length>30)history=history.slice(-30);
+localStorage.setItem('runHistory',JSON.stringify(history));
+renderHistory();
+}
+function renderHistory(){
+historyList.innerHTML=history.slice().reverse().map(h=>`<li>${h}</li>`).join('');
+}
+document.querySelectorAll('.mode-tabs button').forEach(b=>{
+b.addEventListener('click',()=>{
+document.querySelectorAll('.mode-tabs button').forEach(x=>x.classList.remove('active'));
+b.classList.add('active');mode=b.dataset.mode;buildInputs();
+});
+});
+document.getElementById('unitMiles').addEventListener('click',()=>{
+document.getElementById('unitMiles').classList.add('active');
+document.getElementById('unitKm').classList.remove('active');
+unit='miles';buildInputs();
+});
+document.getElementById('unitKm').addEventListener('click',()=>{
+document.getElementById('unitKm').classList.add('active');
+document.getElementById('unitMiles').classList.remove('active');
+unit='km';buildInputs();
+});
+document.getElementById('calcBtn').addEventListener('click',calculate);
+document.getElementById('clearHistory').addEventListener('click',()=>{history=[];localStorage.removeItem('runHistory');renderHistory();});
+buildInputs();renderHistory();
+</script>
+</div>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/metronome" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Metronome — Adjustable BPM & Time Signature</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

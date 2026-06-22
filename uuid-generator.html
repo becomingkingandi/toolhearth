@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UUID Generator — Generate UUID v4 Identifiers Online</title>
+<meta name="description" content="Generate random UUID v4 identifiers. Supports batch generation of 1, 5, 10, or 25 UUIDs at once with uppercase/lowercase option.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:620px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;justify-content:center}
+h1{font-size:1.6rem;font-weight:600;margin-bottom:8px;color:#f0f6fc}
+p.sub{color:#8b949e;font-size:0.9rem;margin-bottom:24px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:24px}
+.uuid-display{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:20px;margin-bottom:16px;min-height:70px;display:flex;align-items:center;justify-content:center;word-break:break-all;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;font-size:1.1rem;color:#58a6ff;text-align:center}
+.uuid-list{display:none;flex-direction:column;gap:6px;margin-bottom:16px;max-height:300px;overflow-y:auto}
+.uuid-list.show{display:flex}
+.uuid-item{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:8px 12px;font-family:'SF Mono',Consolas,'Liberation Mono',monospace;font-size:0.82rem;color:#c9d1d9;word-break:break-all}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:16px}
+.controls .field{display:flex;flex-direction:column;gap:4px}
+.controls .field label{font-size:0.82rem;color:#8b949e}
+.controls .field select{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:8px 12px;color:#c9d1d9;font-size:0.9rem;outline:none;cursor:pointer}
+.controls .field select:focus{border-color:#58a6ff}
+.toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.toggle{position:relative;width:44px;height:24px;background:#30363d;border-radius:12px;cursor:pointer;transition:background .2s}
+.toggle.active{background:#238636}
+.toggle .knob{position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle.active .knob{transform:translateX(20px)}
+.toggle-label{font-size:0.85rem;color:#8b949e}
+.toggle-label span{color:#f0f6fc;font-weight:500}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:10px 24px;font-size:0.95rem;font-weight:500;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn-outline{background:transparent;border:1px solid #30363d;color:#c9d1d9}
+.btn-outline:hover{background:#1c2128}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#238636;color:#fff;padding:10px 20px;border-radius:6px;font-size:0.85rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+footer{text-align:center;padding:20px;color:#484f58;font-size:0.8rem;margin-top:20px}
+@media(max-width:480px){.card{padding:16px}.controls{flex-direction:column;gap:8px}.btn-group{flex-direction:column}.btn{width:100%}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "UUID Generator \u2014 Generate UUID v4 Identifiers Online",
+  "description": "Generate random UUID v4 identifiers. Supports batch generation of 1, 5, 10, or 25 UUIDs at once with uppercase/lowercase option.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>UUID Generator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Generate UUID v4 identifiers</p>
+<div class="card">
+<div class="uuid-display" id="uuidDisplay">Click Generate</div>
+<div class="uuid-list" id="uuidList"></div>
+<div class="controls">
+<div class="field">
+<label>Quantity</label>
+<select id="countSelect">
+<option value="1">1</option>
+<option value="5">5</option>
+<option value="10">10</option>
+<option value="25">25</option>
+</select>
+</div>
+</div>
+<div class="toggle-row">
+<div class="toggle" id="caseToggle">
+<div class="knob"></div>
+</div>
+<div class="toggle-label">Case: <span id="caseLabel">UPPERCASE</span></div>
+</div>
+<div class="btn-group">
+<button class="btn" id="generateBtn">Generate</button>
+<button class="btn btn-outline" id="copyBtn">Copy</button>
+</div>
+</div>
+</div>
+<footer>UUID Generator</footer>
+<div class="toast" id="toast"></div>
+<script>
+let uppercase=true;
+const uuidDisplay=document.getElementById('uuidDisplay');
+const uuidList=document.getElementById('uuidList');
+const countSelect=document.getElementById('countSelect');
+const caseToggle=document.getElementById('caseToggle');
+const caseLabel=document.getElementById('caseLabel');
+const generateBtn=document.getElementById('generateBtn');
+const copyBtn=document.getElementById('copyBtn');
+const toast=document.getElementById('toast');
+
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2000)}
+function uuidv4(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16)})}
+function formatUUID(u){return uppercase?u.toUpperCase():u.toLowerCase()}
+function generate(){
+const count=parseInt(countSelect.value);
+const uuids=[];
+for(let i=0;i<count;i++)uuids.push(formatUUID(uuidv4()));
+if(count===1){uuidDisplay.textContent=uuids[0];uuidList.classList.remove('show');uuidDisplay.style.display='flex'}
+else{uuidDisplay.style.display='none';uuidList.innerHTML=uuids.map(u=>'<div class="uuid-item">'+u+'</div>').join('');uuidList.classList.add('show')}
+showToast('Generated '+count+' UUID'+(count>1?'s':''));
+}
+function copyAll(){
+let text;
+const count=parseInt(countSelect.value);
+if(count===1){text=uuidDisplay.textContent;if(text==='Click Generate'){showToast('Nothing to copy');return}}
+else{const items=uuidList.querySelectorAll('.uuid-item');if(!items.length){showToast('Nothing to copy');return};text=Array.from(items).map(el=>el.textContent).join('\n')}
+navigator.clipboard.writeText(text).then(()=>showToast('Copied!')).catch(()=>showToast('Copied!'))
+}
+
+generateBtn.addEventListener('click',generate);
+copyBtn.addEventListener('click',copyAll);
+caseToggle.addEventListener('click',()=>{
+uppercase=!uppercase;caseToggle.classList.toggle('active');
+caseLabel.textContent=uppercase?'UPPERCASE':'lowercase';
+const count=parseInt(countSelect.value);
+if((count===1&&uuidDisplay.textContent!=='Click Generate')||uuidList.querySelector('.uuid-item')){
+let currentIds;
+if(count===1)currentIds=[uuidDisplay.textContent];else currentIds=Array.from(uuidList.querySelectorAll('.uuid-item')).map(el=>el.textContent);
+const reformatted=currentIds.map(u=>formatUUID(u));
+if(count===1){uuidDisplay.textContent=reformatted[0]}else{
+uuidList.innerHTML=reformatted.map(u=>'<div class="uuid-item">'+u+'</div>').join('')}
+}
+});
+countSelect.addEventListener('change',()=>{
+if(uuidList.classList.contains('show')||uuidDisplay.textContent!=='Click Generate')generate();
+});
+// init
+caseToggle.classList.add('active');caseLabel.textContent='UPPERCASE';
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+      <a href="/diff-checker" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Diff Checker — Compare Text Differences Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

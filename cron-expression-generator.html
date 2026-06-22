@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cron Expression Generator — Visual Cron Job Builder</title>
+<meta name="description" content="Generate cron expressions visually with drop-down menus for minute, hour, day, month, and weekday. Also parses existing expressions.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:system-ui,-apple-system,sans-serif;padding:20px;min-height:100vh}
+.container{max-width:800px;margin:0 auto}
+h1{color:#58a6ff;margin-bottom:8px;font-size:1.5rem;text-align:center}
+.subtitle{text-align:center;color:#8b949e;margin-bottom:24px;font-size:.9rem}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:20px;margin-bottom:20px}
+.card h2{color:#58a6ff;font-size:1.1rem;margin-bottom:16px}
+.form-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.form-group{flex:1;min-width:100px}
+.form-group label{display:block;color:#8b949e;font-size:.8rem;margin-bottom:4px;font-weight:600}
+.form-group select,.form-group input[type="text"]{width:100%;padding:8px 10px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:.9rem}
+.form-group select:focus,.form-group input:focus{outline:none;border-color:#58a6ff}
+.btn{background:#238636;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:.9rem;transition:background .2s}
+.btn:hover{background:#2ea043}
+.btn.secondary{background:#21262d;border:1px solid #30363d}
+.btn.secondary:hover{background:#30363d}
+.expression-display{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.expression-display code{font-size:1.2rem;color:#f0883e;word-break:break-all}
+.copy-btn{background:#21262d;border:1px solid #30363d;color:#c9d1d9;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.8rem}
+.copy-btn:hover{background:#30363d}
+.human-readable{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;color:#7ee787;font-size:.9rem;margin-bottom:16px}
+.ref-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.ref-table th,.ref-table td{border:1px solid #30363d;padding:8px 12px;text-align:left}
+.ref-table th{background:#21262d;color:#8b949e;font-weight:600}
+.ref-table td{color:#c9d1d9}
+.ref-table tr:hover td{background:#1c2128}
+.parser-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.parser-row input{flex:1;min-width:200px;padding:8px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:.9rem}
+.parser-row input:focus{outline:none;border-color:#58a6ff}
+.error{color:#f85149;font-size:.85rem;margin-top:4px}
+.tabs{display:flex;gap:4px;margin-bottom:16px}
+.tab{padding:8px 16px;background:#21262d;border:1px solid #30363d;border-radius:6px 6px 0 0;color:#8b949e;cursor:pointer;font-size:.85rem}
+.tab.active{background:#161b22;border-bottom-color:#161b22;color:#c9d1d9}
+.tab-content{display:none}
+.tab-content.active{display:block}
+@media(max-width:600px){.form-group{min-width:calc(50% - 10px)}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Cron Expression Generator \u2014 Visual Cron Job Builder",
+  "description": "Generate cron expressions visually with drop-down menus for minute, hour, day, month, and weekday. Also parses existing expressions.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>⏰ Cron Expression Generator</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="subtitle">Build and parse cron expressions</p>
+
+<div class="tabs">
+<div class="tab active" data-tab="generator">Generator</div>
+<div class="tab" data-tab="parser">Parser</div>
+<div class="tab" data-tab="reference">Reference</div>
+</div>
+
+<div class="tab-content active" id="tab-generator">
+<div class="card">
+<h2>Build Cron Expression</h2>
+<div class="form-row">
+<div class="form-group">
+<label>Minute (0-59)</label>
+<select id="minute"><option value="*">* (every)</option><option value="*/5">*/5</option><option value="*/10">*/10</option><option value="*/15">*/15</option><option value="*/30">*/30</option><option value="0">0</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select>
+</div>
+<div class="form-group">
+<label>Hour (0-23)</label>
+<select id="hour"><option value="*">* (every)</option><option value="*/2">*/2</option><option value="*/4">*/4</option><option value="*/6">*/6</option><option value="*/12">*/12</option><option value="0">0 (midnight)</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select>
+</div>
+<div class="form-group">
+<label>Day of Month (1-31)</label>
+<select id="dom"><option value="*">* (every)</option><option value="*/2">*/2</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
+</div>
+<div class="form-group">
+<label>Month (1-12)</label>
+<select id="month"><option value="*">* (every)</option><option value="*/2">*/2</option><option value="*/3">*/3</option><option value="*/4">*/4</option><option value="*/6">*/6</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
+</div>
+<div class="form-group">
+<label>Day of Week (0-7)</label>
+<select id="dow"><option value="*">* (every)</option><option value="0">Sun</option><option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option><option value="6">Sat</option><option value="7">Sun (alt)</option></select>
+</div>
+</div>
+
+<div class="expression-display">
+<code id="genExpression">* * * * *</code>
+<button class="copy-btn" onclick="copyExpression()">📋 Copy</button>
+</div>
+<div class="human-readable" id="genDescription">→ Every minute</div>
+</div>
+</div>
+
+<div class="tab-content" id="tab-parser">
+<div class="card">
+<h2>Parse Cron Expression</h2>
+<div class="parser-row">
+<input type="text" id="parseInput" placeholder="e.g. */5 * * * *" value="*/5 * * * *">
+<button class="btn" onclick="parseExpression()">Parse</button>
+</div>
+<div id="parseResult" class="human-readable">→ Every 5 minutes</div>
+<div id="parseError" class="error"></div>
+</div>
+</div>
+
+<div class="tab-content" id="tab-reference">
+<div class="card">
+<h2>Common Cron Expressions</h2>
+<table class="ref-table">
+<thead><tr><th>Expression</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>* * * * *</code></td><td>Every minute</td></tr>
+<tr><td><code>*/5 * * * *</code></td><td>Every 5 minutes</td></tr>
+<tr><td><code>*/15 * * * *</code></td><td>Every 15 minutes</td></tr>
+<tr><td><code>0 * * * *</code></td><td>Every hour (at minute 0)</td></tr>
+<tr><td><code>0 */2 * * *</code></td><td>Every 2 hours</td></tr>
+<tr><td><code>0 */6 * * *</code></td><td>Every 6 hours</td></tr>
+<tr><td><code>0 0 * * *</code></td><td>Daily at midnight</td></tr>
+<tr><td><code>0 9 * * *</code></td><td>Daily at 9 AM</td></tr>
+<tr><td><code>0 0 * * 1</code></td><td>Every Monday at midnight</td></tr>
+<tr><td><code>0 0 1 * *</code></td><td>First day of every month</td></tr>
+<tr><td><code>0 0 1 1 *</code></td><td>January 1st every year</td></tr>
+<tr><td><code>*/30 * * * *</code></td><td>Every 30 minutes</td></tr>
+<tr><td><code>0 9-17 * * 1-5</code></td><td>Every hour 9-5 on weekdays</td></tr>
+<tr><td><code>0 0 * * 0</code></td><td>Every Sunday at midnight</td></tr>
+<tr><td><code>30 4 * * *</code></td><td>Daily at 4:30 AM</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<script>
+const monthNames = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const dowNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+document.querySelectorAll('.tab').forEach(tab => {
+tab.addEventListener('click', function() {
+document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+this.classList.add('active');
+document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+});
+});
+
+['minute','hour','dom','month','dow'].forEach(id => {
+document.getElementById(id).addEventListener('change', updateGenerator);
+});
+
+function updateGenerator() {
+const parts = ['minute','hour','dom','month','dow'].map(id => document.getElementById(id).value);
+const expr = parts.join(' ');
+document.getElementById('genExpression').textContent = expr;
+document.getElementById('genDescription').textContent = '→ ' + describeCron(parts[0], parts[1], parts[2], parts[3], parts[4]);
+}
+
+function describeCron(min, hour, dom, month, dow) {
+const desc = describeField(min, 'minute') + ' ' + describeField(hour, 'hour') + ' ' + describeField(dom, 'day of month') + ' ' + describeField(month, 'month') + ' ' + describeField(dow, 'day of week');
+if (min === '*' && hour === '*' && dom === '*' && month === '*' && dow === '*') return 'Every minute';
+if (min !== '*' && hour === '*' && dom === '*' && month === '*' && dow === '*') return 'Every hour at minute ' + min;
+if (min === '0' && hour !== '*' && dom === '*' && month === '*' && dow === '*') return 'Daily at ' + (hour === '0' ? 'midnight' : hour + ':00');
+if (min === '0' && hour !== '*' && dom === '*' && month === '*' && dow !== '*') {
+const d = dow === '0' || dow === '7' ? 'Sunday' : ['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][parseInt(dow)];
+return 'Every ' + d + ' at ' + (hour === '0' ? 'midnight' : hour + ':00');
+}
+if (min === '0' && hour === '0' && dom !== '*' && month === '*' && dow === '*') return 'Day ' + dom + ' of every month at midnight';
+return 'Every ' + (min === '*' ? 'minute' : min + ' min') + ' / ' + (hour === '*' ? 'any hour' : hour + 'h') + ' / day ' + (dom === '*' ? 'any' : dom) + ' / ' + (month === '*' ? 'any month' : monthNames[parseInt(month)]) + ' / ' + (dow === '*' ? 'any day' : dowNames[parseInt(dow)]);
+}
+
+function describeField(val, name) {
+if (val === '*') return 'every ' + name + ' (any)';
+if (val.startsWith('*/')) return 'every ' + val.slice(2) + ' ' + name + 's';
+return val + ' ' + name;
+}
+
+function copyExpression() {
+const expr = document.getElementById('genExpression').textContent;
+navigator.clipboard.writeText(expr).then(() => {
+const btn = document.querySelector('.copy-btn');
+btn.textContent = '✅ Copied!';
+setTimeout(() => btn.textContent = '📋 Copy', 2000);
+});
+}
+
+function parseExpression() {
+const input = document.getElementById('parseInput').value.trim();
+const errEl = document.getElementById('parseError');
+const resEl = document.getElementById('parseResult');
+errEl.textContent = '';
+
+const parts = input.split(/\s+/);
+if (parts.length !== 5) {
+errEl.textContent = 'Error: Cron expression must have exactly 5 fields';
+resEl.textContent = '';
+return;
+}
+resEl.textContent = '→ ' + describeCron(parts[0], parts[1], parts[2], parts[3], parts[4]);
+}
+
+updateGenerator();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/json-formatter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

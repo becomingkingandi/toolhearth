@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is My IP — See Your Public IP Address & Location</title>
+<meta name="description" content="Find your public IP address, ISP, and location. Free IP address lookup tool with no tracking. Shows city, region, and ASN.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px}
+.container{width:100%;max-width:640px;text-align:center}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:40px 24px;margin-bottom:20px}
+.ip-display{font-size:clamp(2rem,8vw,3.75rem);font-weight:800;color:#58a6ff;word-break:break-all;margin-bottom:8px;letter-spacing:-0.02em}
+.ip-label{font-size:0.85rem;color:#8b949e;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:24px}
+.details{text-align:left;margin-top:24px}
+.detail-row{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid #21262d;gap:12px}
+.detail-row:last-child{border-bottom:none}
+.detail-label{color:#8b949e;font-size:0.85rem;white-space:nowrap}
+.detail-value{color:#e6edf3;font-size:0.95rem;text-align:right;word-break:break-word;max-width:60%}
+.loading-dots::after{content:'';animation:dots 1.4s infinite}
+@keyframes dots{0%,20%{content:'.' } 40%{content:'..' } 60%,80%{content:'...' } 100%{content:'' }}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid #30363d;border-top-color:#58a6ff;border-radius:50%;animation:spin .7s linear infinite;margin-top:20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:10px 28px;font-size:0.95rem;font-weight:600;cursor:pointer;transition:background .15s;margin-top:16px}
+.btn:hover{background:#2ea043}
+.btn:active{background:#1e7e34}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.error-msg{color:#f85149;font-size:0.9rem;margin-top:12px}
+.footer{margin-top:8px;font-size:0.8rem;color:#484f58;padding-bottom:12px}
+.status-text{color:#8b949e;font-size:0.9rem;margin-top:12px}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "What Is My IP \u2014 See Your Public IP Address & Location",
+  "description": "Find your public IP address, ISP, and location. Free IP address lookup tool with no tracking. Shows city, region, and ASN.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+    <div id="ipAddress" class="ip-display">—</div>
+    <div class="ip-label">Your Public IP Address</div>
+
+    <div class="details" id="details">
+      <div class="detail-row">
+        <span class="detail-label">ISP</span>
+        <span class="detail-value" id="isp">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">ASN</span>
+        <span class="detail-value" id="asn">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Organization</span>
+        <span class="detail-value" id="org">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">City</span>
+        <span class="detail-value" id="city">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Region</span>
+        <span class="detail-value" id="region">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Country</span>
+        <span class="detail-value" id="country">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Coordinates</span>
+        <span class="detail-value" id="coords">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Timezone</span>
+        <span class="detail-value" id="timezone">—</span>
+      </div>
+    </div>
+
+    <div id="statusArea">
+      <div id="statusText" class="status-text">Looking up your IP<span class="loading-dots"></span></div>
+      <div class="spinner" id="spinner"></div>
+    </div>
+
+    <div id="errorArea" class="error-msg" style="display:none"></div>
+
+    <button class="btn" id="refetchBtn" onclick="fetchIP()">⟳ Refetch</button>
+  </div>
+
+  <div class="footer">Free IP Address Tool — No tracking, no logs</div>
+</div>
+
+<script>
+async function fetchIP() {
+  const ipEl = document.getElementById('ipAddress');
+  const statusText = document.getElementById('statusText');
+  const spinner = document.getElementById('spinner');
+  const statusArea = document.getElementById('statusArea');
+  const errorArea = document.getElementById('errorArea');
+  const refetchBtn = document.getElementById('refetchBtn');
+
+  // Reset
+  ipEl.textContent = '—';
+  document.getElementById('isp').textContent = '—';
+  document.getElementById('asn').textContent = '—';
+  document.getElementById('org').textContent = '—';
+  document.getElementById('city').textContent = '—';
+  document.getElementById('region').textContent = '—';
+  document.getElementById('country').textContent = '—';
+  document.getElementById('coords').textContent = '—';
+  document.getElementById('timezone').textContent = '—';
+  errorArea.style.display = 'none';
+  statusArea.style.display = 'block';
+  statusText.textContent = 'Looking up your IP\u2026';
+  refetchBtn.disabled = true;
+
+  try {
+    // Step 1: Get IP from ipify
+    const ipResp = await fetch('https://api.ipify.org?format=json');
+    if (!ipResp.ok) throw new Error('Failed to fetch IP (HTTP ' + ipResp.status + ')');
+    const ipData = await ipResp.json();
+    const ip = ipData.ip;
+    ipEl.textContent = ip;
+
+    // Step 2: Fetch geo/ISP details from ip-api.com
+    statusText.textContent = 'Fetching location & ISP data\u2026';
+    const geoResp = await fetch('https://ip-api.com/json/' + encodeURIComponent(ip) + '?fields=status,message,isp,as,org,city,region,regionName,country,countryCode,lat,lon,timezone,query');
+    if (!geoResp.ok) throw new Error('Failed to fetch location data (HTTP ' + geoResp.status + ')');
+    const geo = await geoResp.json();
+
+    if (geo.status === 'fail') {
+      throw new Error(geo.message || 'IP lookup failed — no data available');
+    }
+
+    // Populate details
+    document.getElementById('isp').textContent = geo.isp || '—';
+    document.getElementById('asn').textContent = geo.as || '—';
+    document.getElementById('org').textContent = geo.org || '—';
+    document.getElementById('city').textContent = geo.city || '—';
+    document.getElementById('region').textContent = geo.regionName || geo.region || '—';
+    document.getElementById('country').textContent = geo.country ? (geo.country + (geo.countryCode ? ' (' + geo.countryCode + ')' : '')) : '—';
+    document.getElementById('coords').textContent = (geo.lat != null && geo.lon != null) ? geo.lat + ', ' + geo.lon : '—';
+    document.getElementById('timezone').textContent = geo.timezone || '—';
+
+    statusArea.style.display = 'none';
+  } catch (err) {
+    errorArea.textContent = err.message || 'An unknown error occurred.';
+    errorArea.style.display = 'block';
+    statusArea.style.display = 'none';
+  } finally {
+    refetchBtn.disabled = false;
+  }
+}
+
+// Fetch on page load
+document.addEventListener('DOMContentLoaded', fetchIP);
+</script>
+
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+      <a href="/event-countdown" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Event Countdown — Count Down to Any Date</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Dictionary — Look Up Word Definitions Free</title>
+<meta name="description" content="Look up any word to see its definition, phonetic pronunciation, audio, and example sentences. Free online dictionary.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+  .container { max-width: 720px; margin: 0 auto; padding: 20px; flex: 1; width: 100%; }
+  h1 { text-align: center; margin: 30px 0; font-size: 2rem; background: linear-gradient(135deg,#58a6ff,#bc8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .search-box { display: flex; gap: 10px; margin-bottom: 30px; }
+  .search-box input { flex: 1; padding: 14px 18px; border: 1px solid #30363d; border-radius: 8px; background: #161b22; color: #c9d1d9; font-size: 1rem; outline: none; transition: border .2s; }
+  .search-box input:focus { border-color: #58a6ff; }
+  .search-box button { padding: 14px 28px; border: none; border-radius: 8px; background: #238636; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .2s; white-space: nowrap; }
+  .search-box button:hover { background: #2ea043; }
+  .search-box button:disabled { opacity: .6; cursor: not-allowed; }
+  .loading { text-align: center; padding: 40px; display: none; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #30363d; border-top-color: #58a6ff; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg { background: #3a1c1c; border: 1px solid #f85149; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; font-weight: 500; }
+  .result { display: none; }
+  .word-header { margin-bottom: 24px; }
+  .word-header h2 { font-size: 1.8rem; color: #f0f6fc; margin-bottom: 6px; }
+  .word-header .phonetic { color: #8b949e; font-size: 1.1rem; }
+  .word-header .phonetic a { color: #58a6ff; text-decoration: none; margin-left: 10px; }
+  .word-header .phonetic a:hover { text-decoration: underline; }
+  .meaning { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 18px; margin-bottom: 16px; }
+  .meaning .pos { color: #d2a8ff; font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
+  .meaning .def { margin-bottom: 8px; padding-left: 4px; }
+  .meaning .def .text { color: #f0f6fc; }
+  .meaning .def .example { color: #8b949e; font-style: italic; margin-top: 3px; font-size: 0.92rem; border-left: 2px solid #30363d; padding-left: 10px; }
+  .meaning .synonyms { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .meaning .synonyms span { background: #1f2937; color: #58a6ff; padding: 3px 10px; border-radius: 12px; font-size: .82rem; }
+  .footer { text-align: center; padding: 24px; color: #484f58; font-size: .85rem; border-top: 1px solid #21262d; margin-top: 30px; }
+  .footer a { color: #58a6ff; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  @media (max-width: 500px) { .container { padding: 14px; } h1 { font-size: 1.5rem; } .search-box { flex-direction: column; } .search-box button { width: 100%; } }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Online Dictionary \u2014 Look Up Word Definitions Free",
+  "description": "Look up any word to see its definition, phonetic pronunciation, audio, and example sentences. Free online dictionary.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>📖 Dictionary</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <div class="search-box">
+    <input type="text" id="wordInput" placeholder="Enter a word..." autofocus>
+    <button id="searchBtn">Search</button>
+  </div>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>Looking it up...</span>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="result" id="result"></div>
+</div>
+<div class="footer">Powered by <a href="https://dictionaryapi.dev/" target="_blank">FreeDictionaryAPI</a> &middot; <a href="https://github.com/me-shemika/cheat-sheet" target="_blank">GitHub</a></div>
+<script>
+  const input = document.getElementById('wordInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const loading = document.getElementById('loading');
+  const errorMsg = document.getElementById('errorMsg');
+  const resultDiv = document.getElementById('result');
+
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') search(); });
+  searchBtn.addEventListener('click', search);
+
+  async function search() {
+    const word = input.value.trim();
+    if (!word) return;
+    loading.style.display = 'block';
+    errorMsg.style.display = 'none';
+    resultDiv.style.display = 'none';
+    searchBtn.disabled = true;
+    try {
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+      if (!res.ok) throw new Error(res.status === 404 ? `"${word}" not found in dictionary.` : `Error ${res.status}`);
+      const data = await res.json();
+      render(data[0]);
+    } catch (err) {
+      errorMsg.textContent = err.message;
+      errorMsg.style.display = 'block';
+    } finally {
+      loading.style.display = 'none';
+      searchBtn.disabled = false;
+    }
+  }
+
+  function render(entry) {
+    let html = `<div class="word-header"><h2>${entry.word}</h2><div class="phonetic">`;
+    if (entry.phonetic) html += `${entry.phonetic}`;
+    if (entry.phonetics) {
+      const audio = entry.phonetics.find(p => p.audio);
+      if (audio) html += ` <a href="${audio.audio}" target="_blank">🔊 Listen</a>`;
+    }
+    html += `</div></div>`;
+    (entry.meanings || []).forEach(m => {
+      html += `<div class="meaning"><div class="pos">${m.partOfSpeech}</div>`;
+      (m.definitions || []).forEach(d => {
+        html += `<div class="def"><div class="text">${d.definition}</div>`;
+        if (d.example) html += `<div class="example">"${d.example}"</div>`;
+        html += `</div>`;
+      });
+      if (m.synonyms && m.synonyms.length) {
+        html += `<div class="synonyms">${m.synonyms.slice(0,6).map(s => `<span>${s}</span>`).join('')}</div>`;
+      }
+      html += `</div>`;
+    });
+    resultDiv.innerHTML = html;
+    resultDiv.style.display = 'block';
+  }
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/weather" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Weather Now — Current Temperature & Conditions</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/github-profile" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">GitHub Profile Viewer — Look Up Any GitHub User</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

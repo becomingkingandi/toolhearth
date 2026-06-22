@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Word Counter & Character Counter — Free Online</title>
+<meta name="description" content="Count words, characters, sentences, and paragraphs in any text. Shows reading time, speaking time, and top 10 frequent words.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;padding:16px}
+.container{max-width:800px;margin:0 auto;width:100%;flex:1}
+h1{font-size:1.5rem;margin-bottom:8px;color:#f0f6fc}
+p.sub{color:#8b949e;margin-bottom:20px;font-size:0.9rem}
+textarea{width:100%;min-height:200px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;color:#c9d1d9;font-size:1rem;font-family:inherit;resize:vertical;outline:none;transition:border-color .2s}
+textarea:focus{border-color:#58a6ff}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:16px 0}
+.stat-card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px;text-align:center}
+.stat-card .num{font-size:1.6rem;font-weight:700;color:#58a6ff;display:block}
+.stat-card .label{font-size:0.78rem;color:#8b949e;margin-top:4px;display:block}
+h2{font-size:1.1rem;color:#f0f6fc;margin:20px 0 10px}
+.word-list{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px}
+.word-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #21262d;font-size:0.9rem}
+.word-row:last-child{border:none}
+.word-row .freq{color:#58a6ff;font-weight:600}
+.empty-msg{color:#8b949e;text-align:center;padding:20px;font-size:0.9rem}
+footer{margin-top:auto;padding:20px 0;text-align:center;color:#8b949e;font-size:0.8rem}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Word Counter & Character Counter \u2014 Free Online",
+  "description": "Count words, characters, sentences, and paragraphs in any text. Shows reading time, speaking time, and top 10 frequent words.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Word Counter</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+<p class="sub">Real-time text statistics — paste or type to analyze</p>
+<textarea id="input" placeholder="Paste or type your text here..." oninput="updateStats()"></textarea>
+<div class="stats">
+<div class="stat-card"><span class="num" id="wordCount">0</span><span class="label">Words</span></div>
+<div class="stat-card"><span class="num" id="charCount">0</span><span class="label">Characters (with spaces)</span></div>
+<div class="stat-card"><span class="num" id="charNoSpace">0</span><span class="label">Characters (no spaces)</span></div>
+<div class="stat-card"><span class="num" id="sentCount">0</span><span class="label">Sentences</span></div>
+<div class="stat-card"><span class="num" id="paraCount">0</span><span class="label">Paragraphs</span></div>
+<div class="stat-card"><span class="num" id="readTime">0</span><span class="label">Reading Time (min)</span></div>
+<div class="stat-card"><span class="num" id="speakTime">0</span><span class="label">Speaking Time (min)</span></div>
+</div>
+<h2>Top 10 Most Frequent Words</h2>
+<div id="wordFreqList" class="word-list"><div class="empty-msg">Start typing to see word frequency</div></div>
+</div>
+<footer>Word Counter &mdash; Free Online Tool</footer>
+<script>
+function updateStats(){
+  const input=document.getElementById('input').value;
+  const text=input.trim();
+  const words=text?text.split(/\s+/).filter(Boolean):[];
+  const chars=text.length;
+  const charsNoSpace=text.replace(/\s/g,'').length;
+  const sents=text?text.split(/[.!?]+/).filter(s=>s.trim().length>0).length:0;
+  const paras=text?text.split(/\n\s*\n/).filter(p=>p.trim().length>0).length:Math.min(text.split('\n').filter(l=>l.trim().length>0).length,1);
+  const wordCount=words.length;
+  document.getElementById('wordCount').textContent=wordCount;
+  document.getElementById('charCount').textContent=chars;
+  document.getElementById('charNoSpace').textContent=charsNoSpace;
+  document.getElementById('sentCount').textContent=sents;
+  document.getElementById('paraCount').textContent=paras;
+  document.getElementById('readTime').textContent=Math.max(1,Math.round(wordCount/200));
+  document.getElementById('speakTime').textContent=Math.max(1,Math.round(wordCount/150));
+  
+  const freqDiv=document.getElementById('wordFreqList');
+  if(!wordCount){freqDiv.innerHTML='<div class="empty-msg">Start typing to see word frequency</div>';return}
+  const freq={};
+  words.forEach(w=>{
+    const clean=w.replace(/[^a-zA-Z0-9']/g,'').toLowerCase();
+    if(clean)freq[clean]=(freq[clean]||0)+1;
+  });
+  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  freqDiv.innerHTML=sorted.map(([word,count])=>'<div class="word-row"><span>'+escapeHtml(word)+'</span><span class="freq">'+count+'</span></div>').join('');
+}
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/what-is-my-ip" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">What Is My IP — See Your Public IP Address & Location</a>
+      <a href="/white-screen" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">White Screen Tool — Full Screen Color Display</a>
+      <a href="/qr-generator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">QR Code Generator — Create Custom QR Codes Free</a>
+      <a href="/timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Countdown Timer with Alarm — Free</a>
+      <a href="/stopwatch" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Online Stopwatch with Lap Times — Free</a>
+      <a href="/pomodoro-timer" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pomodoro Timer — Focus Timer for Productivity</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Millimeters to Inches Converter — MM to IN</title>
+<meta name="description" content="Convert millimeters to inches and inches to millimeters. Real-time converter with formula display. Free unit converter.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  .container{max-width:480px;width:100%;margin:0 auto;padding:2rem 1.25rem;flex:1;display:flex;flex-direction:column;justify-content:center}
+  h1{font-size:1.5rem;font-weight:600;margin-bottom:.35rem;text-align:center}
+  .sub{text-align:center;color:#8b949e;font-size:.875rem;margin-bottom:2rem}
+  .converter{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:1.5rem}
+  .unit-group{margin-bottom:1.25rem}
+  .unit-group:last-of-type{margin-bottom:0}
+  label{display:block;font-size:.8rem;font-weight:500;color:#8b949e;margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em}
+  input{width:100%;padding:.75rem 1rem;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:1.125rem;outline:none;transition:border-color .15s}
+  input:focus{border-color:#58a6ff}
+  input::placeholder{color:#484f58}
+  .result{font-size:1.5rem;font-weight:600;color:#58a6ff;margin-top:.5rem;min-height:2rem}
+  .result .detail{font-size:.9rem;font-weight:400;color:#8b949e}
+  .swap-wrap{display:flex;justify-content:center;margin:.75rem 0}
+  .swap-btn{background:#21262d;border:1px solid #30363d;border-radius:8px;color:#e6edf3;padding:.5rem 1rem;font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;transition:background .15s}
+  .swap-btn:hover{background:#30363d}
+  .swap-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .formula{text-align:center;color:#8b949e;font-size:.8rem;margin-top:1.25rem;padding-top:1rem;border-top:1px solid #21262d}
+  .formula code{padding:.15em .45em;border-radius:4px;background:#21262d;font-size:.85em}
+  footer{text-align:center;padding:1rem;color:#484f58;font-size:.75rem;border-top:1px solid #21262d}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Millimeters to Inches Converter \u2014 MM to IN",
+  "description": "Convert millimeters to inches and inches to millimeters. Real-time converter with formula display. Free unit converter.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<!-- AdSense - Add your publisher ID below and uncomment when approved -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+
+<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>Millimeters ⇄ Inches</h1>
+
+<!-- Ad unit - above fold (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  <p class="sub">Convert between millimeters and inches</p>
+
+  <div class="converter">
+    <div class="unit-group">
+      <label for="mm">Millimeters</label>
+      <input type="number" id="mm" placeholder="e.g. 25.4" step="any">
+      <div class="result" id="mmResult"></div>
+    </div>
+
+    <div class="swap-wrap">
+      <button class="swap-btn" id="swapBtn" title="Swap units">
+        <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Swap
+      </button>
+    </div>
+
+    <div class="unit-group">
+      <label for="in">Inches</label>
+      <input type="number" id="in" placeholder="e.g. 1" step="any">
+      <div class="result" id="inResult"></div>
+    </div>
+
+    <div class="formula" id="formula">
+      Formula: <code>1 mm = 0.0393701 in</code>
+    </div>
+  </div>
+</div>
+<footer>Cheat Sheet — Unit Converters</footer>
+
+<script>
+(function(){
+  const mmEl = document.getElementById('mm');
+  const inEl = document.getElementById('in');
+  const mmResult = document.getElementById('mmResult');
+  const inResult = document.getElementById('inResult');
+  const formula = document.getElementById('formula');
+  const swapBtn = document.getElementById('swapBtn');
+
+  const MM_TO_IN = 0.0393701;
+  const IN_TO_MM = 1 / MM_TO_IN;
+
+  function updateFromMm() {
+    const val = mmEl.value;
+    if (val === '') {
+      inEl.value = '';
+      mmResult.textContent = '';
+      inResult.textContent = '';
+      formula.innerHTML = 'Formula: <code>1 mm = 0.0393701 in</code>';
+      return;
+    }
+    const mm = parseFloat(val);
+    if (isNaN(mm)) { inEl.value = ''; mmResult.textContent = ''; inResult.textContent = ''; return; }
+    const inches = mm * MM_TO_IN;
+    inEl.value = parseFloat(inches.toFixed(6)).toString();
+    mmResult.textContent = `${mm} mm`;
+    inResult.textContent = `${parseFloat(inches.toFixed(6))} in`;
+    formula.innerHTML = `Formula: <code>${mm} mm × 0.0393701 = ${parseFloat(inches.toFixed(6))} in</code>`;
+  }
+
+  function updateFromIn() {
+    const val = inEl.value;
+    if (val === '') {
+      mmEl.value = '';
+      mmResult.textContent = '';
+      inResult.textContent = '';
+      formula.innerHTML = 'Formula: <code>1 in = 25.4 mm</code>';
+      return;
+    }
+    const inches = parseFloat(val);
+    if (isNaN(inches)) { mmEl.value = ''; mmResult.textContent = ''; inResult.textContent = ''; return; }
+    const mm = inches * IN_TO_MM;
+    mmEl.value = parseFloat(mm.toFixed(6)).toString();
+    mmResult.textContent = `${parseFloat(mm.toFixed(6))} mm`;
+    inResult.textContent = `${inches} in`;
+    formula.innerHTML = `Formula: <code>${inches} in × 25.4 = ${parseFloat(mm.toFixed(6))} mm</code>`;
+  }
+
+  mmEl.addEventListener('input', updateFromMm);
+  inEl.addEventListener('input', updateFromIn);
+
+  swapBtn.addEventListener('click', function() {
+    if (mmEl.value !== '' || inEl.value !== '') {
+      if (document.activeElement === mmEl) { inEl.focus(); inEl.dispatchEvent(new Event('input')); }
+      else { mmEl.focus(); mmEl.dispatchEvent(new Event('input')); }
+    }
+  });
+})();
+</script>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
+    <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
+      <a href="/unit-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Unit Converter — Length, Mass, Volume, Temperature & More</a>
+      <a href="/currency-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Currency Converter — Live Exchange Rates (USD, EUR, GBP, JPY)</a>
+      <a href="/inches-to-feet" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Inches to Feet Converter — Convert Inches to Feet+Inches</a>
+      <a href="/km-to-miles" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Kilometers to Miles Converter — KM to MI</a>
+      <a href="/timezone-converter" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Time Zone Converter — Convert Time Between Timezones</a>
+      <a href="/binary-translator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Binary Translator — Convert Text to Binary & Binary to Text</a>
+    </div>
+  </div>
+
+
+<!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
+<!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+<!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</body>
+</html>
