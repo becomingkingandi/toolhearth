@@ -3,81 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- toolhearth.com -->
+<link rel="stylesheet" href="/style.css">
 <title>Calculator.net Style — 24 Free Online Calculators</title>
-<meta name="description" content="24 free online calculators across math, health, finance, conversion, and misc categories. BMI, loan, compound interest, and more.">>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;min-height:100vh;display:flex;flex-direction:column}
-  .container{max-width:820px;margin:0 auto;padding:20px 16px;width:100%;flex:1}
-  h1{font-size:28px;font-weight:700;margin-bottom:4px;color:#f0f6fc}
-  .subtitle{color:#8b949e;font-size:14px;margin-bottom:24px}
-  /* Tabs */
-  .tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
-  .tab{background:#161b22;color:#8b949e;border:1px solid #30363d;padding:10px 18px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:all .15s;user-select:none}
-  .tab:hover{background:#1c2128;color:#e6edf3}
-  .tab.active{background:#238636;color:#fff;border-color:#238636;box-shadow:0 0 0 2px rgba(35,134,54,.3)}
-  /* Calculator Cards */
-  .calc-card{background:#161b22;border:1px solid #30363d;border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .2s}
-  .calc-card.expanded{border-color:#30363d}
-  .calc-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s}
-  .calc-header:hover{background:#1c2128}
-  .calc-title{font-size:15px;font-weight:600;color:#e6edf3}
-  .calc-arrow{color:#8b949e;font-size:13px;transition:transform .2s;flex-shrink:0;margin-left:12px}
-  .calc-card.expanded .calc-arrow{transform:rotate(180deg)}
-  .calc-body{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .25s ease}
-  .calc-card.expanded .calc-body{max-height:800px;padding:0 18px 18px}
-  /* Inputs */
-  .form-group{margin-bottom:12px}
-  .form-group:last-child{margin-bottom:0}
-  label{display:block;font-size:13px;color:#8b949e;margin-bottom:4px;font-weight:500}
-  input[type="number"],input[type="text"],select{width:100%;padding:9px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#e6edf3;font-size:14px;outline:none;transition:border-color .15s}
-  input:focus,select:focus{border-color:#238636}
-  select{appearance:auto;cursor:pointer}
-  input::placeholder{color:#484f58}
-  .btn-calc{background:#238636;color:#fff;border:none;padding:9px 20px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;width:100%;margin-top:4px}
-  .btn-calc:hover{background:#2ea043}
-  .btn-calc:active{background:#1e7a30}
-  .result-box{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px 14px;margin-top:10px;font-size:14px;min-height:20px;display:none}
-  .result-box.show{display:block}
-  .result-box .result-label{color:#8b949e;font-size:12px;margin-bottom:2px}
-  .result-box .result-value{color:#f0f6fc;font-weight:600;font-size:16px}
-  .result-box .result-detail{color:#8b949e;font-size:13px;margin-top:2px}
-  .badge{display:inline-block;background:#1f6feb22;color:#58a6ff;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
-  /* Two-col for form groups */
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-  hr{border:none;border-top:1px solid #21262d;margin:16px 0}
-  .footer{text-align:center;padding:28px 16px 20px;color:#484f58;font-size:13px;border-top:1px solid #21262d;margin-top:auto}
-  .footer a{color:#58a6ff;text-decoration:none}
-  .footer a:hover{text-decoration:underline}
-  @media(max-width:600px){
-    h1{font-size:24px}
-    .container{padding:14px 12px}
-    .tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
-    .tab{white-space:nowrap;padding:8px 14px;font-size:13px}
-    .row,.row-3{grid-template-columns:1fr}
-    .calc-header{padding:12px 14px}
-    .calc-body{padding:0 14px}
-    .calc-card.expanded .calc-body{padding:0 14px 14px}
-  }
-</style>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Calculator.net Style \u2014 24 Free Online Calculators",
-  "description": "24 free online calculators across math, health, finance, conversion, and misc categories. BMI, loan, compound interest, and more.",
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "Web",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  }
-}
-</script>
+<meta name="description" content="24 free online calculators across math, health, finance, conversion, and misc categories. BMI, loan, compound interest, and more.">
+<link rel="canonical" href="https://toolhearth.com/boring-calculators.html">
+
 </head>
 <body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">tool<span>hearth</span></a>
+    <nav class="header-nav">
+      <a href="/">Home</a>
+      <a href="/#calculators">Calculators</a>
+      <a href="/#converters">Converters</a>
+      <a href="/#dev-tools">Dev Tools</a>
+    </nav>
+  </div>
+</header>
+<div class="container">
+<div class="breadcrumbs">
+  <a href="/">Home</a><span class="sep">/</span>
+  <span class="current">Boring Calculators</span>
+</div>
+<div class="tool-content">
 <div class="container">
   <h1>🧮 Boring Calculators</h1>
   <p class="subtitle">20+ free online calculators — accurate, no ads, no fluff. All run client-side.</p>
@@ -515,5 +465,80 @@ document.addEventListener('keydown', (e) => {
 // Init
 renderCategory('math');
 </script>
+</div>
+</div><!-- /container -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+  <div class="footer-col">
+    <h4>Calculators</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+  <div class="footer-col">
+    <h4>Converters</h4>
+    <a href="/unit-converter.html">Unit Converter</a>
+    <a href="/currency-converter.html">Currency Converter</a>
+    <a href="/inches-to-feet.html">Inches to Feet</a>
+    <a href="/km-to-miles.html">KM to Miles</a>
+    <a href="/mm-to-inches.html">MM to Inches</a>
+    <a href="/temperature-converter.html">Temperature Converter</a>
+    <a href="/timezone-converter.html">Timezone Converter</a>
+    <a href="/text-case-converter.html">Text Case Converter</a>
+  </div>
+  <div class="footer-col">
+    <h4>Developer Tools</h4>
+    <a href="/ascii-table.html">ASCII Table</a>
+    <a href="/regex-tester.html">Regex Tester</a>
+    <a href="/uuid-generator.html">UUID Generator</a>
+    <a href="/jwt-decoder.html">JWT Decoder</a>
+    <a href="/html-preview.html">HTML Preview</a>
+    <a href="/diff-checker.html">Diff Checker</a>
+    <a href="/csv-viewer.html">CSV Viewer</a>
+    <a href="/mime-types.html">MIME Types Reference</a>
+  </div>
+  <div class="footer-col">
+    <h4>Generators</h4>
+    <a href="/qr-generator.html">QR Code Generator</a>
+    <a href="/random-number.html">Random Number Generator</a>
+    <a href="/random-quote.html">Random Quote Generator</a>
+    <a href="/random-fact.html">Random Fact Generator</a>
+    <a href="/random-name-generator.html">Random Name Generator</a>
+    <a href="/password-generator.html">Password Generator</a>
+    <a href="/list-randomizer.html">List Randomizer</a>
+    <a href="/decision-maker.html">Decision Maker</a>
+  </div>
+  <div class="footer-col">
+    <h4>Timers & Clocks</h4>
+    <a href="/pomodoro-timer.html">Pomodoro Timer</a>
+    <a href="/timer.html">Timer</a>
+    <a href="/stopwatch.html">Stopwatch</a>
+    <a href="/metronome.html">Metronome</a>
+    <a href="/world-clock.html">World Clock</a>
+    <a href="/countdown-timer.html">Countdown Timer</a>
+  </div>
+  <div class="footer-col">
+    <h4>Health & Fitness</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
+    </div>
+  </div>
+</footer>
 </body>
 </html>

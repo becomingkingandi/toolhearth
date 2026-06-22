@@ -3,69 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- toolhearth.com -->
+<link rel="stylesheet" href="/style.css">
 <title>Hacker News Reader — Top Stories, New, Show & Ask</title>
 <meta name="description" content="Browse the latest Hacker News stories. Filter by top, new, show, and ask categories. Free HN reader.">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
-  .container { max-width: 720px; margin: 0 auto; padding: 20px; flex: 1; width: 100%; }
-  h1 { text-align: center; margin: 24px 0 10px; font-size: 2rem; background: linear-gradient(135deg,#f78166,#e3b341); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .subtitle { text-align: center; color: #8b949e; font-size: .9rem; margin-bottom: 20px; }
-  .tabs { display: flex; gap: 6px; margin-bottom: 20px; overflow-x: auto; }
-  .tab { padding: 10px 22px; border: 1px solid #30363d; border-radius: 8px; background: #161b22; color: #8b949e; cursor: pointer; font-size: .9rem; font-weight: 600; transition: all .2s; white-space: nowrap; }
-  .tab:hover { border-color: #f78166; color: #f0f6fc; }
-  .tab.active { background: #f78166; color: #fff; border-color: #f78166; }
-  .loading { text-align: center; padding: 40px; display: none; }
-  .spinner { width: 40px; height: 40px; border: 4px solid #30363d; border-top-color: #f78166; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .error-msg { background: #3a1c1c; border: 1px solid #f85149; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; }
-  .story-list { display: flex; flex-direction: column; gap: 10px; }
-  .story { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 14px 16px; transition: border-color .2s; }
-  .story:hover { border-color: #30363d; }
-  .story .title { font-size: 1rem; font-weight: 600; color: #f0f6fc; margin-bottom: 6px; }
-  .story .title a { color: #f0f6fc; text-decoration: none; }
-  .story .title a:hover { color: #58a6ff; }
-  .story .meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: .82rem; color: #8b949e; }
-  .story .meta span { display: flex; align-items: center; gap: 3px; }
-  .story .meta .score { color: #e3b341; font-weight: 600; }
-  .story .meta .author { color: #58a6ff; }
-  .story .meta .comments { color: #7ee787; }
-  .story .meta .site { color: #8b949e; font-size: .78rem; }
-  .story .meta .site a { color: #8b949e; text-decoration: none; }
-  .story .meta .site a:hover { color: #58a6ff; }
-  .footer { text-align: center; padding: 24px; color: #484f58; font-size: .85rem; border-top: 1px solid #21262d; margin-top: 30px; }
-  .footer a { color: #58a6ff; text-decoration: none; }
-  .footer a:hover { text-decoration: underline; }
-  @media (max-width: 500px) { .container { padding: 14px; } h1 { font-size: 1.5rem; } .tabs { gap: 4px; } .tab { padding: 8px 14px; font-size: .82rem; } }
-</style>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Hacker News Reader \u2014 Top Stories, New, Show & Ask",
-  "description": "Browse the latest Hacker News stories. Filter by top, new, show, and ask categories. Free HN reader.",
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "Web",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  }
-}
-</script>
-<!-- AdSense - Add your publisher ID below and uncomment when approved -->
-<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
+<link rel="canonical" href="https://toolhearth.com/hacker-news.html">
 
-<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-XXXXXXXXXX');
-</script>
 </head>
 <body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">tool<span>hearth</span></a>
+    <nav class="header-nav">
+      <a href="/">Home</a>
+      <a href="/#calculators">Calculators</a>
+      <a href="/#converters">Converters</a>
+      <a href="/#dev-tools">Dev Tools</a>
+    </nav>
+  </div>
+</header>
+<div class="container">
+<div class="breadcrumbs">
+  <a href="/">Home</a><span class="sep">/</span>
+  <a href="/#generators">Generators</a><span class="sep">/</span>
+  <span class="current">Hacker News Reader</span>
+</div>
+<div class="tool-content">
 <div class="container">
   <h1>📰 Hacker News</h1>
 
@@ -162,5 +125,80 @@ gtag('config', 'G-XXXXXXXXXX');
 <!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
 <!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</div>
+</div><!-- /container -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+  <div class="footer-col">
+    <h4>Calculators</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+  <div class="footer-col">
+    <h4>Converters</h4>
+    <a href="/unit-converter.html">Unit Converter</a>
+    <a href="/currency-converter.html">Currency Converter</a>
+    <a href="/inches-to-feet.html">Inches to Feet</a>
+    <a href="/km-to-miles.html">KM to Miles</a>
+    <a href="/mm-to-inches.html">MM to Inches</a>
+    <a href="/temperature-converter.html">Temperature Converter</a>
+    <a href="/timezone-converter.html">Timezone Converter</a>
+    <a href="/text-case-converter.html">Text Case Converter</a>
+  </div>
+  <div class="footer-col">
+    <h4>Developer Tools</h4>
+    <a href="/ascii-table.html">ASCII Table</a>
+    <a href="/regex-tester.html">Regex Tester</a>
+    <a href="/uuid-generator.html">UUID Generator</a>
+    <a href="/jwt-decoder.html">JWT Decoder</a>
+    <a href="/html-preview.html">HTML Preview</a>
+    <a href="/diff-checker.html">Diff Checker</a>
+    <a href="/csv-viewer.html">CSV Viewer</a>
+    <a href="/mime-types.html">MIME Types Reference</a>
+  </div>
+  <div class="footer-col">
+    <h4>Generators</h4>
+    <a href="/qr-generator.html">QR Code Generator</a>
+    <a href="/random-number.html">Random Number Generator</a>
+    <a href="/random-quote.html">Random Quote Generator</a>
+    <a href="/random-fact.html">Random Fact Generator</a>
+    <a href="/random-name-generator.html">Random Name Generator</a>
+    <a href="/password-generator.html">Password Generator</a>
+    <a href="/list-randomizer.html">List Randomizer</a>
+    <a href="/decision-maker.html">Decision Maker</a>
+  </div>
+  <div class="footer-col">
+    <h4>Timers & Clocks</h4>
+    <a href="/pomodoro-timer.html">Pomodoro Timer</a>
+    <a href="/timer.html">Timer</a>
+    <a href="/stopwatch.html">Stopwatch</a>
+    <a href="/metronome.html">Metronome</a>
+    <a href="/world-clock.html">World Clock</a>
+    <a href="/countdown-timer.html">Countdown Timer</a>
+  </div>
+  <div class="footer-col">
+    <h4>Health & Fitness</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
+    </div>
+  </div>
+</footer>
 </body>
 </html>

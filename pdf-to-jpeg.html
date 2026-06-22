@@ -1,224 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF to JPEG — Free Online PDF Tool</title>
-    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.min.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #0d1117;
-            color: #c9d1d9;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem 1rem;
-        }
-        .container { max-width: 900px; width: 100%; }
-        header { text-align: center; margin-bottom: 2.5rem; }
-        header h1 { font-size: 2rem; color: #f0f6fc; margin-bottom: 0.5rem; }
-        header p { color: #8b949e; font-size: 1rem; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- toolhearth.com -->
+<link rel="stylesheet" href="/style.css">
+<title>PDF to JPEG — Free Online PDF Tool</title>
+<link rel="canonical" href="https://toolhearth.com/pdf-to-jpeg.html">
 
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .features .feat {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-        }
-        .features .feat .icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
-        .features .feat h3 { font-size: 0.95rem; color: #f0f6fc; margin-bottom: 0.3rem; }
-        .features .feat p { font-size: 0.8rem; color: #8b949e; }
-
-        .drop-zone {
-            border: 2px dashed #30363d;
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
-            background: #161b22;
-            margin-bottom: 1.5rem;
-        }
-        .drop-zone:hover, .drop-zone.dragover {
-            border-color: #ffa657;
-            background: #1f1a17;
-        }
-        .drop-zone .icon { font-size: 3rem; margin-bottom: 1rem; }
-        .drop-zone p { color: #8b949e; }
-        .drop-zone .browse-link { color: #ffa657; text-decoration: underline; cursor: pointer; }
-        input[type="file"] { display: none; }
-
-        .file-info {
-            display: none;
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .file-info .row { display: flex; justify-content: space-between; padding: 0.3rem 0; }
-        .file-info .row span:first-child { color: #8b949e; }
-        .file-info .row span:last-child { color: #f0f6fc; font-weight: 500; }
-
-        .controls {
-            display: none;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        .controls label { color: #c9d1d9; font-size: 0.9rem; }
-        .controls select, .controls input[type="number"] {
-            background: #21262d;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 0.5rem 0.8rem;
-            font-size: 0.9rem;
-        }
-        .controls input[type="number"] { width: 80px; }
-
-        .btn {
-            background: #d29922;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 0.7rem 1.8rem;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-weight: 600;
-        }
-        .btn:hover { background: #e3b341; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-secondary {
-            background: #21262d;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
-        }
-        .btn-secondary:hover { background: #30363d; }
-
-        .progress-area { display: none; margin-bottom: 1.5rem; }
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #30363d;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
-        }
-        .progress-bar .fill {
-            height: 100%;
-            width: 0%;
-            background: #ffa657;
-            transition: width 0.3s;
-        }
-        .progress-text { color: #8b949e; font-size: 0.85rem; text-align: center; }
-
-        .gallery {
-            display: none;
-            margin-bottom: 1.5rem;
-        }
-        .gallery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-        }
-        .gallery-header h2 { font-size: 1.1rem; color: #f0f6fc; }
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .gallery-item {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: border-color 0.2s;
-        }
-        .gallery-item:hover { border-color: #ffa657; }
-        .gallery-item img {
-            width: 100%;
-            display: block;
-            aspect-ratio: auto;
-            background: #0d1117;
-        }
-        .gallery-item .caption {
-            padding: 0.5rem 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .gallery-item .caption span { font-size: 0.82rem; color: #8b949e; }
-        .gallery-item .caption a {
-            color: #ffa657;
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        .gallery-item .caption a:hover { text-decoration: underline; }
-
-        .page-range {
-            display: none;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-        .page-range label { color: #c9d1d9; font-size: 0.9rem; }
-        .page-range input {
-            background: #21262d;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 0.5rem;
-            width: 70px;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-        .page-range span { color: #8b949e; font-size: 0.85rem; }
-
-        footer {
-            margin-top: auto;
-            padding-top: 2rem;
-            text-align: center;
-            color: #484f58;
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 600px) {
-            header h1 { font-size: 1.5rem; }
-            .drop-zone { padding: 2rem 1rem; }
-            .gallery-grid { grid-template-columns: 1fr 1fr; }
-        }
-    </style>
-<!-- AdSense - Add your publisher ID below and uncomment when approved -->
-<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
-
-<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-XXXXXXXXXX');
-</script>
 </head>
 <body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">tool<span>hearth</span></a>
+    <nav class="header-nav">
+      <a href="/">Home</a>
+      <a href="/#calculators">Calculators</a>
+      <a href="/#converters">Converters</a>
+      <a href="/#dev-tools">Dev Tools</a>
+    </nav>
+  </div>
+</header>
+<div class="container">
+<div class="breadcrumbs">
+  <a href="/">Home</a><span class="sep">/</span>
+  <span class="current">Pdf To Jpeg</span>
+</div>
+<div class="tool-content">
 <div class="container">
     <header>
         <h1>🖼️ PDF to JPEG</h1>
@@ -526,5 +334,80 @@ gtag('config', 'G-XXXXXXXXXX');
 <!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
 <!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</div>
+</div><!-- /container -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+  <div class="footer-col">
+    <h4>Calculators</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+  <div class="footer-col">
+    <h4>Converters</h4>
+    <a href="/unit-converter.html">Unit Converter</a>
+    <a href="/currency-converter.html">Currency Converter</a>
+    <a href="/inches-to-feet.html">Inches to Feet</a>
+    <a href="/km-to-miles.html">KM to Miles</a>
+    <a href="/mm-to-inches.html">MM to Inches</a>
+    <a href="/temperature-converter.html">Temperature Converter</a>
+    <a href="/timezone-converter.html">Timezone Converter</a>
+    <a href="/text-case-converter.html">Text Case Converter</a>
+  </div>
+  <div class="footer-col">
+    <h4>Developer Tools</h4>
+    <a href="/ascii-table.html">ASCII Table</a>
+    <a href="/regex-tester.html">Regex Tester</a>
+    <a href="/uuid-generator.html">UUID Generator</a>
+    <a href="/jwt-decoder.html">JWT Decoder</a>
+    <a href="/html-preview.html">HTML Preview</a>
+    <a href="/diff-checker.html">Diff Checker</a>
+    <a href="/csv-viewer.html">CSV Viewer</a>
+    <a href="/mime-types.html">MIME Types Reference</a>
+  </div>
+  <div class="footer-col">
+    <h4>Generators</h4>
+    <a href="/qr-generator.html">QR Code Generator</a>
+    <a href="/random-number.html">Random Number Generator</a>
+    <a href="/random-quote.html">Random Quote Generator</a>
+    <a href="/random-fact.html">Random Fact Generator</a>
+    <a href="/random-name-generator.html">Random Name Generator</a>
+    <a href="/password-generator.html">Password Generator</a>
+    <a href="/list-randomizer.html">List Randomizer</a>
+    <a href="/decision-maker.html">Decision Maker</a>
+  </div>
+  <div class="footer-col">
+    <h4>Timers & Clocks</h4>
+    <a href="/pomodoro-timer.html">Pomodoro Timer</a>
+    <a href="/timer.html">Timer</a>
+    <a href="/stopwatch.html">Stopwatch</a>
+    <a href="/metronome.html">Metronome</a>
+    <a href="/world-clock.html">World Clock</a>
+    <a href="/countdown-timer.html">Countdown Timer</a>
+  </div>
+  <div class="footer-col">
+    <h4>Health & Fitness</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
+    </div>
+  </div>
+</footer>
 </body>
 </html>

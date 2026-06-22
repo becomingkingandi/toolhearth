@@ -1,299 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unit Converter — Length, Mass, Volume, Temperature & More</title>
-  <meta name="description" content="Convert between hundreds of units across 32 categories including length, mass, volume, temperature, speed, and area.">>
-  <meta name="keywords" content="unit converter, length converter, weight converter, temperature converter, volume converter, area converter, speed converter, time converter, pressure converter, energy converter, data converter, metric conversion, calculator">
-  <meta name="robots" content="index, follow">
-  <meta name="author" content="UnitConverterPro">
-  <link rel="canonical" href="https://www.unitconverterpro.com/">
-  <meta property="og:title" content="Unit Converter Pro — Quick & Accurate Conversions">
-  <meta property="og:description" content="Free online unit converter with 10 categories. Instant bidirectional conversion. Dark theme. Mobile-friendly.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.unitconverterpro.com/">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Unit Converter Pro">
-  <meta name="twitter:description" content="Free online unit converter — length, weight, temp, volume, area, speed, time, pressure, energy, data.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- toolhearth.com -->
+<link rel="stylesheet" href="/style.css">
+<title>Unit Converter — Length, Mass, Volume, Temperature & More</title>
+<meta name="description" content="Convert between hundreds of units across 32 categories including length, mass, volume, temperature, speed, and area.">
+<link rel="canonical" href="https://toolhearth.com/unit-converter.html">
 
-  <style>
-    /* ── Reset & Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0f0f13;
-      --surface: #1a1a23;
-      --surface2: #24243a;
-      --border: #2e2e4a;
-      --text: #e4e4ed;
-      --text2: #9898b3;
-      --accent: #7c6cf0;
-      --accent-hover: #968af5;
-      --accent-glow: rgba(124,108,240,.25);
-      --green: #34d399;
-      --radius: 10px;
-      --shadow: 0 4px 24px rgba(0,0,0,.4);
-      font-size: 16px;
-    }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { color: var(--accent-hover); text-decoration: underline; }
-
-    /* ── Layout ── */
-    .container { max-width: 820px; margin: 0 auto; padding: 0 16px; width: 100%; }
-    header, footer { text-align: center; padding: 16px 0; }
-    main { flex: 1; padding: 8px 0 32px; }
-
-    /* ── Ad placeholders ── */
-    .ad-slot {
-      background: var(--surface);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      font-size: .75rem;
-      color: var(--text2);
-      text-align: center;
-      margin: 12px auto;
-      min-height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: 728px;
-    }
-    .ad-slot.header-ad { min-height: 90px; }
-
-    /* ── Title ── */
-    .app-title {
-      font-size: 1.65rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), var(--green));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -.5px;
-    }
-    .app-sub { font-size: .85rem; color: var(--text2); margin-top: 2px; }
-
-    /* ── Tabs ── */
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin: 18px 0 14px;
-      justify-content: center;
-    }
-    .tab-btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 6px 14px;
-      font-size: .8rem;
-      color: var(--text2);
-      cursor: pointer;
-      transition: all .18s;
-      white-space: nowrap;
-    }
-    .tab-btn:hover { border-color: var(--accent); color: var(--text); }
-    .tab-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-      box-shadow: 0 0 16px var(--accent-glow);
-    }
-
-    /* ── Converter Card ── */
-    .converter-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 18px;
-      box-shadow: var(--shadow);
-      display: none;
-    }
-    .converter-card.active { display: block; }
-    .conv-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-
-    /* ── Dual inputs ── */
-    .dual-row {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-    .dual-row .side { flex: 1; }
-    .side label {
-      display: block;
-      font-size: .72rem;
-      color: var(--text2);
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-    .side select, .side input {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-size: .9rem;
-      color: var(--text);
-      transition: border-color .18s;
-    }
-    .side select:focus, .side input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-    .side select { cursor: pointer; }
-    .side input { font-variant-numeric: tabular-nums; }
-    .side input::placeholder { color: var(--text2); opacity: .6; }
-
-    /* ── Swap ── */
-    .swap-area {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px 0;
-    }
-    .swap-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all .2s;
-      color: var(--text2);
-      font-size: 1.2rem;
-    }
-    .swap-btn:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-      transform: rotate(180deg);
-    }
-
-    /* ── Result rows ── */
-    .result-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .result-item {
-      background: var(--surface2);
-      border-radius: 6px;
-      padding: 8px 12px;
-      text-align: center;
-    }
-    .result-item .val { font-size: 1rem; font-weight: 600; color: var(--green); }
-    .result-item .unit { font-size: .7rem; color: var(--text2); }
-
-    /* ── Temperature special ── */
-    .temp-row {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 8px;
-    }
-    .temp-row .temp-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .temp-row .temp-item label { min-width: 28px; font-weight: 600; color: var(--accent); }
-    .temp-row .temp-item input { flex: 1; }
-
-    /* ── Affiliate ── */
-    .affiliate-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      margin: 18px auto 0;
-      text-align: center;
-      max-width: 480px;
-    }
-    .affiliate-box p { font-size: .8rem; color: var(--text2); }
-    .affiliate-box a {
-      display: inline-block;
-      margin-top: 6px;
-      background: var(--accent);
-      color: #fff;
-      padding: 7px 20px;
-      border-radius: 6px;
-      font-size: .85rem;
-      font-weight: 500;
-      transition: background .2s;
-    }
-    .affiliate-box a:hover { background: var(--accent-hover); text-decoration: none; }
-
-    /* ── Footer ── */
-    footer { font-size: .75rem; color: var(--text2); border-top: 1px solid var(--border); margin-top: 20px; padding: 14px 0; }
-
-    /* ── Responsive ── */
-    @media (max-width: 600px) {
-      :root { font-size: 14px; }
-      .container { padding: 0 10px; }
-      .converter-card { padding: 14px 12px; }
-      .dual-row { flex-direction: column; gap: 12px; }
-      .swap-area { padding: 8px 0; }
-      .swap-btn { width: 38px; height: 38px; font-size: 1rem; }
-      .tab-btn { font-size: .72rem; padding: 5px 10px; }
-      .app-title { font-size: 1.3rem; }
-      .result-row { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 400px) {
-      .tabs { gap: 3px; }
-      .tab-btn { font-size: .65rem; padding: 4px 7px; }
-      .result-row { grid-template-columns: 1fr; }
-    }
-  </style>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Unit Converter \u2014 Length, Mass, Volume, Temperature & More",
-  "description": "Convert between hundreds of units across 32 categories including length, mass, volume, temperature, speed, and area.",
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "Web",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  }
-}
-</script>
-<!-- AdSense - Add your publisher ID below and uncomment when approved -->
-<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"></script> -->
-
-<!-- TODO: Replace G-XXXXXXXXXX with real GA4 measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-XXXXXXXXXX');
-</script>
 </head>
 <body>
-
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">tool<span>hearth</span></a>
+    <nav class="header-nav">
+      <a href="/">Home</a>
+      <a href="/#calculators">Calculators</a>
+      <a href="/#converters">Converters</a>
+      <a href="/#dev-tools">Dev Tools</a>
+    </nav>
+  </div>
+</header>
+<div class="container">
+<div class="breadcrumbs">
+  <a href="/">Home</a><span class="sep">/</span>
+  <a href="/#converters">Converters</a><span class="sep">/</span>
+  <span class="current">Unit Converter</span>
+</div>
+<div class="tool-content">
 <header>
   <div class="container">
     <div class="ad-slot header-ad">📢 AdSense — Header Banner (728×90)</div>
@@ -876,5 +611,80 @@ gtag('config', 'G-XXXXXXXXXX');
 <!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
 <!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+</div>
+</div><!-- /container -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+  <div class="footer-col">
+    <h4>Calculators</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+  <div class="footer-col">
+    <h4>Converters</h4>
+    <a href="/unit-converter.html">Unit Converter</a>
+    <a href="/currency-converter.html">Currency Converter</a>
+    <a href="/inches-to-feet.html">Inches to Feet</a>
+    <a href="/km-to-miles.html">KM to Miles</a>
+    <a href="/mm-to-inches.html">MM to Inches</a>
+    <a href="/temperature-converter.html">Temperature Converter</a>
+    <a href="/timezone-converter.html">Timezone Converter</a>
+    <a href="/text-case-converter.html">Text Case Converter</a>
+  </div>
+  <div class="footer-col">
+    <h4>Developer Tools</h4>
+    <a href="/ascii-table.html">ASCII Table</a>
+    <a href="/regex-tester.html">Regex Tester</a>
+    <a href="/uuid-generator.html">UUID Generator</a>
+    <a href="/jwt-decoder.html">JWT Decoder</a>
+    <a href="/html-preview.html">HTML Preview</a>
+    <a href="/diff-checker.html">Diff Checker</a>
+    <a href="/csv-viewer.html">CSV Viewer</a>
+    <a href="/mime-types.html">MIME Types Reference</a>
+  </div>
+  <div class="footer-col">
+    <h4>Generators</h4>
+    <a href="/qr-generator.html">QR Code Generator</a>
+    <a href="/random-number.html">Random Number Generator</a>
+    <a href="/random-quote.html">Random Quote Generator</a>
+    <a href="/random-fact.html">Random Fact Generator</a>
+    <a href="/random-name-generator.html">Random Name Generator</a>
+    <a href="/password-generator.html">Password Generator</a>
+    <a href="/list-randomizer.html">List Randomizer</a>
+    <a href="/decision-maker.html">Decision Maker</a>
+  </div>
+  <div class="footer-col">
+    <h4>Timers & Clocks</h4>
+    <a href="/pomodoro-timer.html">Pomodoro Timer</a>
+    <a href="/timer.html">Timer</a>
+    <a href="/stopwatch.html">Stopwatch</a>
+    <a href="/metronome.html">Metronome</a>
+    <a href="/world-clock.html">World Clock</a>
+    <a href="/countdown-timer.html">Countdown Timer</a>
+  </div>
+  <div class="footer-col">
+    <h4>Health & Fitness</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
+    </div>
+  </div>
+</footer>
 </body>
 </html>
