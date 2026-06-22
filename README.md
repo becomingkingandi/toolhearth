@@ -1,4 +1,4 @@
 # toolhearth.com
 
-Tool site collection — 126+ utilities, converters, generators, and calculators.
-Deployed on Cloudflare Pages.
+Online tools, utilities, calculators, and generators.
+Built with vanilla HTML/CSS/JS. Zero dependencies.
