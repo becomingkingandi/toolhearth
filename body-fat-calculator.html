@@ -117,13 +117,13 @@ document.getElementById('results').classList.add('hidden');
 });
 function getCategory(pct,gender){
 if(gender==='male'){
-if(pct<6)return {name:'Essential Fat',color:'#58a6ff',min:0,max:6};
+if(pct<6)return {name:'Essential Fat',color:'#fbbf24',min:0,max:6};
 if(pct<14)return {name:'Athlete',color:'#3fb950',min:6,max:14};
 if(pct<18)return {name:'Fit',color:'#d29922',min:14,max:18};
 if(pct<25)return {name:'Average',color:'#f0883e',min:18,max:25};
 return {name:'Overweight / Obese',color:'#f85149',min:25,max:50};
 }else{
-if(pct<10)return {name:'Essential Fat',color:'#58a6ff',min:0,max:10};
+if(pct<10)return {name:'Essential Fat',color:'#fbbf24',min:0,max:10};
 if(pct<21)return {name:'Athlete',color:'#3fb950',min:10,max:21};
 if(pct<25)return {name:'Fit',color:'#d29922',min:21,max:25};
 if(pct<32)return {name:'Average',color:'#f0883e',min:25,max:32};
@@ -183,12 +183,12 @@ renderResults(bf,gender,'Simple');
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
     <h3 style="color:#8b949e;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
-      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
-      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
-      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
-      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
-      <a href="/ovulation-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#58a6ff;text-decoration:none;font-size:.85rem;">Ovulation Calculator — Fertility Window & Ovulation Date</a>
+      <a href="/calorie-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#fbbf24;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#fbbf24;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#fbbf24;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#fbbf24;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#fbbf24;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+      <a href="/ovulation-calculator" style="display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#fbbf24;text-decoration:none;font-size:.85rem;">Ovulation Calculator — Fertility Window & Ovulation Date</a>
     </div>
   </div>
 
