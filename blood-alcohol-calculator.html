@@ -30,14 +30,14 @@
 </div>
 <div class="tool-content">
 <div class="container">
-  <h1>🍺 <span>BAC</span> Calculator</h1>
+  <h1> <span>BAC</span>Calculator</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
 <!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
 
   <div class="card">
-    <h2>📋 Drinking Info</h2>
+    <h2>Drinking Info</h2>
     <div class="input-grid">
       <div class="input-group">
         <label>Gender</label>
@@ -78,16 +78,16 @@
         <input type="number" id="hours" value="1" min="0" max="24" step="0.25">
       </div>
     </div>
-    <button id="calcBtn">🔄 Calculate BAC</button>
+    <button id="calcBtn">Calculate BAC</button>
   </div>
 
   <div class="card">
-    <h2>📊 Results</h2>
+    <h2>Results</h2>
 
     <div class="bac-display green" id="bacDisplay">
       <div class="label">Estimated Blood Alcohol Content</div>
       <div class="value" id="bacValue">0.000%</div>
-      <div class="status" id="bacStatus">📋 Under legal limit</div>
+      <div class="status" id="bacStatus">Under legal limit</div>
     </div>
 
     <div class="bar-container">
@@ -126,12 +126,12 @@
     </div>
     <div class="info-row">
       <span class="lbl">Status</span>
-      <span class="val" id="legalStatus" style="color:#4cd964;">Under limit ✓</span>
+      <span class="val" id="legalStatus" style="color:#4cd964;">Under limit </span>
     </div>
 
     <div class="legal-note">
-      <strong>Disclaimer:</strong> This calculator provides estimates only. BAC depends on many factors including metabolism, food intake, and individual physiology. Do not drink and drive.
-    </div>
+      <strong>Disclaimer:</strong>This calculator provides estimates only. BAC depends on many factors including metabolism, food intake, and individual physiology. Do not drink and drive.
+ </div>
   </div>
 
   <footer>Free Blood Alcohol Content Calculator — Widmark Formula</footer>
@@ -206,20 +206,20 @@
     if (bacPctCorrect < 0.08) {
       bacDisplay.classList.add('green');
       bacBar.classList.add('under');
-      bacStatus.textContent = '✅ Under legal limit (0.08%)';
-      legalStatus.textContent = 'Under limit ✓';
+      bacStatus.textContent = ' Under legal limit (0.08%)';
+      legalStatus.textContent = 'Under limit ';
       legalStatus.style.color = '#4cd964';
     } else if (bacPctCorrect <= 0.15) {
       bacDisplay.classList.add('yellow');
       bacBar.classList.add('at');
-      bacStatus.textContent = '⚠️ Over legal limit — Do not drive';
-      legalStatus.textContent = 'Over limit ⚠️';
+      bacStatus.textContent = ' Over legal limit — Do not drive';
+      legalStatus.textContent = 'Over limit ';
       legalStatus.style.color = '#ff9500';
     } else {
       bacDisplay.classList.add('red');
       bacBar.classList.add('over');
-      bacStatus.textContent = '🚫 High BAC — Serious impairment risk';
-      legalStatus.textContent = 'High BAC 🚫';
+      bacStatus.textContent = ' High BAC — Serious impairment risk';
+      legalStatus.textContent = 'High BAC ';
       legalStatus.style.color = '#ff3b30';
     }
 
@@ -242,14 +242,14 @@
 </script>
 
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
-    <h3 style="color:#5f6b62;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <h3 style="color:#6b6357;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/calorie-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
-      <a href="/bmr-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
-      <a href="/body-fat-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
-      <a href="/water-intake-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
-      <a href="/due-date-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
-      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+      <a href="/calorie-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
     </div>
   </div>
 
@@ -328,8 +328,8 @@
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

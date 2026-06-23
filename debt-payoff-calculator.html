@@ -29,7 +29,7 @@
 </div>
 <div class="tool-content">
 <div class="container">
-<h1>💳 Debt Payoff Calculator</h1>
+<h1>Debt Payoff Calculator</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -37,7 +37,7 @@
 <p class="subtitle">Compare Avalanche vs Snowball methods — pay off debt faster and save on interest</p>
 
 <div class="card">
-  <h2>📋 Your Debts</h2>
+  <h2>Your Debts</h2>
   <div class="debt-row header">
     <span>Name</span><span>Balance</span><span>APR %</span><span>Min Payment</span><span></span><span></span>
   </div>
@@ -51,20 +51,20 @@
   </div>
 
   <div class="strategy-box" style="margin-top:16px">
-    <h3>💰 Extra Monthly Payment</h3>
+    <h3>Extra Monthly Payment</h3>
     <p>How much extra can you put toward debt each month (beyond minimums)?</p>
     <div class="flex-row" style="margin-top:8px">
       <div class="field" style="max-width:250px"><input type="number" id="extraPayment" value="200" min="0" step="50"></div>
-      <button class="btn" id="calcDebtBtn">📊 Calculate Both Strategies</button>
+      <button class="btn" id="calcDebtBtn">Calculate Both Strategies</button>
     </div>
   </div>
 </div>
 
 <div class="card">
-  <h2>⚔️ Strategy Comparison</h2>
+  <h2>Strategy Comparison</h2>
   <div class="method-tabs">
-    <div class="method-tab active" data-method="avalanche">❄️ Avalanche</div>
-    <div class="method-tab" data-method="snowball">⛄ Snowball</div>
+    <div class="method-tab active" data-method="avalanche">Avalanche</div>
+    <div class="method-tab" data-method="snowball">Snowball</div>
   </div>
 
   <div id="strategyResults" class="strategy-results">
@@ -74,17 +74,17 @@
       <div class="summary-item"><div class="label">Total Paid</div><div class="value" id="totalPaidAmt">$0.00</div></div>
     </div>
 
-    <h3 style="font-size:.9rem;color:#5f6b62;margin-bottom:8px">📅 Payoff Order</h3>
+    <h3 style="font-size:.9rem;color:#6b6357;margin-bottom:8px">Payoff Order</h3>
     <ul class="plan-list" id="payoffOrder"></ul>
 
     <div class="comparison-banner">
       <div class="comp-card">
-        <h3>❄️ Avalanche</h3>
+        <h3>Avalanche</h3>
         <div class="big green" id="avalancheTime">—</div>
         <div class="sub" id="avalancheInterest">Interest: $0.00</div>
       </div>
       <div class="comp-card">
-        <h3>⛄ Snowball</h3>
+        <h3>Snowball</h3>
         <div class="big blue" id="snowballTime">—</div>
         <div class="sub" id="snowballInterest">Interest: $0.00</div>
       </div>
@@ -128,7 +128,7 @@ function renderDebts() {
       <span>${d.apr.toFixed(1)}%</span>
       <span>${fmt(d.minPayment)}</span>
       <span></span>
-      <button class="remove-btn" data-id="${d.id}" title="Remove">✕</button>
+      <button class="remove-btn" data-id="${d.id}" title="Remove"></button>
     `;
     container.appendChild(row);
   });
@@ -267,7 +267,7 @@ function calculate() {
 
   // Payoff timeline bars
   const timeline = $('payoffTimeline');
-  timeline.innerHTML = '<h3 style="font-size:.9rem;color:#5f6b62;margin-bottom:8px;margin-top:12px">📊 Payoff Progress (Avalanche)</h3>';
+  timeline.innerHTML = '<h3 style="font-size:.9rem;color:#6b6357;margin-bottom:8px;margin-top:12px"> Payoff Progress (Avalanche)</h3>';
 
   const avSorted = [...debts].sort((a, b) => b.apr - a.apr);
   const maxBalance = Math.max(...debts.map(d => d.balance), 1);
@@ -368,8 +368,8 @@ calculate();
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

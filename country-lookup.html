@@ -29,7 +29,7 @@
   <span class="current">Country Lookup</span>
 </div>
 <div class="tool-content">
-<h1>🌍 Country Lookup</h1>
+<h1>Country Lookup</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -45,56 +45,56 @@
 
 <script>
 const COUNTRIES = [
-  {name:"United States",capital:"Washington, D.C.",currency:"USD ($)",calling:"+1",flag:"🇺🇸"},
-  {name:"Canada",capital:"Ottawa",currency:"CAD ($)",calling:"+1",flag:"🇨🇦"},
-  {name:"United Kingdom",capital:"London",currency:"GBP (£)",calling:"+44",flag:"🇬🇧"},
-  {name:"Germany",capital:"Berlin",currency:"EUR (€)",calling:"+49",flag:"🇩🇪"},
-  {name:"France",capital:"Paris",currency:"EUR (€)",calling:"+33",flag:"🇫🇷"},
-  {name:"Italy",capital:"Rome",currency:"EUR (€)",calling:"+39",flag:"🇮🇹"},
-  {name:"Spain",capital:"Madrid",currency:"EUR (€)",calling:"+34",flag:"🇪🇸"},
-  {name:"Portugal",capital:"Lisbon",currency:"EUR (€)",calling:"+351",flag:"🇵🇹"},
-  {name:"Netherlands",capital:"Amsterdam",currency:"EUR (€)",calling:"+31",flag:"🇳🇱"},
-  {name:"Belgium",capital:"Brussels",currency:"EUR (€)",calling:"+32",flag:"🇧🇪"},
-  {name:"Switzerland",capital:"Bern",currency:"CHF",calling:"+41",flag:"🇨🇭"},
-  {name:"Sweden",capital:"Stockholm",currency:"SEK (kr)",calling:"+46",flag:"🇸🇪"},
-  {name:"Norway",capital:"Oslo",currency:"NOK (kr)",calling:"+47",flag:"🇳🇴"},
-  {name:"Denmark",capital:"Copenhagen",currency:"DKK (kr)",calling:"+45",flag:"🇩🇰"},
-  {name:"Finland",capital:"Helsinki",currency:"EUR (€)",calling:"+358",flag:"🇫🇮"},
-  {name:"Poland",capital:"Warsaw",currency:"PLN (zł)",calling:"+48",flag:"🇵🇱"},
-  {name:"Russia",capital:"Moscow",currency:"RUB (₽)",calling:"+7",flag:"🇷🇺"},
-  {name:"China",capital:"Beijing",currency:"CNY (¥)",calling:"+86",flag:"🇨🇳"},
-  {name:"Japan",capital:"Tokyo",currency:"JPY (¥)",calling:"+81",flag:"🇯🇵"},
-  {name:"South Korea",capital:"Seoul",currency:"KRW (₩)",calling:"+82",flag:"🇰🇷"},
-  {name:"India",capital:"New Delhi",currency:"INR (₹)",calling:"+91",flag:"🇮🇳"},
-  {name:"Indonesia",capital:"Jakarta",currency:"IDR (Rp)",calling:"+62",flag:"🇮🇩"},
-  {name:"Thailand",capital:"Bangkok",currency:"THB (฿)",calling:"+66",flag:"🇹🇭"},
-  {name:"Vietnam",capital:"Hanoi",currency:"VND (₫)",calling:"+84",flag:"🇻🇳"},
-  {name:"Singapore",capital:"Singapore",currency:"SGD ($)",calling:"+65",flag:"🇸🇬"},
-  {name:"Malaysia",capital:"Kuala Lumpur",currency:"MYR (RM)",calling:"+60",flag:"🇲🇾"},
-  {name:"Philippines",capital:"Manila",currency:"PHP (₱)",calling:"+63",flag:"🇵🇭"},
-  {name:"Australia",capital:"Canberra",currency:"AUD ($)",calling:"+61",flag:"🇦🇺"},
-  {name:"New Zealand",capital:"Wellington",currency:"NZD ($)",calling:"+64",flag:"🇳🇿"},
-  {name:"Brazil",capital:"Brasília",currency:"BRL (R$)",calling:"+55",flag:"🇧🇷"},
-  {name:"Argentina",capital:"Buenos Aires",currency:"ARS ($)",calling:"+54",flag:"🇦🇷"},
-  {name:"Mexico",capital:"Mexico City",currency:"MXN ($)",calling:"+52",flag:"🇲🇽"},
-  {name:"South Africa",capital:"Pretoria",currency:"ZAR (R)",calling:"+27",flag:"🇿🇦"},
-  {name:"Nigeria",capital:"Abuja",currency:"NGN (₦)",calling:"+234",flag:"🇳🇬"},
-  {name:"Egypt",capital:"Cairo",currency:"EGP (£)",calling:"+20",flag:"🇪🇬"},
-  {name:"Kenya",capital:"Nairobi",currency:"KES (KSh)",calling:"+254",flag:"🇰🇪"},
-  {name:"Turkey",capital:"Ankara",currency:"TRY (₺)",calling:"+90",flag:"🇹🇷"},
-  {name:"United Arab Emirates",capital:"Abu Dhabi",currency:"AED (د.إ)",calling:"+971",flag:"🇦🇪"},
-  {name:"Saudi Arabia",capital:"Riyadh",currency:"SAR (﷼)",calling:"+966",flag:"🇸🇦"},
-  {name:"Israel",capital:"Jerusalem",currency:"ILS (₪)",calling:"+972",flag:"🇮🇱"},
-  {name:"Pakistan",capital:"Islamabad",currency:"PKR (₨)",calling:"+92",flag:"🇵🇰"},
-  {name:"Bangladesh",capital:"Dhaka",currency:"BDT (৳)",calling:"+880",flag:"🇧🇩"},
-  {name:"Greece",capital:"Athens",currency:"EUR (€)",calling:"+30",flag:"🇬🇷"},
-  {name:"Ireland",capital:"Dublin",currency:"EUR (€)",calling:"+353",flag:"🇮🇪"},
-  {name:"Czech Republic",capital:"Prague",currency:"CZK (Kč)",calling:"+420",flag:"🇨🇿"},
-  {name:"Romania",capital:"Bucharest",currency:"RON (lei)",calling:"+40",flag:"🇷🇴"},
-  {name:"Ukraine",capital:"Kyiv",currency:"UAH (₴)",calling:"+380",flag:"🇺🇦"},
-  {name:"Colombia",capital:"Bogotá",currency:"COP ($)",calling:"+57",flag:"🇨🇴"},
-  {name:"Chile",capital:"Santiago",currency:"CLP ($)",calling:"+56",flag:"🇨🇱"},
-  {name:"Peru",capital:"Lima",currency:"PEN (S/)",calling:"+51",flag:"🇵🇪"}
+  {name:"United States",capital:"Washington, D.C.",currency:"USD ($)",calling:"+1",flag:""},
+  {name:"Canada",capital:"Ottawa",currency:"CAD ($)",calling:"+1",flag:""},
+  {name:"United Kingdom",capital:"London",currency:"GBP (£)",calling:"+44",flag:""},
+  {name:"Germany",capital:"Berlin",currency:"EUR (€)",calling:"+49",flag:""},
+  {name:"France",capital:"Paris",currency:"EUR (€)",calling:"+33",flag:""},
+  {name:"Italy",capital:"Rome",currency:"EUR (€)",calling:"+39",flag:""},
+  {name:"Spain",capital:"Madrid",currency:"EUR (€)",calling:"+34",flag:""},
+  {name:"Portugal",capital:"Lisbon",currency:"EUR (€)",calling:"+351",flag:""},
+  {name:"Netherlands",capital:"Amsterdam",currency:"EUR (€)",calling:"+31",flag:""},
+  {name:"Belgium",capital:"Brussels",currency:"EUR (€)",calling:"+32",flag:""},
+  {name:"Switzerland",capital:"Bern",currency:"CHF",calling:"+41",flag:""},
+  {name:"Sweden",capital:"Stockholm",currency:"SEK (kr)",calling:"+46",flag:""},
+  {name:"Norway",capital:"Oslo",currency:"NOK (kr)",calling:"+47",flag:""},
+  {name:"Denmark",capital:"Copenhagen",currency:"DKK (kr)",calling:"+45",flag:""},
+  {name:"Finland",capital:"Helsinki",currency:"EUR (€)",calling:"+358",flag:""},
+  {name:"Poland",capital:"Warsaw",currency:"PLN (zł)",calling:"+48",flag:""},
+  {name:"Russia",capital:"Moscow",currency:"RUB (₽)",calling:"+7",flag:""},
+  {name:"China",capital:"Beijing",currency:"CNY (¥)",calling:"+86",flag:""},
+  {name:"Japan",capital:"Tokyo",currency:"JPY (¥)",calling:"+81",flag:""},
+  {name:"South Korea",capital:"Seoul",currency:"KRW (₩)",calling:"+82",flag:""},
+  {name:"India",capital:"New Delhi",currency:"INR (₹)",calling:"+91",flag:""},
+  {name:"Indonesia",capital:"Jakarta",currency:"IDR (Rp)",calling:"+62",flag:""},
+  {name:"Thailand",capital:"Bangkok",currency:"THB (฿)",calling:"+66",flag:""},
+  {name:"Vietnam",capital:"Hanoi",currency:"VND (₫)",calling:"+84",flag:""},
+  {name:"Singapore",capital:"Singapore",currency:"SGD ($)",calling:"+65",flag:""},
+  {name:"Malaysia",capital:"Kuala Lumpur",currency:"MYR (RM)",calling:"+60",flag:""},
+  {name:"Philippines",capital:"Manila",currency:"PHP (₱)",calling:"+63",flag:""},
+  {name:"Australia",capital:"Canberra",currency:"AUD ($)",calling:"+61",flag:""},
+  {name:"New Zealand",capital:"Wellington",currency:"NZD ($)",calling:"+64",flag:""},
+  {name:"Brazil",capital:"Brasília",currency:"BRL (R$)",calling:"+55",flag:""},
+  {name:"Argentina",capital:"Buenos Aires",currency:"ARS ($)",calling:"+54",flag:""},
+  {name:"Mexico",capital:"Mexico City",currency:"MXN ($)",calling:"+52",flag:""},
+  {name:"South Africa",capital:"Pretoria",currency:"ZAR (R)",calling:"+27",flag:""},
+  {name:"Nigeria",capital:"Abuja",currency:"NGN (₦)",calling:"+234",flag:""},
+  {name:"Egypt",capital:"Cairo",currency:"EGP (£)",calling:"+20",flag:""},
+  {name:"Kenya",capital:"Nairobi",currency:"KES (KSh)",calling:"+254",flag:""},
+  {name:"Turkey",capital:"Ankara",currency:"TRY (₺)",calling:"+90",flag:""},
+  {name:"United Arab Emirates",capital:"Abu Dhabi",currency:"AED (د.إ)",calling:"+971",flag:""},
+  {name:"Saudi Arabia",capital:"Riyadh",currency:"SAR (﷼)",calling:"+966",flag:""},
+  {name:"Israel",capital:"Jerusalem",currency:"ILS (₪)",calling:"+972",flag:""},
+  {name:"Pakistan",capital:"Islamabad",currency:"PKR (₨)",calling:"+92",flag:""},
+  {name:"Bangladesh",capital:"Dhaka",currency:"BDT (৳)",calling:"+880",flag:""},
+  {name:"Greece",capital:"Athens",currency:"EUR (€)",calling:"+30",flag:""},
+  {name:"Ireland",capital:"Dublin",currency:"EUR (€)",calling:"+353",flag:""},
+  {name:"Czech Republic",capital:"Prague",currency:"CZK (Kč)",calling:"+420",flag:""},
+  {name:"Romania",capital:"Bucharest",currency:"RON (lei)",calling:"+40",flag:""},
+  {name:"Ukraine",capital:"Kyiv",currency:"UAH (₴)",calling:"+380",flag:""},
+  {name:"Colombia",capital:"Bogotá",currency:"COP ($)",calling:"+57",flag:""},
+  {name:"Chile",capital:"Santiago",currency:"CLP ($)",calling:"+56",flag:""},
+  {name:"Peru",capital:"Lima",currency:"PEN (S/)",calling:"+51",flag:""}
 ];
 
 function filterCountries() {
@@ -145,13 +145,13 @@ filterCountries();
 </script>
 
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
-    <h3 style="color:#5f6b62;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <h3 style="color:#6b6357;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/mime-types" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">MIME Type Reference — Complete Content-Type Lookup</a>
-      <a href="/world-clock" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">World Clock — Current Time in Cities Worldwide</a>
-      <a href="/html-entity-reference" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">HTML Entity Reference — Complete Character Entities</a>
-      <a href="/seo-meta-generator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">SEO Meta Tag Generator — Generate & Preview Meta Tags</a>
-      <a href="/browser-info" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Browser Info — See Your Browser & Device Details</a>
+      <a href="/mime-types" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">MIME Type Reference — Complete Content-Type Lookup</a>
+      <a href="/world-clock" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">World Clock — Current Time in Cities Worldwide</a>
+      <a href="/html-entity-reference" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">HTML Entity Reference — Complete Character Entities</a>
+      <a href="/seo-meta-generator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">SEO Meta Tag Generator — Generate & Preview Meta Tags</a>
+      <a href="/browser-info" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Browser Info — See Your Browser & Device Details</a>
     </div>
   </div>
 
@@ -230,8 +230,8 @@ filterCountries();
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

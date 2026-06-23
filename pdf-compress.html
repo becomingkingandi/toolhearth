@@ -29,7 +29,7 @@
 <div class="tool-content">
 <div class="container">
     <header>
-        <h1>📦 PDF Compress</h1>
+        <h1>PDF Compress</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -38,16 +38,16 @@
     </header>
 
     <div class="features">
-        <div class="feat"><div class="icon">🗜️</div><h3>Smart Compression</h3><p>Strips metadata and unused objects</p></div>
-        <div class="feat"><div class="icon">🔒</div><h3>100% Private</h3><p>All processing is client-side in your browser</p></div>
-        <div class="feat"><div class="icon">⚡</div><h3>Fast & Free</h3><p>No uploads, no queues, instant results</p></div>
-        <div class="feat"><div class="icon">🖥️</div><h3>Cross-Platform</h3><p>Works on any modern browser</p></div>
+        <div class="feat"><div class="icon"></div><h3>Smart Compression</h3><p>Strips metadata and unused objects</p></div>
+        <div class="feat"><div class="icon"></div><h3>100% Private</h3><p>All processing is client-side in your browser</p></div>
+        <div class="feat"><div class="icon"></div><h3>Fast & Free</h3><p>No uploads, no queues, instant results</p></div>
+        <div class="feat"><div class="icon"></div><h3>Cross-Platform</h3><p>Works on any modern browser</p></div>
     </div>
 
     <div class="drop-zone" id="dropZone">
-        <div class="icon">📄</div>
+        <div class="icon"></div>
         <p>Drag & drop your PDF here or <span class="browse-link" id="browseLink">browse</span></p>
-        <p style="font-size:0.8rem;margin-top:0.5rem;color:#9aa295;">Supports files up to 50 MB</p>
+        <p style="font-size:0.8rem;margin-top:0.5rem;color:#b3ab9c;">Supports files up to 50 MB</p>
         <input type="file" id="fileInput" accept=".pdf" style="display:none">
     </div>
 
@@ -77,18 +77,18 @@
         <div class="card">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
                 <div>
-                    <p style="color:#5f6b62;font-size:0.85rem;">Compression complete!</p>
+                    <p style="color:#6b6357;font-size:0.85rem;">Compression complete!</p>
                     <p class="savings" id="savingsText">-0%</p>
-                    <p class="sizes" id="sizesText">Original: 0 KB → Compressed: 0 KB</p>
+                    <p class="sizes" id="sizesText">Original: 0 KB Compressed: 0 KB</p>
                 </div>
-                <button class="btn" id="downloadBtn">⬇ Download</button>
+                <button class="btn" id="downloadBtn">Download</button>
             </div>
         </div>
     </div>
 
     <footer>
-        Free online PDF tools — No upload to server, all client-side
-    </footer>
+ Free online PDF tools — No upload to server, all client-side
+ </footer>
 </div>
 
 <script>
@@ -241,7 +241,7 @@
             const compressedSize = compressedBytes.length;
             const savings = ((1 - compressedSize / originalSize) * 100).toFixed(1);
 
-            sizesText.textContent = `Original: ${formatSize(originalSize)} → Compressed: ${formatSize(compressedSize)}`;
+            sizesText.textContent = `Original: ${formatSize(originalSize)}  Compressed: ${formatSize(compressedSize)}`;
             savingsText.textContent = `-${savings}%`;
 
             result.style.display = 'block';
@@ -348,8 +348,8 @@
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

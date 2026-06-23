@@ -32,19 +32,19 @@
     <a href="/blog/" class="back-link">&larr; Back to Blog</a>
     <h1>HTML Entity Encoder &amp; Decoder: Quick Reference Guide</h1>
     <div class="meta">Published Jun 18, 2026 &middot; 5 min read</div>
-    <p>HTML entities are a fundamental part of web development that every developer encounters. They're how you display reserved characters (&lt;, &gt;, &amp;, &quot;) in HTML without breaking the page structure. A good <a href="/html-entity-encoder.html">HTML entity encoder/decoder</a> makes working with these characters effortless.</p>
+    <p>HTML entities are a fundamental part of web development that every developer encounters. They're how you display reserved characters (&lt;, &gt;, &amp;, &quot;) in HTML without breaking the page structure. A good <a href="/html-entity-encoder.html">HTML entity encoder/decoder</a>makes working with these characters effortless.</p>
 
     <h2>What Are HTML Entities?</h2>
-    <p>HTML entities are codes that represent special characters. They always start with <code>&amp;</code> and end with <code>;</code>. There are two types:</p>
+    <p>HTML entities are codes that represent special characters. They always start with <code>&amp;</code>and end with <code>;</code>. There are two types:</p>
     <ul>
-        <li><strong>Named entities:</strong> <code>&amp;lt;</code> for &lt;, <code>&amp;gt;</code> for &gt;</li>
-        <li><strong>Numeric entities:</strong> <code>&amp;#60;</code> for &lt;, <code>&amp;#62;</code> for &gt;</li>
+        <li><strong>Named entities:</strong> <code>&amp;lt;</code>for &lt;, <code>&amp;gt;</code>for &gt;</li>
+        <li><strong>Numeric entities:</strong> <code>&amp;#60;</code>for &lt;, <code>&amp;#62;</code>for &gt;</li>
     </ul>
 
     <h2>When You Need to Encode HTML</h2>
 
     <h3>User-Generated Content</h3>
-    <p>If your app accepts user input and displays it on a web page, you <em>must</em> HTML-encode that content. Failure to do so creates cross-site scripting (XSS) vulnerabilities. A user could submit <code>&lt;script&gt;...&lt;/script&gt;</code> that executes on your site.</p>
+    <p>If your app accepts user input and displays it on a web page, you <em>must</em>HTML-encode that content. Failure to do so creates cross-site scripting (XSS) vulnerabilities. A user could submit <code>&lt;script&gt;...&lt;/script&gt;</code>that executes on your site.</p>
 
     <h3>Code Examples in Blog Posts</h3>
     <p>When showing HTML code in a blog post (like this one), you need to encode the angle brackets so they display as text rather than being interpreted as HTML tags.</p>
@@ -75,21 +75,21 @@
     <h2>Using an HTML Entity Encoder/Decoder</h2>
     <p>Rather than memorizing every entity code, use an <a href="/html-entity-encoder.html">HTML entity encoder and decoder tool</a>. Paste in your text, click encode, and all special characters are converted to their entity equivalents instantly. The decoder does the reverse — turn encoded text back into readable characters.</p>
 
-    <p>For related developer utilities, check out our <a href="/json-formatter.html">JSON formatter</a> for formatting API data that may contain HTML content.</p>
+    <p>For related developer utilities, check out our <a href="/json-formatter.html">JSON formatter</a>for formatting API data that may contain HTML content.</p>
 
     <h2>Encoding in Practice</h2>
     <p>Most modern frameworks (React, Vue, Angular) handle HTML entity encoding automatically when you use templates properly. However, when you're working with raw HTML strings, inserting content via <code>innerHTML</code>, or building email templates manually, you still need to encode explicitly.</p>
 
-    <div class="tip"><strong>Security note:</strong> Never insert user-generated content into a page without HTML encoding it first. This is the most common source of XSS vulnerabilities on the web.</div>
+    <div class="tip"><strong>Security note:</strong>Never insert user-generated content into a page without HTML encoding it first. This is the most common source of XSS vulnerabilities on the web.</div>
 
     <div class="related-box">
-        <h3>🔗 Related Tools</h3>
+        <h3>Related Tools</h3>
         <ul>
-            <li><a href="/html-entity-encoder.html">HTML Entity Encoder/Decoder</a> — Encode and decode HTML entities instantly</li>
-            <li><a href="/json-formatter.html">JSON Formatter & Validator</a> — Format and validate API data</li>
+            <li><a href="/html-entity-encoder.html">HTML Entity Encoder/Decoder</a>— Encode and decode HTML entities instantly</li>
+            <li><a href="/json-formatter.html">JSON Formatter & Validator</a>— Format and validate API data</li>
         </ul>
     </div>
-    <footer><p><a href="/blog/">&larr; Back to Blog</a> &middot; &copy; 2026 CheatSheet Tools</p></footer>
+    <footer><p><a href="/blog/">&larr; Back to Blog</a>&middot; &copy; 2026 CheatSheet Tools</p></footer>
 </div>
 </div>
 </div><!-- /container -->
@@ -162,8 +162,8 @@
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

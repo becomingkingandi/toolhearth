@@ -30,7 +30,7 @@
 </div>
 <div class="tool-content">
 <div class="container">
-<h1>🌱 Ovulation & Fertility Calculator</h1>
+<h1>Ovulation & Fertility Calculator</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -58,18 +58,18 @@
 <button onclick="calculate()">Calculate</button>
 
 <div class="results" id="results">
-<div class="result-row"><span class="result-label">📅 Ovulation Date</span><span class="result-value fertile" id="ovulationDate">—</span></div>
-<div class="result-row"><span class="result-label">🌺 Fertile Window</span><span class="result-value fertile" id="fertileWindow">—</span></div>
-<div class="result-row"><span class="result-label">🩸 Next Period</span><span class="result-value period" id="nextPeriod">—</span></div>
-<div class="result-row"><span class="result-label">💫 Conception Window</span><span class="result-value fertile" id="conceptionWindow">—</span></div>
-<div class="result-row"><span class="result-label">📊 Cycle Day Today</span><span class="result-value" id="cycleDayToday">—</span></div>
+<div class="result-row"><span class="result-label">Ovulation Date</span><span class="result-value fertile" id="ovulationDate">—</span></div>
+<div class="result-row"><span class="result-label">Fertile Window</span><span class="result-value fertile" id="fertileWindow">—</span></div>
+<div class="result-row"><span class="result-label">Next Period</span><span class="result-value period" id="nextPeriod">—</span></div>
+<div class="result-row"><span class="result-label">Conception Window</span><span class="result-value fertile" id="conceptionWindow">—</span></div>
+<div class="result-row"><span class="result-label">Cycle Day Today</span><span class="result-value" id="cycleDayToday">—</span></div>
 
 <div class="calendar">
-<h3>📆 Current Cycle Calendar</h3>
+<h3>Current Cycle Calendar</h3>
 <div class="legend">
-<div class="legend-item"><span class="legend-dot period"></span> Period</div>
-<div class="legend-item"><span class="legend-dot fertile"></span> Fertile</div>
-<div class="legend-item"><span class="legend-dot ovulation"></span> Ovulation</div>
+<div class="legend-item"><span class="legend-dot period"></span>Period</div>
+<div class="legend-item"><span class="legend-dot fertile"></span>Fertile</div>
+<div class="legend-item"><span class="legend-dot ovulation"></span>Ovulation</div>
 </div>
 <div class="calendar-grid" id="calendarGrid"></div>
 </div>
@@ -181,7 +181,7 @@ el.appendChild(daySpan);
 if (dayOfCycle >= 1 && dayOfCycle <= cycleLen) {
 const dot = document.createElement('div');
 dot.style.cssText = 'font-size:8px;color:#555;margin-top:1px';
-if (dayOfCycle === ovulationDay) dot.textContent = '⚡';
+if (dayOfCycle === ovulationDay) dot.textContent = '';
 else if (dayOfCycle >= ovulationDay - 5 && dayOfCycle <= ovulationDay) dot.textContent = '•';
 else if (dayOfCycle >= 1 && dayOfCycle <= periodLen) dot.textContent = '—';
 el.appendChild(dot);
@@ -205,14 +205,14 @@ return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
 </script>
 
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
-    <h3 style="color:#5f6b62;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <h3 style="color:#6b6357;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/calorie-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
-      <a href="/bmr-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
-      <a href="/body-fat-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
-      <a href="/water-intake-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
-      <a href="/due-date-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
-      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+      <a href="/calorie-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
     </div>
   </div>
 
@@ -291,8 +291,8 @@ return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

@@ -29,7 +29,7 @@
 </div>
 <div class="tool-content">
 <div class="container">
-<h1>📊 Investment Returns Calculator</h1>
+<h1>Investment Returns Calculator</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -102,12 +102,12 @@
     <div id="cmpResults" style="margin-top:14px;display:none">
       <div class="comparison-grid">
         <div class="comparison-card">
-          <h3>💰 Lump Sum Final</h3>
+          <h3>Lump Sum Final</h3>
           <div class="val blue" id="cmpLsFinal">$0.00</div>
           <div class="sub" id="cmpLsGain">Gain: $0.00</div>
         </div>
         <div class="comparison-card">
-          <h3>📅 DCA Final</h3>
+          <h3>DCA Final</h3>
           <div class="val green" id="cmpDcaFinal">$0.00</div>
           <div class="sub" id="cmpDcaGain">Gain: $0.00</div>
         </div>
@@ -290,7 +290,7 @@ function calcCompare() {
   function yPos(v) { return pad.top + chartH - (v / maxVal) * chartH; }
 
   // Grid lines
-  ctx.strokeStyle = '#eef0ea';
+  ctx.strokeStyle = '#f3efe8';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = pad.top + (i / 4) * chartH;
@@ -298,14 +298,14 @@ function calcCompare() {
     ctx.moveTo(pad.left, y);
     ctx.lineTo(w - pad.right, y);
     ctx.stroke();
-    ctx.fillStyle = '#9aa295';
+    ctx.fillStyle = '#b3ab9c';
     ctx.font = '11px -apple-system, sans-serif';
     ctx.textAlign = 'right';
     ctx.fillText('$' + Math.round((maxVal * (1 - i/4)) / 1000) + 'k', pad.left - 8, y + 4);
   }
 
   // X labels
-  ctx.fillStyle = '#9aa295';
+  ctx.fillStyle = '#b3ab9c';
   ctx.font = '11px -apple-system, sans-serif';
   ctx.textAlign = 'center';
   for (let i = 0; i <= 5; i++) {
@@ -315,7 +315,7 @@ function calcCompare() {
   }
 
   // Lump sum line
-  ctx.strokeStyle = '#0d9488';
+  ctx.strokeStyle = '#d97706';
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   data.forEach((d, i) => {
@@ -326,7 +326,7 @@ function calcCompare() {
   ctx.stroke();
 
   // DCA line
-  ctx.strokeStyle = '#0d9488';
+  ctx.strokeStyle = '#d97706';
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   data.forEach((d, i) => {
@@ -337,16 +337,16 @@ function calcCompare() {
   ctx.stroke();
 
   // Legend
-  ctx.fillStyle = '#0d9488';
+  ctx.fillStyle = '#d97706';
   ctx.fillRect(w - 140, 6, 12, 12);
-  ctx.fillStyle = '#243027';
+  ctx.fillStyle = '#2a2622';
   ctx.font = '12px -apple-system, sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText('Lump Sum', w - 124, 17);
 
-  ctx.fillStyle = '#0d9488';
+  ctx.fillStyle = '#d97706';
   ctx.fillRect(w - 140, 24, 12, 12);
-  ctx.fillStyle = '#243027';
+  ctx.fillStyle = '#2a2622';
   ctx.fillText('DCA', w - 124, 35);
 }
 
@@ -451,8 +451,8 @@ calcLumpSum();
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

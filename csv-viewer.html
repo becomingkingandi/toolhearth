@@ -30,7 +30,7 @@
 </div>
 <div class="tool-content">
 <div class="container">
-<h1>📊 CSV Viewer</h1>
+<h1>CSV Viewer</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -39,10 +39,10 @@
 
 <div class="toolbar">
 <button class="btn" onclick="parseCSV()">▶ Parse</button>
-<button class="btn secondary" onclick="loadSample()">📄 Sample</button>
-<button class="btn danger" onclick="clearAll()">🗑️ Clear</button>
+<button class="btn secondary" onclick="loadSample()">Sample</button>
+<button class="btn danger" onclick="clearAll()">Clear</button>
 <div class="file-upload">
-<label for="fileInput">📁 Upload CSV</label>
+<label for="fileInput">Upload CSV</label>
 <input type="file" id="fileInput" accept=".csv,.tsv,.txt">
 </div>
 </div>
@@ -54,14 +54,14 @@
 </div>
 <div class="pane">
 <div class="pane-header"><span>Preview</span><span id="previewInfo">No data</span></div>
-<div id="previewArea" style="display:flex;align-items:center;justify-content:center;min-height:280px;background:#f7f7f2">
+<div id="previewArea" style="display:flex;align-items:center;justify-content:center;min-height:280px;background:#faf8f4">
 <div class="empty-state">Paste CSV data and click Parse</div>
 </div>
 </div>
 </div>
 
 <div class="search-row">
-<input type="text" id="searchInput" placeholder="🔍 Search/filter rows..." oninput="renderTable()">
+<input type="text" id="searchInput" placeholder=" Search/filter rows..." oninput="renderTable()">
 <span class="info" id="rowCount">Rows: 0</span>
 <span class="info" id="colCount">Cols: 0</span>
 </div>
@@ -159,16 +159,16 @@ parsedData = { headers, rows };
 // Preview first 3 rows
 const previewHeaders = headers.slice(0, 4).join(' | ');
 const previewRows = rows.slice(0, 3).map(r => r.slice(0, 4).join(' | ')).join('<br>');
-previewArea.innerHTML = `<div style="padding:12px;font-size:.82rem;text-align:center;color:#5f6b62">
-<div style="color:#0d9488;margin-bottom:4px">${previewHeaders}</div>
+previewArea.innerHTML = `<div style="padding:12px;font-size:.82rem;text-align:center;color:#6b6357">
+<div style="color:#d97706;margin-bottom:4px">${previewHeaders}</div>
 <div>${previewRows}</div>
-<div style="color:#9aa295;margin-top:8px">${rows.length} rows × ${headers.length} columns</div>
+<div style="color:#b3ab9c;margin-top:8px">${rows.length} rows × ${headers.length} columns</div>
 </div>`;
 
 document.getElementById('previewInfo').textContent = rows.length + ' rows parsed';
 document.getElementById('inputStats').textContent = text.length + ' chars';
 renderTable();
-showToast('✅ Parsed ' + rows.length + ' rows');
+showToast(' Parsed ' + rows.length + ' rows');
 }
 
 function renderTable() {
@@ -198,7 +198,7 @@ html += '<th>' + h.replace(/</g, '&lt;') + '</th>';
 html += '</tr></thead><tbody>';
 
 if (filteredRows.length === 0) {
-html += '<tr><td colspan="' + parsedData.headers.length + '" style="text-align:center;padding:20px;color:#9aa295">No matching rows found</td></tr>';
+html += '<tr><td colspan="' + parsedData.headers.length + '" style="text-align:center;padding:20px;color:#b3ab9c">No matching rows found</td></tr>';
 } else {
 filteredRows.forEach(row => {
 html += '<tr>';
@@ -248,14 +248,14 @@ document.getElementById('previewInfo').textContent = 'No data';
 </script>
 
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
-    <h3 style="color:#5f6b62;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <h3 style="color:#6b6357;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/json-formatter" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
-      <a href="/base64" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
-      <a href="/uuid-generator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
-      <a href="/lorem-ipsum" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
-      <a href="/regex-tester" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
-      <a href="/jwt-decoder" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+      <a href="/json-formatter" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/regex-tester" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Regex Tester — Test Regular Expressions Online</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
     </div>
   </div>
 
@@ -334,8 +334,8 @@ document.getElementById('previewInfo').textContent = 'No data';
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

@@ -42,7 +42,7 @@
 <!-- ===== HERO ===== -->
 <section class="hero">
   <div class="container">
-    <span class="hero-badge">🚀 16 Premium Templates</span>
+    <span class="hero-badge">16 Premium Templates</span>
     <h1>Premium Templates for Modern Businesses</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
@@ -67,7 +67,7 @@
 <main class="container">
   <div id="template-grid" class="grid"></div>
   <div class="no-results" id="no-results">
-    <div class="big-icon">🔍</div>
+    <div class="big-icon"></div>
     <h3>No templates found</h3>
     <p>Try adjusting your search or filter.</p>
   </div>
@@ -76,7 +76,7 @@
 <!-- ===== FOOTER ===== -->
 <footer class="site-footer">
   <div class="container">
-    <p class="affiliate">⚡ Affiliate Disclosure</p>
+    <p class="affiliate">Affiliate Disclosure</p>
     <p>Some links on this site are affiliate links. We may earn a small commission at no extra cost to you. All templates are hosted on Gumroad, Etsy, or similar third-party platforms.</p>
     <p>&copy; 2026 TemplateMarket &mdash; curated templates for modern professionals.</p>
   </div>
@@ -104,7 +104,7 @@ const templates = [
 ];
 
 /* ===== ICONS ===== */
-const catIcons = { Business:"📊", Finance:"💰", Marketing:"📈", Personal:"✨" };
+const catIcons = { Business:"", Finance:"", Marketing:"", Personal:"" };
 
 /* ===== RENDER ===== */
 const grid = document.getElementById('template-grid');
@@ -133,7 +133,7 @@ function render() {
   noResults.classList.remove('visible');
 
   grid.innerHTML = filtered.map(t => {
-    const icon = catIcons[t.category] || '📄';
+    const icon = catIcons[t.category] || '';
     return `
       <div class="template-card" data-category="${t.category}">
         <div class="card-thumb">
@@ -148,7 +148,7 @@ function render() {
             <span class="stars">${renderStars(t.stars)}</span>
           </div>
           <div class="card-actions">
-            <button class="btn btn-preview" onclick="alert('📄 ${t.name}\\n\\n${t.desc}\\n\\nCategory: ${t.category}\\nPrice: \$${t.price}')">Preview</button>
+            <button class="btn btn-preview" onclick="alert(' ${t.name}\\n\\n${t.desc}\\n\\nCategory: ${t.category}\\nPrice: \$${t.price}')">Preview</button>
             <a class="btn btn-buy" href="https://gumroad.com/checkout?product=template-${t.id}" target="_blank" rel="noopener">Buy Now</a>
           </div>
         </div>
@@ -255,8 +255,8 @@ render();
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

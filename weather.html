@@ -30,7 +30,7 @@
 </div>
 <div class="tool-content">
 <div class="container">
-<h1>&#127326; Weather Now</h1>
+<h1>Weather Now</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -38,18 +38,18 @@
 <p class="subtitle">Real-time weather at your location</p>
 
 <div class="location-controls">
-  <button class="btn" id="refreshBtn" onclick="getWeather()">&#128260; Refresh</button>
+  <button class="btn" id="refreshBtn" onclick="getWeather()">Refresh</button>
 </div>
 
 <div class="card">
-  <div class="status-msg" id="statusMsg">&#127758; Getting your location...</div>
+  <div class="status-msg" id="statusMsg">Getting your location...</div>
   <div class="spinner" id="spinner"></div>
   <div class="error-msg" id="errorMsg"></div>
 
   <div id="weatherDisplay" style="display:none">
     <div class="location-name" id="locationName"></div>
     <div class="weather-main">
-      <span class="weather-icon" id="weatherIcon">&#9728;</span>
+      <span class="weather-icon" id="weatherIcon"></span>
       <span class="weather-temp" id="weatherTemp">--<sup>&deg;C</sup></span>
     </div>
     <div class="weather-desc" id="weatherDesc"></div>
@@ -69,39 +69,39 @@
 </div>
 
 <div class="footer">
-  Powered by <a href="https://open-meteo.com" target="_blank">Open-Meteo</a> &amp; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> &mdash; Free API Site
+ Powered by <a href="https://open-meteo.com" target="_blank">Open-Meteo</a>&amp; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>&mdash; Free API Site
 </div>
 
 <script>
 const WMO_CODES = {
-  0:['Clear sky','&#9728;'],
-  1:['Mainly clear','&#127780;'],
-  2:['Partly cloudy','&#127781;'],
-  3:['Overcast','&#9729;'],
-  45:['Foggy','&#127787;'],
-  48:['Depositing rime fog','&#127787;'],
-  51:['Light drizzle','&#127783;'],
-  53:['Moderate drizzle','&#127783;'],
-  55:['Dense drizzle','&#127783;'],
-  56:['Light freezing drizzle','&#127783;'],
-  57:['Dense freezing drizzle','&#127783;'],
-  61:['Slight rain','&#127782;'],
-  63:['Moderate rain','&#127782;'],
-  65:['Heavy rain','&#127782;'],
-  66:['Light freezing rain','&#127782;'],
-  67:['Heavy freezing rain','&#127782;'],
-  71:['Slight snow','&#127784;'],
-  73:['Moderate snow','&#127784;'],
-  75:['Heavy snow','&#127784;'],
-  77:['Snow grains','&#127784;'],
-  80:['Slight rain showers','&#127783;'],
-  81:['Moderate rain showers','&#127783;'],
-  82:['Violent rain showers','&#127783;'],
-  85:['Slight snow showers','&#127784;'],
-  86:['Heavy snow showers','&#127784;'],
-  95:['Thunderstorm','&#9928;'],
-  96:['Thunderstorm with slight hail','&#9928;'],
-  99:['Thunderstorm with heavy hail','&#9928;']
+  0:['Clear sky',''],
+  1:['Mainly clear',''],
+  2:['Partly cloudy',''],
+  3:['Overcast',''],
+  45:['Foggy',''],
+  48:['Depositing rime fog',''],
+  51:['Light drizzle',''],
+  53:['Moderate drizzle',''],
+  55:['Dense drizzle',''],
+  56:['Light freezing drizzle',''],
+  57:['Dense freezing drizzle',''],
+  61:['Slight rain',''],
+  63:['Moderate rain',''],
+  65:['Heavy rain',''],
+  66:['Light freezing rain',''],
+  67:['Heavy freezing rain',''],
+  71:['Slight snow',''],
+  73:['Moderate snow',''],
+  75:['Heavy snow',''],
+  77:['Snow grains',''],
+  80:['Slight rain showers',''],
+  81:['Moderate rain showers',''],
+  82:['Violent rain showers',''],
+  85:['Slight snow showers',''],
+  86:['Heavy snow showers',''],
+  95:['Thunderstorm',''],
+  96:['Thunderstorm with slight hail',''],
+  99:['Thunderstorm with heavy hail','']
 };
 
 let lat = null;
@@ -121,7 +121,7 @@ function getWeather() {
   statusMsg.classList.remove('active');
 
   if (navigator.geolocation) {
-    statusMsg.textContent = '&#127758; Getting your location...';
+    statusMsg.textContent = 'Getting your location...';
     statusMsg.classList.add('active');
     navigator.geolocation.getCurrentPosition(
       position => {
@@ -169,7 +169,7 @@ async function fetchWeather(lat, lon) {
     const data = await resp.json();
     const cw = data.current_weather;
 
-    const wmo = WMO_CODES[cw.weathercode] || ['Unknown', '&#9877;'];
+    const wmo = WMO_CODES[cw.weathercode] || ['Unknown', ''];
     const city = `${lat}, ${lon}`;
 
     document.getElementById('locationName').textContent = city;
@@ -196,14 +196,14 @@ document.addEventListener('DOMContentLoaded', getWeather);
 </script>
 
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
-    <h3 style="color:#5f6b62;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <h3 style="color:#6b6357;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/bitcoin-price" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
-      <a href="/joke-generator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
-      <a href="/random-quote" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
-      <a href="/random-fact" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
-      <a href="/dictionary" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
-      <a href="/github-profile" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">GitHub Profile Viewer — Look Up Any GitHub User</a>
+      <a href="/bitcoin-price" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Bitcoin Price — Live BTC, ETH & SOL Prices</a>
+      <a href="/joke-generator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Random Joke Generator — Get a Laugh Instantly</a>
+      <a href="/random-quote" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Random Quote Generator — Inspirational & Wisdom Quotes</a>
+      <a href="/random-fact" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Random Fact Generator — Learn Something New Daily</a>
+      <a href="/dictionary" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Online Dictionary — Look Up Word Definitions Free</a>
+      <a href="/github-profile" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">GitHub Profile Viewer — Look Up Any GitHub User</a>
     </div>
   </div>
 
@@ -282,8 +282,8 @@ document.addEventListener('DOMContentLoaded', getWeather);
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

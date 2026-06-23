@@ -85,7 +85,7 @@
 </div>
 
 <div class="repo-card" style="border-left-color:#c88040;">
-  <div class="num">Repo 07/07 ⚡</div>
+  <div class="num">Repo 07/07 </div>
   <div class="name">Meta's Llama Cookbook</div>
   <div class="desc">Everything you need to run, fine-tune, and deploy open-source models locally or in production. Quantization, LoRA, inference optimization, multi-GPU setups. The most underrated repo in AI. Knowing what's in here is worth $250K+ at any company touching local models. The repo that takes you from "AI user" to "AI infrastructure engineer."</div>
   <span class="tag">Open-Source &bull; Quantization &bull; LoRA</span>
@@ -108,17 +108,17 @@
 <p class="meta">By HackingFlix &middot; @hackingflixofficial</p>
 <p class="meta" style="margin-bottom:18px">9-part technical breakdown on automotive cybersecurity.</p>
 
-<p>A modern car runs <strong>70-100+ ECUs</strong> (Electronic Control Units) talking over shared buses that were never designed with security in mind. No authentication. No encryption. Every ECU trusts every message.</p>
+<p>A modern car runs <strong>70-100+ ECUs</strong>(Electronic Control Units) talking over shared buses that were never designed with security in mind. No authentication. No encryption. Every ECU trusts every message.</p>
 
 <h3>The Attack Surface</h3>
 <ul>
-  <li><strong>OBD-II Port</strong> — physical, direct ECU access under the dashboard</li>
-  <li><strong>CAN Bus</strong> — internal network, zero authentication</li>
-  <li><strong>Key Fob (RF)</strong> — 315/433MHz, relay-able</li>
-  <li><strong>Bluetooth</strong> — infotainment pairing flaws</li>
-  <li><strong>Wi-Fi Hotspot</strong> — weak default credentials</li>
-  <li><strong>Cellular / Telematics</strong> — remote entry point</li>
-  <li><strong>TPMS</strong> — unencrypted tire sensor broadcasts</li>
+  <li><strong>OBD-II Port</strong>— physical, direct ECU access under the dashboard</li>
+  <li><strong>CAN Bus</strong>— internal network, zero authentication</li>
+  <li><strong>Key Fob (RF)</strong>— 315/433MHz, relay-able</li>
+  <li><strong>Bluetooth</strong>— infotainment pairing flaws</li>
+  <li><strong>Wi-Fi Hotspot</strong>— weak default credentials</li>
+  <li><strong>Cellular / Telematics</strong>— remote entry point</li>
+  <li><strong>TPMS</strong>— unencrypted tire sensor broadcasts</li>
 </ul>
 
 <h3>CAN Bus Exploitation</h3>
@@ -155,21 +155,21 @@
   <li>B's device captures the fob's low-power signal and relays it to A in real time.</li>
   <li>The car "hears" the key as if it were nearby — it unlocks and starts.</li>
 </ol>
-<p><strong>Why this works:</strong> Rolling codes don't help — the signal isn't replayed, it's <em>relayed live</em>.<br>
-<strong>Defense:</strong> Faraday pouch / signal-blocking key storage.</p>
+<p><strong>Why this works:</strong>Rolling codes don't help — the signal isn't replayed, it's <em>relayed live</em>.<br>
+<strong>Defense:</strong>Faraday pouch / signal-blocking key storage.</p>
 
 <h3>Wireless Attack Vectors</h3>
 <p>Four radios on board. Four different ways in — no cable required.</p>
 <ul>
-  <li><strong>Bluetooth</strong> — Pairing &amp; protocol-stack flaws in infotainment</li>
-  <li><strong>Wi-Fi Hotspot</strong> — Default or weak credentials on the built-in AP</li>
-  <li><strong>Cellular / Telematics</strong> — Modem flaws → remote code execution, no physical access</li>
-  <li><strong>TPMS</strong> — Tire sensor IDs broadcast in plaintext, trivially spoofable</li>
+  <li><strong>Bluetooth</strong>— Pairing &amp; protocol-stack flaws in infotainment</li>
+  <li><strong>Wi-Fi Hotspot</strong>— Default or weak credentials on the built-in AP</li>
+  <li><strong>Cellular / Telematics</strong>— Modem flaws remote code execution, no physical access</li>
+  <li><strong>TPMS</strong>— Tire sensor IDs broadcast in plaintext, trivially spoofable</li>
 </ul>
 
 <h3>Case Study: Jeep Cherokee (2015)</h3>
 <p class="meta">Miller &amp; Valasek &bull; 1.4M vehicles recalled</p>
-<p>Researchers found a remote flaw in the Uconnect cellular system. They used the telematics unit as a pivot point to reach the internal CAN bus. They <strong>remotely killed the engine, disabled brakes, and took over steering</strong> — while a journalist was driving on a real highway. It triggered the first cybersecurity-related vehicle recall in history.</p>
+<p>Researchers found a remote flaw in the Uconnect cellular system. They used the telematics unit as a pivot point to reach the internal CAN bus. They <strong>remotely killed the engine, disabled brakes, and took over steering</strong>— while a journalist was driving on a real highway. It triggered the first cybersecurity-related vehicle recall in history.</p>
 
 <h3>How It Gets Fixed</h3>
 <ul>
@@ -260,8 +260,8 @@
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

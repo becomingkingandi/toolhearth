@@ -30,22 +30,22 @@
 </div>
 <div class="tool-content">
 <div class="top">
-  <h1><a href="index.html" style="color:var(--muted);text-decoration:none">←</a> .* Regex Tester &amp; Reference</h1>
+  <h1><a href="index.html" style="color:var(--muted);text-decoration:none"></a>.* Regex Tester &amp; Reference</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
 <!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
-  <span class="ref-toggle" onclick="toggleRef()">📖 Cheat Sheet</span>
+  <span class="ref-toggle" onclick="toggleRef()">Cheat Sheet</span>
 </div>
 
 <div class="input-row">
   <label>Pattern /<input type="text" id="pattern" value="\b\w+@\w+\.\w+\b" spellcheck="false" oninput="testRegex()"></label>/<span id="flagDisplay" style="font-size:.9rem;color:var(--muted)"></span>
   <div class="flags">
-    <label><input type="checkbox" id="flagG" checked onchange="testRegex()"> g</label>
-    <label><input type="checkbox" id="flagI" onchange="testRegex()"> i</label>
-    <label><input type="checkbox" id="flagM" onchange="testRegex()"> m</label>
-    <label><input type="checkbox" id="flagS" onchange="testRegex()"> s</label>
-    <label><input type="checkbox" id="flagU" onchange="testRegex()"> u</label>
+    <label><input type="checkbox" id="flagG" checked onchange="testRegex()">g</label>
+    <label><input type="checkbox" id="flagI" onchange="testRegex()">i</label>
+    <label><input type="checkbox" id="flagM" onchange="testRegex()">m</label>
+    <label><input type="checkbox" id="flagS" onchange="testRegex()">s</label>
+    <label><input type="checkbox" id="flagU" onchange="testRegex()">u</label>
   </div>
 </div>
 
@@ -74,8 +74,8 @@ Hello World! hello-world hello_world</textarea>
 </div>
 
 <div class="info-bar">
-  <span id="status">✅ Pattern OK</span>
-  <span id="matchInfo">📊 0 matches</span>
+  <span id="status">Pattern OK</span>
+  <span id="matchInfo">0 matches</span>
 </div>
 
 <div id="refSheet">
@@ -151,24 +151,24 @@ function testRegex() {
   if (!pat) {
     matchesDiv.innerHTML = '<div class="no-match">Type a pattern to test</div>';
     hlPreview.textContent = text || '';
-    status.textContent = '⏳ Enter pattern';
+    status.textContent = ' Enter pattern';
     matchCount.textContent = '0';
-    matchInfo.textContent = '📊 0 matches';
+    matchInfo.textContent = ' 0 matches';
     return;
   }
 
   let regex;
   try {
     regex = new RegExp(pat, flags);
-    status.innerHTML = '✅ Pattern OK';
+    status.innerHTML = ' Pattern OK';
     pattern.className = '';
   } catch(e) {
-    matchesDiv.innerHTML = `<div class="no-match" style="color:var(--red)">❌ ${e.message}</div>`;
+    matchesDiv.innerHTML = `<div class="no-match" style="color:var(--red)"> ${e.message}</div>`;
     hlPreview.textContent = text || '';
-    status.innerHTML = '❌ Invalid';
+    status.innerHTML = ' Invalid';
     pattern.className = 'err';
     matchCount.textContent = '—';
-    matchInfo.textContent = '📊 error';
+    matchInfo.textContent = ' error';
     return;
   }
 
@@ -195,7 +195,7 @@ function testRegex() {
   if (allMatches.length === 0) {
     matchesDiv.innerHTML = '<div class="no-match">No matches found</div>';
     matchCount.textContent = '0';
-    matchInfo.textContent = '📊 0 matches';
+    matchInfo.textContent = ' 0 matches';
   } else {
     let html = '';
     allMatches.forEach((m, i) => {
@@ -214,7 +214,7 @@ function testRegex() {
     });
     matchesDiv.innerHTML = html;
     matchCount.textContent = `${allMatches.length}`;
-    matchInfo.textContent = `📊 ${allMatches.length} match${allMatches.length!==1?'es':''}`;
+    matchInfo.textContent = ` ${allMatches.length} match${allMatches.length!==1?'es':''}`;
   }
 
   // Build highlighted preview
@@ -271,14 +271,14 @@ testRegex();
 </script>
 
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
-    <h3 style="color:#5f6b62;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <h3 style="color:#6b6357;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/json-formatter" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
-      <a href="/base64" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
-      <a href="/uuid-generator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
-      <a href="/lorem-ipsum" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
-      <a href="/jwt-decoder" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
-      <a href="/diff-checker" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Diff Checker — Compare Text Differences Online</a>
+      <a href="/json-formatter" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">JSON Formatter & Validator — Format, Validate, Minify JSON</a>
+      <a href="/base64" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Base64 Encoder & Decoder — Encode Text to Base64 Online</a>
+      <a href="/uuid-generator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">UUID Generator — Generate UUID v4 Identifiers Online</a>
+      <a href="/lorem-ipsum" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Lorem Ipsum Generator — Generate Placeholder Text</a>
+      <a href="/jwt-decoder" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">JWT Decoder — Decode JSON Web Tokens Online</a>
+      <a href="/diff-checker" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Diff Checker — Compare Text Differences Online</a>
     </div>
   </div>
 
@@ -357,8 +357,8 @@ testRegex();
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

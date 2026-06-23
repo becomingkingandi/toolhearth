@@ -29,7 +29,7 @@
 </div>
 <div class="tool-content">
 <div class="container">
-  <h1>🧮 Boring Calculators</h1>
+  <h1>Boring Calculators</h1>
   <p class="subtitle">20+ free online calculators — accurate, no ads, no fluff. All run client-side.</p>
 
   <div class="tabs">
@@ -44,7 +44,7 @@
 </div>
 
 <div class="footer">
-  <a href="https://calculator.net" target="_blank" rel="noopener">calculator.net</a> &middot; bored at work &middot; all calculations client-side JavaScript<br>
+  <a href="https://calculator.net" target="_blank" rel="noopener">calculator.net</a>&middot; bored at work &middot; all calculations client-side JavaScript<br>
   <span style="font-size:12px">No data ever leaves your device. <span id="year"></span></span>
 </div>
 
@@ -360,7 +360,7 @@ const CALCULATORS = [
     if(p.length>=16) score++;
     const labels=['Extremely Weak','Very Weak','Weak','Fair','Strong','Very Strong','Unbreakable'];
     const time=p.length<6?'seconds':score<=2?'minutes':score<=3?'hours':score<=4?'days (or weeks)':score<=5?'years':'centuries';
-    const star='★'.repeat(Math.max(1,Math.min(score+1,6)))+'☆'.repeat(Math.max(0,5-score));
+    const star=''.repeat(Math.max(1,Math.min(score+1,6)))+''.repeat(Math.max(0,5-score));
     return{value:labels[Math.min(score,6)]+' ('+p.length+' chars)',detail:'Score: '+star+' &middot; Estimated crack time: '+time};
   }},
   { cat:'misc', title:'Odds Calculator', inputs:[
@@ -536,8 +536,8 @@ renderCategory('math');
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

@@ -29,7 +29,7 @@
 </div>
 <div class="tool-content">
 <div class="container">
-<h1>🏖️ Retirement Calculator</h1>
+<h1>Retirement Calculator</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -39,7 +39,7 @@
 <div class="card">
   <div class="tabs">
     <div class="tab active" data-tab="standard">Standard</div>
-    <div class="tab" data-tab="fire">🔥 FIRE</div>
+    <div class="tab" data-tab="fire">FIRE</div>
     <div class="tab" data-tab="withdrawal">Withdrawal</div>
   </div>
 
@@ -53,7 +53,7 @@
       <div class="field"><label>Expected Return (%)</label><input type="number" id="stdReturn" value="7" step="0.25" min="0" max="30"></div>
       <div class="field"><label>Expected Inflation (%)</label><input type="number" id="stdInflation" value="3" step="0.1" min="0" max="20"></div>
     </div>
-    <button class="btn calc-tab-btn" data-tab="standard">📊 Calculate</button>
+    <button class="btn calc-tab-btn" data-tab="standard">Calculate</button>
     <div id="stdResults" style="margin-top:14px;display:none">
       <div class="result-grid">
         <div class="result-item"><div class="label">At Retirement</div><div class="value accent" id="stdAtRetire">$0.00</div></div>
@@ -78,7 +78,7 @@
       <div class="field"><label>Expected Return (%)</label><input type="number" id="fireReturn" value="7" step="0.25" min="0" max="30"></div>
       <div class="field"><label>Safe Withdrawal Rate (%)</label><input type="number" id="fireSWR" value="4" step="0.25" min="1" max="10"></div>
     </div>
-    <button class="btn calc-tab-btn" data-tab="fire">🔥 Calculate FIRE</button>
+    <button class="btn calc-tab-btn" data-tab="fire">Calculate FIRE</button>
     <div id="fireResults" style="margin-top:14px;display:none">
       <div class="result-grid">
         <div class="result-item"><div class="label">FIRE Number</div><div class="value accent" id="fireNumber">$0.00</div></div>
@@ -101,7 +101,7 @@
       <div class="field"><label>Portfolio Return (%)</label><input type="number" id="wdReturn" value="6" step="0.25" min="0" max="20"></div>
       <div class="field"><label>Inflation Rate (%)</label><input type="number" id="wdInflation" value="3" step="0.1" min="0" max="20"></div>
     </div>
-    <button class="btn calc-tab-btn" data-tab="withdrawal">🔄 Simulate</button>
+    <button class="btn calc-tab-btn" data-tab="withdrawal">Simulate</button>
     <div id="wdResults" style="margin-top:14px;display:none">
       <div class="result-grid">
         <div class="result-item"><div class="label">Years Until Depleted</div><div class="value accent" id="wdYears">—</div></div>
@@ -172,19 +172,19 @@ function drawChart(canvasId, labels, lsValues, dcaValues, lsLabel, dcaLabel, col
   function yPos(v) { return pad.top + ch - (v / maxVal) * ch; }
 
   // Grid
-  ctx.strokeStyle = '#eef0ea';
+  ctx.strokeStyle = '#f3efe8';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = pad.top + (i / 4) * ch;
     ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
-    ctx.fillStyle = '#9aa295';
+    ctx.fillStyle = '#b3ab9c';
     ctx.font = '10px -apple-system, sans-serif';
     ctx.textAlign = 'right';
     ctx.fillText('$' + Math.round(maxVal * (1 - i/4) / 1000) + 'k', pad.left - 6, y + 3);
   }
 
   // X labels
-  ctx.fillStyle = '#9aa295';
+  ctx.fillStyle = '#b3ab9c';
   ctx.font = '10px -apple-system, sans-serif';
   ctx.textAlign = 'center';
   const skip = Math.max(1, Math.floor(n / 8));
@@ -213,7 +213,7 @@ function drawChart(canvasId, labels, lsValues, dcaValues, lsLabel, dcaLabel, col
   // Legend
   ctx.fillStyle = color1;
   ctx.fillRect(w - 150, 6, 12, 12);
-  ctx.fillStyle = '#243027';
+  ctx.fillStyle = '#2a2622';
   ctx.font = '11px -apple-system, sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText(lsLabel, w - 134, 17);
@@ -221,7 +221,7 @@ function drawChart(canvasId, labels, lsValues, dcaValues, lsLabel, dcaLabel, col
   if (dcaValues.length > 0) {
     ctx.fillStyle = color2;
     ctx.fillRect(w - 150, 24, 12, 12);
-    ctx.fillStyle = '#243027';
+    ctx.fillStyle = '#2a2622';
     ctx.fillText(dcaLabel, w - 134, 35);
   }
 }
@@ -288,7 +288,7 @@ function calcStandard() {
     chartLabels.push(String(retireAge));
     chartVals.push(totalAtRetire);
   }
-  drawChart('stdChart', chartLabels, chartVals, [], 'Portfolio Value', '', '#0d9488', 'transparent');
+  drawChart('stdChart', chartLabels, chartVals, [], 'Portfolio Value', '', '#d97706', 'transparent');
 }
 
 // --- FIRE ---
@@ -346,7 +346,7 @@ function calcFire() {
       ? `At your current savings rate, you'll reach FIRE at age <strong>${fireAgeReached}</strong> — just <strong>${yearsToFire} years</strong> away.`
       : `At your current savings rate, reaching FIRE would take over ${maxYears} years. Consider increasing savings or reducing expenses.`);
 
-  drawChart('fireChart', chartLabels, chartVals, [], 'Portfolio', '', '#0d9488', 'transparent');
+  drawChart('fireChart', chartLabels, chartVals, [], 'Portfolio', '', '#d97706', 'transparent');
 }
 
 // --- Withdrawal ---
@@ -502,8 +502,8 @@ calcStandard();
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

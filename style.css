@@ -1,28 +1,28 @@
-/* toolhearth.com — "Sage": warm cream + teal, Work Sans + Noto Serif. No animations. */
+/* toolhearth.com — "Paper": warm light + amber, Work Sans + Noto Serif. No animations. */
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=Noto+Serif:wght@600;700&display=swap');
 
 :root{
-  --bg:#f7f7f2;
+  --bg:#faf8f4;
   --bg-card:#ffffff;
-  --bg-hover:#fafaf7;
-  --bg-subtle:#eef0ea;
-  --border:#e4e7df;
-  --border-strong:#d3d8cd;
-  --text:#1a201d;
-  --text-muted:#5f6b62;
-  --text-soft:#828d80;
-  --brand:#0d9488;
-  --brand-hover:#0f766e;
-  --brand-solid:#0d9488;
-  --brand-solid-hover:#0f766e;
-  --brand-tint:#ecfdf5;
-  --brand-tint-border:#a7f3d0;
+  --bg-hover:#fdfcfa;
+  --bg-subtle:#f3efe8;
+  --border:#e7e2d9;
+  --border-strong:#ddd6c8;
+  --text:#1c1917;
+  --text-muted:#6b6357;
+  --text-soft:#928a7d;
+  --brand:#d97706;
+  --brand-hover:#b45309;
+  --brand-solid:#d97706;
+  --brand-solid-hover:#b45309;
+  --brand-tint:#fff7ed;
+  --brand-tint-border:#fcd9a8;
   --ink:#ffffff;
   --max-width:1080px;
   --radius:12px;
   --radius-sm:8px;
-  --shadow-sm:0 1px 2px rgba(26,32,29,.05),0 1px 3px rgba(26,32,29,.06);
-  --shadow:0 6px 22px rgba(26,32,29,.09);
+  --shadow-sm:0 1px 2px rgba(28,25,23,.05),0 1px 3px rgba(28,25,23,.06);
+  --shadow:0 6px 22px rgba(28,25,23,.09);
   --font-sans:'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --font-serif:'Noto Serif',Georgia,'Times New Roman',serif;
 }
@@ -34,7 +34,7 @@ a{color:var(--brand);text-decoration:none}
 a:hover{color:var(--brand-hover)}
 .container{max-width:var(--max-width);margin:0 auto;padding:0 20px;width:100%;flex:1}
 
-.site-header{background:rgba(247,247,242,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:100}
+.site-header{background:rgba(250,248,244,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:100}
 .header-inner{max-width:var(--max-width);margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.01em}
 .logo span{color:var(--brand)}
@@ -54,7 +54,7 @@ a:hover{color:var(--brand-hover)}
 .page-header .subtitle,.subtitle{color:var(--text-muted);font-size:15px}
 
 .hero{text-align:center;padding:64px 0 46px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(13,148,136,.07),transparent 70%);pointer-events:none}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(217,119,6,.07),transparent 70%);pointer-events:none}
 .hero-icon-grid{display:flex;justify-content:center;gap:14px;margin-bottom:28px;flex-wrap:wrap;position:relative;z-index:1}
 .hero-icon{width:54px;height:54px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:var(--shadow-sm)}
 .hero h1{font-family:var(--font-serif);font-size:46px;font-weight:700;color:var(--text);margin-bottom:14px;letter-spacing:-.02em;line-height:1.08;position:relative;z-index:1}

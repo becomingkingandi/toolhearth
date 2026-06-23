@@ -30,7 +30,7 @@
 </div>
 <div class="tool-content">
 <div class="container">
-  <h1>😴 Sleep Calculator</h1>
+  <h1>Sleep Calculator</h1>
 
 <!-- Ad unit - above fold (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
@@ -38,7 +38,7 @@
   <p class="subtitle">Wake up at the end of a cycle — feel refreshed</p>
 
   <div class="card">
-    <h2>⏰ When do you need to wake up?</h2>
+    <h2>When do you need to wake up?</h2>
     <div class="input-group">
       <label for="wakeup">Wake time:</label>
       <input type="time" id="wakeup" value="07:00">
@@ -48,7 +48,7 @@
   </div>
 
   <div class="card">
-    <h2>🔄 Reverse — Going to bed now?</h2>
+    <h2>Reverse — Going to bed now?</h2>
     <div class="input-group">
       <label for="bedtime">Bed time:</label>
       <input type="time" id="bedtime">
@@ -58,10 +58,10 @@
   </div>
 
   <div class="card">
-    <h2>📖 About Sleep Cycles</h2>
+    <h2>About Sleep Cycles</h2>
     <div class="explanation">
-      <p>Sleep cycles are <strong>~90 minutes</strong> each. Waking at the <strong>end of a cycle</strong> leaves you refreshed. Waking <strong>mid-cycle</strong> causes grogginess (sleep inertia).</p>
-      <p style="margin-top:0.6rem;">For best results, aim for <strong>5 or 6 full cycles</strong> — that's about 7.5&ndash;9 hours. Even 4 cycles (6 hours) works if your schedule is tight.</p>
+      <p>Sleep cycles are <strong>~90 minutes</strong>each. Waking at the <strong>end of a cycle</strong>leaves you refreshed. Waking <strong>mid-cycle</strong>causes grogginess (sleep inertia).</p>
+      <p style="margin-top:0.6rem;">For best results, aim for <strong>5 or 6 full cycles</strong>— that's about 7.5&ndash;9 hours. Even 4 cycles (6 hours) works if your schedule is tight.</p>
     </div>
   </div>
 
@@ -117,10 +117,10 @@ function calcBedtimes() {
   const container = document.getElementById('bedtimes');
   
   const cycles = [
-    { label: '😴 3 cycles', cycles: 3, hours: '4.5h' },
-    { label: '😐 4 cycles', cycles: 4, hours: '6h' },
-    { label: '🙂 5 cycles', cycles: 5, hours: '7.5h' },
-    { label: '😊 6 cycles', cycles: 6, hours: '9h' },
+    { label: ' 3 cycles', cycles: 3, hours: '4.5h' },
+    { label: ' 4 cycles', cycles: 4, hours: '6h' },
+    { label: ' 5 cycles', cycles: 5, hours: '7.5h' },
+    { label: ' 6 cycles', cycles: 6, hours: '9h' },
   ];
 
   let html = '';
@@ -157,7 +157,7 @@ function calcWakeups() {
     const wakeTime = formatAmPm(wakeMin);
     const isOptimal = c.cycles >= 5;
     html += '<div class="result-row' + (isOptimal ? ' optimal' : '') + '">' +
-      '<span>' + (isOptimal ? '😊 ' : '') + c.label + ' <span class="cycles">' + c.hours + '</span></span>' +
+      '<span>' + (isOptimal ? ' ' : '') + c.label + ' <span class="cycles">' + c.hours + '</span></span>' +
       '<span class="time">' + wakeTime + '</span>' +
       '</div>';
   }
@@ -171,14 +171,14 @@ function calcWakeups() {
 </script>
 
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
-    <h3 style="color:#5f6b62;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
+    <h3 style="color:#6b6357;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/calorie-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
-      <a href="/bmr-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
-      <a href="/body-fat-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
-      <a href="/water-intake-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
-      <a href="/due-date-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
-      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e4e7df;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#0d9488;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
+      <a href="/calorie-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Calorie Calculator — Daily Calorie Needs by Age, Weight & Activity</a>
+      <a href="/bmr-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">BMR Calculator — Basal Metabolic Rate (Mifflin-St Jeor & Harris-Benedict)</a>
+      <a href="/body-fat-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Body Fat Percentage Calculator — US Navy Method & Simple Method</a>
+      <a href="/water-intake-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Water Intake Calculator — How Much Water Should You Drink Daily</a>
+      <a href="/due-date-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Pregnancy Due Date Calculator — LMP & Conception Date</a>
+      <a href="/pregnancy-week-calculator" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Pregnancy Week Calculator — Current Week, Trimester & Due Date</a>
     </div>
   </div>
 
@@ -257,8 +257,8 @@ function calcWakeups() {
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>

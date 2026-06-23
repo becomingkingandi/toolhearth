@@ -41,7 +41,7 @@
   <section class="filters">
     <div class="container">
       <div class="search-wrap">
-        <span class="search-icon">&#128269;</span>
+        <span class="search-icon"></span>
         <input type="text" id="searchInput" placeholder="Search jobs, companies, keywords…" oninput="filterJobs()">
       </div>
       <div class="salary-filter">
@@ -75,35 +75,35 @@
 
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
-    Listings curated from top remote AI companies
-  </footer>
+ Listings curated from top remote AI companies
+ </footer>
 
   <script>
     // ===== DATA =====
     const jobs = [
-      { id:1,  title:'Machine Learning Engineer',   company:'Anthropic',        salaryMin:200000, salaryMax:350000, salary:'$200–350k', category:'Engineering', posted:'2 days ago',     logo:'🤖' },
-      { id:2,  title:'AI Engineer',                  company:'OpenAI',          salaryMin:180000, salaryMax:320000, salary:'$180–320k', category:'Engineering', posted:'5 days ago',     logo:'⚡' },
-      { id:3,  title:'ML Engineer',                  company:'Google DeepMind', salaryMin:160000, salaryMax:300000, salary:'$160–300k', category:'Engineering', posted:'1 week ago',    logo:'🧠' },
-      { id:4,  title:'Research Scientist',           company:'Meta AI',         salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Research',    posted:'3 days ago',    logo:'🔬' },
-      { id:5,  title:'AI Product Manager',           company:'Microsoft',       salaryMin:140000, salaryMax:250000, salary:'$140–250k', category:'Product',     posted:'1 week ago',    logo:'📊' },
-      { id:6,  title:'Data Scientist',               company:'Stripe',          salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Data',        posted:'4 days ago',    logo:'📈' },
-      { id:7,  title:'ML Ops Engineer',              company:'Spotify',         salaryMin:120000, salaryMax:200000, salary:'$120–200k', category:'Engineering', posted:'2 weeks ago',   logo:'🎵' },
-      { id:8,  title:'AI Research Engineer',          company:'NVIDIA',          salaryMin:160000, salaryMax:300000, salary:'$160–300k', category:'Research',    posted:'6 days ago',    logo:'🟢' },
-      { id:9,  title:'LLM Engineer',                 company:'Cohere',          salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Engineering', posted:'1 week ago',    logo:'📝' },
-      { id:10, title:'Computer Vision Engineer',     company:'Tesla',           salaryMin:140000, salaryMax:260000, salary:'$140–260k', category:'Engineering', posted:'3 days ago',    logo:'🚗' },
-      { id:11, title:'NLP Engineer',                 company:'Grammarly',       salaryMin:130000, salaryMax:240000, salary:'$130–240k', category:'Engineering', posted:'2 weeks ago',   logo:'✍️' },
-      { id:12, title:'AI Ethics Researcher',          company:'ACLU',            salaryMin:100000, salaryMax:180000, salary:'$100–180k', category:'Research',    posted:'1 month ago',   logo:'⚖️' },
-      { id:13, title:'Prompt Engineer',              company:'Various',         salaryMin:80000,  salaryMax:150000, salary:'$80–150k',  category:'Engineering', posted:'1 week ago',    logo:'💬' },
-      { id:14, title:'AI Product Designer',          company:'Figma',           salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Design',      posted:'5 days ago',    logo:'🎨' },
-      { id:15, title:'ML Infrastructure Engineer',    company:'Databricks',      salaryMin:150000, salaryMax:270000, salary:'$150–270k', category:'Engineering', posted:'2 weeks ago',   logo:'🏗️' },
-      { id:16, title:'Applied Scientist',            company:'Amazon',          salaryMin:140000, salaryMax:260000, salary:'$140–260k', category:'Research',    posted:'1 week ago',    logo:'📦' },
-      { id:17, title:'AI Writer / Editor',           company:'Jasper',          salaryMin:90000,  salaryMax:160000, salary:'$90–160k',  category:'Design',      posted:'3 weeks ago',   logo:'✏️' },
-      { id:18, title:'Deep Learning Engineer',       company:'Cruise',          salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Engineering', posted:'4 days ago',    logo:'🚀' },
-      { id:19, title:'AI Data Curator',              company:'Scale AI',        salaryMin:80000,  salaryMax:140000, salary:'$80–140k',  category:'Data',        posted:'2 weeks ago',   logo:'🏷️' },
-      { id:20, title:'Reinforcement Learning Eng.',   company:'DeepMind',        salaryMin:170000, salaryMax:320000, salary:'$170–320k', category:'Research',    posted:'1 week ago',    logo:'♟️' },
-      { id:21, title:'AI Solutions Architect',       company:'Google Cloud',    salaryMin:160000, salaryMax:280000, salary:'$160–280k', category:'Engineering', posted:'3 days ago',    logo:'☁️' },
-      { id:22, title:'Data Engineering Lead',        company:'Snowflake',       salaryMin:150000, salaryMax:260000, salary:'$150–260k', category:'Data',        posted:'1 week ago',    logo:'❄️' },
-      { id:23, title:'AI Product Strategist',        company:'Notion',          salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Product',     posted:'5 days ago',    logo:'📋' },
+      { id:1,  title:'Machine Learning Engineer',   company:'Anthropic',        salaryMin:200000, salaryMax:350000, salary:'$200–350k', category:'Engineering', posted:'2 days ago',     logo:'' },
+      { id:2,  title:'AI Engineer',                  company:'OpenAI',          salaryMin:180000, salaryMax:320000, salary:'$180–320k', category:'Engineering', posted:'5 days ago',     logo:'' },
+      { id:3,  title:'ML Engineer',                  company:'Google DeepMind', salaryMin:160000, salaryMax:300000, salary:'$160–300k', category:'Engineering', posted:'1 week ago',    logo:'' },
+      { id:4,  title:'Research Scientist',           company:'Meta AI',         salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Research',    posted:'3 days ago',    logo:'' },
+      { id:5,  title:'AI Product Manager',           company:'Microsoft',       salaryMin:140000, salaryMax:250000, salary:'$140–250k', category:'Product',     posted:'1 week ago',    logo:'' },
+      { id:6,  title:'Data Scientist',               company:'Stripe',          salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Data',        posted:'4 days ago',    logo:'' },
+      { id:7,  title:'ML Ops Engineer',              company:'Spotify',         salaryMin:120000, salaryMax:200000, salary:'$120–200k', category:'Engineering', posted:'2 weeks ago',   logo:'' },
+      { id:8,  title:'AI Research Engineer',          company:'NVIDIA',          salaryMin:160000, salaryMax:300000, salary:'$160–300k', category:'Research',    posted:'6 days ago',    logo:'' },
+      { id:9,  title:'LLM Engineer',                 company:'Cohere',          salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Engineering', posted:'1 week ago',    logo:'' },
+      { id:10, title:'Computer Vision Engineer',     company:'Tesla',           salaryMin:140000, salaryMax:260000, salary:'$140–260k', category:'Engineering', posted:'3 days ago',    logo:'' },
+      { id:11, title:'NLP Engineer',                 company:'Grammarly',       salaryMin:130000, salaryMax:240000, salary:'$130–240k', category:'Engineering', posted:'2 weeks ago',   logo:'' },
+      { id:12, title:'AI Ethics Researcher',          company:'ACLU',            salaryMin:100000, salaryMax:180000, salary:'$100–180k', category:'Research',    posted:'1 month ago',   logo:'' },
+      { id:13, title:'Prompt Engineer',              company:'Various',         salaryMin:80000,  salaryMax:150000, salary:'$80–150k',  category:'Engineering', posted:'1 week ago',    logo:'' },
+      { id:14, title:'AI Product Designer',          company:'Figma',           salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Design',      posted:'5 days ago',    logo:'' },
+      { id:15, title:'ML Infrastructure Engineer',    company:'Databricks',      salaryMin:150000, salaryMax:270000, salary:'$150–270k', category:'Engineering', posted:'2 weeks ago',   logo:'' },
+      { id:16, title:'Applied Scientist',            company:'Amazon',          salaryMin:140000, salaryMax:260000, salary:'$140–260k', category:'Research',    posted:'1 week ago',    logo:'' },
+      { id:17, title:'AI Writer / Editor',           company:'Jasper',          salaryMin:90000,  salaryMax:160000, salary:'$90–160k',  category:'Design',      posted:'3 weeks ago',   logo:'' },
+      { id:18, title:'Deep Learning Engineer',       company:'Cruise',          salaryMin:150000, salaryMax:280000, salary:'$150–280k', category:'Engineering', posted:'4 days ago',    logo:'' },
+      { id:19, title:'AI Data Curator',              company:'Scale AI',        salaryMin:80000,  salaryMax:140000, salary:'$80–140k',  category:'Data',        posted:'2 weeks ago',   logo:'' },
+      { id:20, title:'Reinforcement Learning Eng.',   company:'DeepMind',        salaryMin:170000, salaryMax:320000, salary:'$170–320k', category:'Research',    posted:'1 week ago',    logo:'' },
+      { id:21, title:'AI Solutions Architect',       company:'Google Cloud',    salaryMin:160000, salaryMax:280000, salary:'$160–280k', category:'Engineering', posted:'3 days ago',    logo:'' },
+      { id:22, title:'Data Engineering Lead',        company:'Snowflake',       salaryMin:150000, salaryMax:260000, salary:'$150–260k', category:'Data',        posted:'1 week ago',    logo:'' },
+      { id:23, title:'AI Product Strategist',        company:'Notion',          salaryMin:130000, salaryMax:220000, salary:'$130–220k', category:'Product',     posted:'5 days ago',    logo:'' },
     ];
 
     // ===== STATE =====
@@ -153,13 +153,13 @@
           <div class="job-title">${job.logo || ''} ${job.title}</div>
           <div class="job-company">${job.company} — Remote</div>
           <div class="job-meta">
-            <span class="salary">💰 ${job.salary}</span>
+            <span class="salary"> ${job.salary}</span>
           </div>
           <div class="job-tags">
             <span class="tag tag-${job.category.toLowerCase()}">${job.category}</span>
           </div>
           <div class="job-footer">
-            <span class="job-posted">📅 ${job.posted}</span>
+            <span class="job-posted"> ${job.posted}</span>
             <button class="apply-btn" onclick="alert('Application link for ${job.title} at ${job.company}')">Apply Now</button>
           </div>
         </div>
@@ -251,8 +251,8 @@
   </div>
     </div>
     <div class="footer-bottom">
-      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
-    </div>
+ &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
+ </div>
   </div>
 </footer>
 </body>
