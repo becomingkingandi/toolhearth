@@ -9,6 +9,14 @@
 <meta name="description" content="See the current time in 10 major world cities simultaneously. Add custom timezones. Auto-updates every second.">
 <link rel="canonical" href="https://toolhearth.com/world-clock.html">
 
+<meta property="og:title" content="World Clock — Current Time in Cities Worldwide">
+<meta property="og:description" content="See the current time in 10 major world cities simultaneously. Add custom timezones. Auto-updates every second.">
+<meta property="og:url" content="https://toolhearth.com/world-clock.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="toolhearth.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="World Clock — Current Time in Cities Worldwide">
+<meta name="twitter:description" content="See the current time in 10 major world cities simultaneously. Add custom timezones. Auto-updates every second.">
 </head>
 <body>
 <header class="site-header">
@@ -313,5 +321,53 @@ COMMON_TZS.forEach(t => { const o = document.createElement('option'); o.value = 
  </div>
   </div>
 </footer>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "World Clock",
+  "description": "See the current time in 10 major world cities simultaneously. Add custom timezones. Auto-updates every second.",
+  "url": "https://toolhearth.com/world-clock.html",
+  "applicationCategory": "Timer",
+  "operatingSystem": "Web Browser",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "1200"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://toolhearth.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Timer",
+      "item": "https://toolhearth.com/#timer"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "World Clock",
+      "item": "https://toolhearth.com/world-clock.html"
+    }
+  ]
+}
+</script>
 </body>
 </html>
