@@ -172,19 +172,19 @@ function drawChart(canvasId, labels, lsValues, dcaValues, lsLabel, dcaLabel, col
   function yPos(v) { return pad.top + ch - (v / maxVal) * ch; }
 
   // Grid
-  ctx.strokeStyle = '#21262d';
+  ctx.strokeStyle = '#eef0ea';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = pad.top + (i / 4) * ch;
     ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
-    ctx.fillStyle = '#484f58';
+    ctx.fillStyle = '#9aa295';
     ctx.font = '10px -apple-system, sans-serif';
     ctx.textAlign = 'right';
     ctx.fillText('$' + Math.round(maxVal * (1 - i/4) / 1000) + 'k', pad.left - 6, y + 3);
   }
 
   // X labels
-  ctx.fillStyle = '#484f58';
+  ctx.fillStyle = '#9aa295';
   ctx.font = '10px -apple-system, sans-serif';
   ctx.textAlign = 'center';
   const skip = Math.max(1, Math.floor(n / 8));
@@ -213,7 +213,7 @@ function drawChart(canvasId, labels, lsValues, dcaValues, lsLabel, dcaLabel, col
   // Legend
   ctx.fillStyle = color1;
   ctx.fillRect(w - 150, 6, 12, 12);
-  ctx.fillStyle = '#c9d1d9';
+  ctx.fillStyle = '#243027';
   ctx.font = '11px -apple-system, sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText(lsLabel, w - 134, 17);
@@ -221,7 +221,7 @@ function drawChart(canvasId, labels, lsValues, dcaValues, lsLabel, dcaLabel, col
   if (dcaValues.length > 0) {
     ctx.fillStyle = color2;
     ctx.fillRect(w - 150, 24, 12, 12);
-    ctx.fillStyle = '#c9d1d9';
+    ctx.fillStyle = '#243027';
     ctx.fillText(dcaLabel, w - 134, 35);
   }
 }
@@ -288,7 +288,7 @@ function calcStandard() {
     chartLabels.push(String(retireAge));
     chartVals.push(totalAtRetire);
   }
-  drawChart('stdChart', chartLabels, chartVals, [], 'Portfolio Value', '', '#fbbf24', 'transparent');
+  drawChart('stdChart', chartLabels, chartVals, [], 'Portfolio Value', '', '#0d9488', 'transparent');
 }
 
 // --- FIRE ---
@@ -346,7 +346,7 @@ function calcFire() {
       ? `At your current savings rate, you'll reach FIRE at age <strong>${fireAgeReached}</strong> — just <strong>${yearsToFire} years</strong> away.`
       : `At your current savings rate, reaching FIRE would take over ${maxYears} years. Consider increasing savings or reducing expenses.`);
 
-  drawChart('fireChart', chartLabels, chartVals, [], 'Portfolio', '', '#3fb950', 'transparent');
+  drawChart('fireChart', chartLabels, chartVals, [], 'Portfolio', '', '#0d9488', 'transparent');
 }
 
 // --- Withdrawal ---

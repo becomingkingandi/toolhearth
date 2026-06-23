@@ -74,7 +74,7 @@
       <div class="summary-item"><div class="label">Total Paid</div><div class="value" id="totalPaidAmt">$0.00</div></div>
     </div>
 
-    <h3 style="font-size:.9rem;color:#8b949e;margin-bottom:8px">📅 Payoff Order</h3>
+    <h3 style="font-size:.9rem;color:#5f6b62;margin-bottom:8px">📅 Payoff Order</h3>
     <ul class="plan-list" id="payoffOrder"></ul>
 
     <div class="comparison-banner">
@@ -267,7 +267,7 @@ function calculate() {
 
   // Payoff timeline bars
   const timeline = $('payoffTimeline');
-  timeline.innerHTML = '<h3 style="font-size:.9rem;color:#8b949e;margin-bottom:8px;margin-top:12px">📊 Payoff Progress (Avalanche)</h3>';
+  timeline.innerHTML = '<h3 style="font-size:.9rem;color:#5f6b62;margin-bottom:8px;margin-top:12px">📊 Payoff Progress (Avalanche)</h3>';
 
   const avSorted = [...debts].sort((a, b) => b.apr - a.apr);
   const maxBalance = Math.max(...debts.map(d => d.balance), 1);

@@ -290,7 +290,7 @@ function calcCompare() {
   function yPos(v) { return pad.top + chartH - (v / maxVal) * chartH; }
 
   // Grid lines
-  ctx.strokeStyle = '#21262d';
+  ctx.strokeStyle = '#eef0ea';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = pad.top + (i / 4) * chartH;
@@ -298,14 +298,14 @@ function calcCompare() {
     ctx.moveTo(pad.left, y);
     ctx.lineTo(w - pad.right, y);
     ctx.stroke();
-    ctx.fillStyle = '#484f58';
+    ctx.fillStyle = '#9aa295';
     ctx.font = '11px -apple-system, sans-serif';
     ctx.textAlign = 'right';
     ctx.fillText('$' + Math.round((maxVal * (1 - i/4)) / 1000) + 'k', pad.left - 8, y + 4);
   }
 
   // X labels
-  ctx.fillStyle = '#484f58';
+  ctx.fillStyle = '#9aa295';
   ctx.font = '11px -apple-system, sans-serif';
   ctx.textAlign = 'center';
   for (let i = 0; i <= 5; i++) {
@@ -315,7 +315,7 @@ function calcCompare() {
   }
 
   // Lump sum line
-  ctx.strokeStyle = '#fbbf24';
+  ctx.strokeStyle = '#0d9488';
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   data.forEach((d, i) => {
@@ -326,7 +326,7 @@ function calcCompare() {
   ctx.stroke();
 
   // DCA line
-  ctx.strokeStyle = '#3fb950';
+  ctx.strokeStyle = '#0d9488';
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   data.forEach((d, i) => {
@@ -337,16 +337,16 @@ function calcCompare() {
   ctx.stroke();
 
   // Legend
-  ctx.fillStyle = '#fbbf24';
+  ctx.fillStyle = '#0d9488';
   ctx.fillRect(w - 140, 6, 12, 12);
-  ctx.fillStyle = '#c9d1d9';
+  ctx.fillStyle = '#243027';
   ctx.font = '12px -apple-system, sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText('Lump Sum', w - 124, 17);
 
-  ctx.fillStyle = '#3fb950';
+  ctx.fillStyle = '#0d9488';
   ctx.fillRect(w - 140, 24, 12, 12);
-  ctx.fillStyle = '#c9d1d9';
+  ctx.fillStyle = '#243027';
   ctx.fillText('DCA', w - 124, 35);
 }
 
