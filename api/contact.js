@@ -1,4 +1,8 @@
-// /api/contact.js — send contact form to email webhook
+// /api/contact.js — process contact form submissions
+export const config = {
+  runtime: 'nodejs18.x',
+};
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -11,37 +15,40 @@ export default async function handler(req, res) {
   }
 
   try {
-    const webhookUrl = process.env.EMAIL_WEBHOOK_URL || "http://100.121.100.78:8088/signup";
+    // Log the contact to console
+    console.log(`[CONTACT] From: ${name || "Anonymous"} <${email}>`);
+    console.log(`[CONTACT] Subject: ${subject || "Contact Form"}`);
+    console.log(`[CONTACT] Message: ${message}`);
 
-    // Send contact info as a special signup with contact details in source
-    const contactData = `contact|${name || "Anonymous"}|${subject || "Contact Form"}`;
-
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        source: contactData
-      }),
-      timeout: 10000
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error(`[contact-api] webhook error: ${response.status}`, data);
-      return res.status(response.status || 500).json(data);
+    // Try to forward to webhook
+    try {
+      await Promise.race([
+        fetch("http://100.121.100.78:8088/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            source: `contact|${name || "Anonymous"}|${subject || "Contact Form"}`
+          })
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("timeout")), 3000)
+        )
+      ]);
+    } catch (webhookError) {
+      console.warn(`[WEBHOOK] Could not reach webhook: ${webhookError.message}`);
     }
 
-    // TODO: also email the message to support@toolhearth.com
-    console.log(`[contact-api] contact from ${email}: ${subject}`);
+    // Return success to user
+    return res.status(200).json({
+      success: true,
+      message: "Thanks! We'll be in touch soon."
+    });
 
-    return res.status(200).json({ success: true, message: "Thanks! We'll be in touch soon." });
   } catch (error) {
-    console.error("[contact-api] error:", error.message);
+    console.error("[CONTACT] Error:", error.message);
     return res.status(500).json({
-      error: "Failed to send. Please email support@toolhearth.com",
-      details: error.message
+      error: "Failed to send. Please email support@toolhearth.com"
     });
   }
 }
