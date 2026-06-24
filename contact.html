@@ -82,7 +82,7 @@ document.getElementById("contact-form").addEventListener("submit", async functio
   status.textContent = "";
 
   try {
-    var r = await fetch("https://toolhearth-email.vercel.app/api/contact", {
+    var r = await fetch("/api/contact", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
@@ -116,7 +116,7 @@ document.getElementById("email-form").addEventListener("submit", async function(
   btn.disabled = true;
   btn.textContent = "Subscribing...";
   try {
-    var r = await fetch("https://toolhearth-email.vercel.app/api/subscribe", {
+    var r = await fetch("/api/subscribe", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({email: this.email.value, source: "toolhearth"})
