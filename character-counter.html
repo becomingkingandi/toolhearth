@@ -3,37 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- toolhearth.com -->
 <link rel="stylesheet" href="/style.css">
 <title>Character Counter — Count Characters, Words & Sentences</title>
 <meta name="description" content="Free online character counter. Live count of characters, words, sentences, paragraphs and estimated reading time as you type or paste text.">
 <link rel="canonical" href="https://toolhearth.com/character-counter.html">
-<style>
-.hidden{display:none}
-.tool-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);margin:18px 0}
-.unit-toggle{display:inline-flex;gap:4px;margin:4px 0 8px}
-.unit-toggle button{background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);padding:5px 13px;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit}
-.unit-toggle button.active{background:var(--brand-solid);color:#fff;border-color:var(--brand-solid)}
-.big-result{font-family:var(--font-serif);font-size:44px;font-weight:700;color:var(--brand-hover);text-align:center;line-height:1.05}
-.big-sub{text-align:center;color:var(--text-muted);margin-top:4px}
-.res-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
-.res-row:last-child{border-bottom:none}
-.res-row .k{color:var(--text-muted)}.res-row .v{font-weight:600}
-.muted{color:var(--text-muted);font-size:13px}
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;text-align:center}
-.stat-grid .n{font-family:var(--font-serif);font-size:30px;font-weight:700;color:var(--brand-hover)}
-.stat-grid .l{font-size:11.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
-.checks{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0}
-.checks label{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:500;cursor:pointer}
-.cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;margin-top:6px}
-.cd-grid .n{font-family:var(--font-serif);font-size:46px;font-weight:700;color:var(--brand-hover);line-height:1}
-.cd-grid .l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
-.copy-row{display:flex;gap:8px;margin-top:12px}
-.copy-row input{flex:1;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px}
-.bar{height:9px;border-radius:5px;background:var(--bg-subtle);overflow:hidden;margin:10px 0 4px}
-.bar > i{display:block;height:100%;width:0;background:var(--brand-solid);transition:width .25s}
-.rng{width:100%}
-</style>
+
 </head>
+<body>
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="logo">tool<span>hearth</span></a>
@@ -63,9 +40,7 @@
 <div><div class="n" id="words">0</div><div class="l">Words</div></div>
 <div><div class="n" id="sentences">0</div><div class="l">Sentences</div></div>
 <div><div class="n" id="paras">0</div><div class="l">Paragraphs</div></div>
-<div><div class="n" id="read">0s</div><div class="l">Reading time</div></div>
-</div></div>
-</div>
+<div><div class="n" id="read">0s</div><div class="l">Reading time</div>
 <script>
 function upd(){
 var t=document.getElementById("txt").value;
@@ -80,23 +55,85 @@ document.getElementById("read").textContent=secs<60?secs+"s":Math.floor(secs/60)
 </script>
 </div>
 </div>
+</div>
+</div><!-- /container -->
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-grid">
-  <div class="footer-col"><h4>Calculators</h4>
-    <a href="/bmi-calculator.html">BMI Calculator</a><a href="/body-fat-calculator.html">Body Fat Calculator</a><a href="/bmr-calculator.html">BMR Calculator</a><a href="/calorie-calculator.html">Calorie Calculator</a><a href="/macro-calculator.html">Macro Calculator</a><a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a><a href="/water-intake-calculator.html">Water Intake Calculator</a><a href="/sleep-calculator.html">Sleep Calculator</a></div>
-  <div class="footer-col"><h4>Converters</h4>
-    <a href="/unit-converter.html">Unit Converter</a><a href="/currency-converter.html">Currency Converter</a><a href="/inches-to-feet.html">Inches to Feet</a><a href="/km-to-miles.html">KM to Miles</a><a href="/mm-to-inches.html">MM to Inches</a><a href="/temperature-converter.html">Temperature Converter</a><a href="/timezone-converter.html">Timezone Converter</a><a href="/text-case-converter.html">Text Case Converter</a></div>
-  <div class="footer-col"><h4>Developer Tools</h4>
-    <a href="/ascii-table.html">ASCII Table</a><a href="/regex-tester.html">Regex Tester</a><a href="/uuid-generator.html">UUID Generator</a><a href="/jwt-decoder.html">JWT Decoder</a><a href="/html-preview.html">HTML Preview</a><a href="/diff-checker.html">Diff Checker</a><a href="/csv-viewer.html">CSV Viewer</a><a href="/mime-types.html">MIME Types Reference</a></div>
-  <div class="footer-col"><h4>Generators</h4>
-    <a href="/qr-generator.html">QR Code Generator</a><a href="/random-number.html">Random Number Generator</a><a href="/random-quote.html">Random Quote Generator</a><a href="/random-fact.html">Random Fact Generator</a><a href="/random-name-generator.html">Random Name Generator</a><a href="/password-generator.html">Password Generator</a><a href="/list-randomizer.html">List Randomizer</a><a href="/decision-maker.html">Decision Maker</a></div>
-  <div class="footer-col"><h4>Timers &amp; Clocks</h4>
-    <a href="/pomodoro-timer.html">Pomodoro Timer</a><a href="/timer.html">Timer</a><a href="/stopwatch.html">Stopwatch</a><a href="/metronome.html">Metronome</a><a href="/world-clock.html">World Clock</a><a href="/countdown-timer.html">Countdown Timer</a></div>
-  <div class="footer-col"><h4>Health &amp; Fitness</h4>
-    <a href="/bmi-calculator.html">BMI Calculator</a><a href="/calorie-calculator.html">Calorie Calculator</a><a href="/body-fat-calculator.html">Body Fat Calculator</a><a href="/bmr-calculator.html">BMR Calculator</a><a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a><a href="/macro-calculator.html">Macro Calculator</a><a href="/water-intake-calculator.html">Water Intake Calculator</a><a href="/sleep-calculator.html">Sleep Calculator</a></div>
+  <div class="footer-col">
+    <h4>Calculators</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+  <div class="footer-col">
+    <h4>Converters</h4>
+    <a href="/unit-converter.html">Unit Converter</a>
+    <a href="/currency-converter.html">Currency Converter</a>
+    <a href="/inches-to-feet.html">Inches to Feet</a>
+    <a href="/km-to-miles.html">KM to Miles</a>
+    <a href="/mm-to-inches.html">MM to Inches</a>
+    <a href="/temperature-converter.html">Temperature Converter</a>
+    <a href="/timezone-converter.html">Timezone Converter</a>
+    <a href="/text-case-converter.html">Text Case Converter</a>
+  </div>
+  <div class="footer-col">
+    <h4>Developer Tools</h4>
+    <a href="/ascii-table.html">ASCII Table</a>
+    <a href="/regex-tester.html">Regex Tester</a>
+    <a href="/uuid-generator.html">UUID Generator</a>
+    <a href="/jwt-decoder.html">JWT Decoder</a>
+    <a href="/html-preview.html">HTML Preview</a>
+    <a href="/diff-checker.html">Diff Checker</a>
+    <a href="/csv-viewer.html">CSV Viewer</a>
+    <a href="/mime-types.html">MIME Types Reference</a>
+  </div>
+  <div class="footer-col">
+    <h4>Generators</h4>
+    <a href="/qr-generator.html">QR Code Generator</a>
+    <a href="/random-number.html">Random Number Generator</a>
+    <a href="/random-quote.html">Random Quote Generator</a>
+    <a href="/random-fact.html">Random Fact Generator</a>
+    <a href="/random-name-generator.html">Random Name Generator</a>
+    <a href="/password-generator.html">Password Generator</a>
+    <a href="/list-randomizer.html">List Randomizer</a>
+    <a href="/decision-maker.html">Decision Maker</a>
+  </div>
+  <div class="footer-col">
+    <h4>Timers & Clocks</h4>
+    <a href="/pomodoro-timer.html">Pomodoro Timer</a>
+    <a href="/timer.html">Timer</a>
+    <a href="/stopwatch.html">Stopwatch</a>
+    <a href="/metronome.html">Metronome</a>
+    <a href="/world-clock.html">World Clock</a>
+    <a href="/countdown-timer.html">Countdown Timer</a>
+  </div>
+  <div class="footer-col">
+    <h4>Health & Fitness</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
     </div>
-    <div class="footer-bottom">&copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.</div>
+    <div class="footer-bottom" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+      <span>&copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.</span>
+      <nav style="display:flex;gap:18px;font-size:13px;">
+        <a href="/about.html" style="color:var(--text-muted)">About</a>
+        <a href="/contact.html" style="color:var(--text-muted)">Contact</a>
+        <a href="/privacy.html" style="color:var(--text-muted)">Privacy</a>
+        <a href="/terms.html" style="color:var(--text-muted)">Terms</a>
+      </nav>
+    </div>
   </div>
 </footer>
 </body>

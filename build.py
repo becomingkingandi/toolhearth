@@ -36,7 +36,8 @@ CATEGORIES = OrderedDict([
         "color-palette", "gradient-builder", "box-shadow",
         "typography-tester", "grid-layout", "emoji-picker",
         "lorem-ipsum", "browser-info", "what-is-my-ip",
-        "word-counter", "character-counter",
+        "word-counter", "character-counter", "anagram-solver",
+        "word-unscrambler", "wordle-solver", "random-word-generator",
     ]),
     ("Generators", [
         "qr-generator", "random-number", "random-quote", "random-fact",
@@ -149,6 +150,10 @@ NAME_OVERRIDES = {
     "typography-tester": "Typography Tester",
     "password-generator": "Password Generator",
     "dictionary": "Dictionary Lookup",
+    "anagram-solver": "Anagram Solver",
+    "word-unscrambler": "Word Unscrambler",
+    "wordle-solver": "Wordle Solver",
+    "random-word-generator": "Random Word Generator",
 }
 
 def display_name(slug):
@@ -296,6 +301,31 @@ def inject_tool_page(filepath):
     if not body_match:
         body_match = re.search(r'<body[^>]*>(.*)', html, re.DOTALL)
     body_content = body_match.group(1).strip() if body_match else html
+
+    # If this page has already been injected, unwrap the previous site shell so
+    # repeated builds stay idempotent instead of nesting headers and footers.
+    tool_marker = '<div class="tool-content">'
+    if tool_marker in body_content:
+        body_content = body_content.split(tool_marker)[-1]
+        body_content = re.sub(
+            r'\s*</div>\s*</div><!-- /container -->\s*<footer class="site-footer">.*$',
+            '',
+            body_content,
+            flags=re.DOTALL,
+        ).strip()
+        body_content = re.sub(
+            r'\s*</div>\s*</div>\s*(<script\b)',
+            r'\n\1',
+            body_content,
+            count=1,
+            flags=re.DOTALL,
+        ).strip()
+        body_content = re.sub(
+            r'\s*<footer class="site-footer">\s*<div class="footer-inner">.*?</footer>',
+            '',
+            body_content,
+            flags=re.DOTALL,
+        ).strip()
 
     # Clean up body content - remove inline styles, scripts that were in head
     # Remove the massive <style> block

@@ -50,8 +50,6 @@
 <div id="history">
 <h3>History <button class="clear-btn" id="clearHistory">Clear</button></h3>
 <ul id="historyList"></ul>
-</div>
-</div>
 <script>
 let mode='pace',unit='miles';
 let history=JSON.parse(localStorage.getItem('runHistory')||'[]');
@@ -159,7 +157,7 @@ buildInputs();renderHistory();
   <div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">
     <h3 style="color:#6b6357;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Related Tools</h3>
     <div style="display:flex;flex-wrap:wrap;gap:.25rem;">
-      <a href="/metronome" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Online Metronome — Adjustable BPM & Time Signature</a>
+      <a href="/metronome.html" style="display:inline-block;background:#ffffff;border:1px solid #e7e2d9;border-radius:6px;padding:.4rem .8rem;margin:.25rem;color:#d97706;text-decoration:none;font-size:.85rem;">Online Metronome — Adjustable BPM & Time Signature</a>
     </div>
   </div>
 
@@ -237,9 +235,15 @@ buildInputs();renderHistory();
     <a href="/sleep-calculator.html">Sleep Calculator</a>
   </div>
     </div>
-    <div class="footer-bottom">
- &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a>&mdash; Free online tools, calculators, and utilities.
- </div>
+    <div class="footer-bottom" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+      <span>&copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.</span>
+      <nav style="display:flex;gap:18px;font-size:13px;">
+        <a href="/about.html" style="color:var(--text-muted)">About</a>
+        <a href="/contact.html" style="color:var(--text-muted)">Contact</a>
+        <a href="/privacy.html" style="color:var(--text-muted)">Privacy</a>
+        <a href="/terms.html" style="color:var(--text-muted)">Terms</a>
+      </nav>
+    </div>
   </div>
 </footer>
 </body>
