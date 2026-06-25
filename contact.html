@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact — Toolhearth</title>
-  <meta name="description" content="Contact the Toolhearth team. Report a bug, suggest a tool, or just say hello.">
-  <link rel="stylesheet" href="/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/style.css">
+<title>Contact — toolhearth.com</title>
+<meta name="description" content="Contact toolhearth. Send us feedback, feature requests, or bug reports.">
+<link rel="canonical" href="https://toolhearth.com/contact.html">
+<meta property="og:title" content="Contact — toolhearth.com">
+<meta property="og:type" content="website">
 </head>
-<body>
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="logo">tool<span>hearth</span></a>
@@ -20,80 +22,125 @@
   </div>
 </header>
 <div class="container">
-  <div class="breadcrumbs"><a href="/">Home</a><span class="sep">/</span><span class="current">Contact</span></div>
-  <div class="page-header">
-    <h1>Contact Us</h1>
-    <p class="subtitle">Bug report, tool suggestion, or just want to say hi — we read everything.</p>
-  </div>
-
-  <div style="max-width:560px;">
-    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow-sm);">
-
-      <div style="margin-bottom:20px;">
-        <label style="display:block;font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">Your name</label>
-        <input id="name" type="text" placeholder="Jane Smith"
-          style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font-sans);color:var(--text);background:var(--bg);outline:none;">
-      </div>
-
-      <div style="margin-bottom:20px;">
-        <label style="display:block;font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">Email address</label>
-        <input id="email" type="email" placeholder="you@example.com"
-          style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font-sans);color:var(--text);background:var(--bg);outline:none;">
-      </div>
-
-      <div style="margin-bottom:20px;">
-        <label style="display:block;font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">What's this about?</label>
-        <select id="subject"
-          style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font-sans);color:var(--text);background:var(--bg);outline:none;">
-          <option value="">Select a topic</option>
-          <option value="bug">Bug report</option>
-          <option value="suggestion">Tool suggestion</option>
-          <option value="business">Business inquiry</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <div style="margin-bottom:24px;">
-        <label style="display:block;font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">Message</label>
-        <textarea id="message" rows="5" placeholder="Tell us what's on your mind..."
-          style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font-sans);color:var(--text);background:var(--bg);outline:none;resize:vertical;"></textarea>
-      </div>
-
-      <button onclick="sendMsg()"
-        style="width:100%;padding:13px;background:var(--brand);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;font-family:var(--font-sans);cursor:pointer;">
-        Send message
-      </button>
-      <p id="msg-status" style="margin-top:12px;font-size:14px;color:var(--brand);display:none;text-align:center;">
-        Thanks! We'll get back to you soon.
-      </p>
-    </div>
-
-    <p style="margin-top:20px;font-size:14px;color:var(--text-muted);">
-      You can also email us directly at <a href="mailto:hello@toolhearth.com">hello@toolhearth.com</a>.
-    </p>
-  </div>
+<div class="breadcrumbs">
+  <a href="/">Home</a><span class="sep">/</span>
+  <span class="current">Contact</span>
 </div>
+<div class="tool-content">
+<div class="container" style="max-width:800px">
+<h1>Contact Us</h1>
+
+<p>We'd love to hear from you. Have feedback? Found a bug? Have a tool request?</p>
+
+<div class="tool-card" style="max-width:500px">
+<form id="contact-form">
+  <div class="form-group"><label>Your Name</label><input type="text" name="name" required></div>
+  <div class="form-group"><label>Your Email</label><input type="email" name="email" required></div>
+  <div class="form-group"><label>Subject</label><input type="text" name="subject" placeholder="Bug report, feature request, etc." required></div>
+  <div class="form-group"><label>Message</label><textarea name="message" rows="5" required></textarea></div>
+  <button type="submit" class="btn btn-block">Send Message</button>
+  <p id="form-status" style="text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted)"></p>
+</form>
+</div>
+</div>
+</div>
+</div>
+
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-bottom" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
-      <span>&copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.</span>
-      <nav style="display:flex;gap:18px;font-size:13px;">
-        <a href="/about.html" style="color:var(--text-muted)">About</a>
-        <a href="/contact.html" style="color:var(--text-muted)">Contact</a>
-        <a href="/privacy.html" style="color:var(--text-muted)">Privacy</a>
-        <a href="/terms.html" style="color:var(--text-muted)">Terms</a>
-      </nav>
+    <div class="email-signup-section" style="margin-bottom:24px;padding:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)">
+      <h3 style="margin:0 0 8px;font-size:16px;font-weight:600">Get free tools & tips delivered</h3>
+      <p style="margin:0 0 12px;font-size:13px;color:var(--text-muted)">Join 10k+ people getting weekly calculators and converters.</p>
+      <form id="email-form" style="display:flex;gap:6px;flex-wrap:wrap">
+        <input type="email" name="email" placeholder="your@email.com" required style="flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:13px">
+        <button type="submit" class="btn" style="white-space:nowrap">Subscribe</button>
+      </form>
+      <p style="margin:8px 0 0;font-size:11px;color:var(--text-muted)">No spam. Unsubscribe anytime.</p>
     </div>
+    <div class="footer-grid">
+      <div class="footer-col"><h4>Calculators</h4><a href="/bmi-calculator.html">BMI Calculator</a><a href="/body-fat-calculator.html">Body Fat Calculator</a></div>
+      <div class="footer-col"><h4>More</h4><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools.</div>
   </div>
 </footer>
+
+<div id="cookie-consent" style="position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;color:#fff;padding:16px;z-index:10000;border-top:1px solid #333;font-size:13px;display:none">
+  <div style="max-width:1200px;margin:0 auto;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+    <span>We use cookies for analytics and ads. By continuing, you agree to our <a href="/privacy.html" style="color:#d97706">Privacy Policy</a>.</span>
+    <button id="cookie-accept" style="padding:6px 16px;background:#d97706;border:none;color:#fff;border-radius:4px;cursor:pointer;font-size:13px;white-space:nowrap">Accept All</button>
+  </div>
+</div>
+
 <script>
-function sendMsg() {
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const message = document.getElementById('message').value.trim();
-  if (!name || !email || !message) { alert('Please fill in all fields.'); return; }
-  document.getElementById('msg-status').style.display = 'block';
+document.getElementById("contact-form").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  var btn = this.querySelector("button");
+  var status = document.getElementById("form-status");
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  status.textContent = "";
+
+  try {
+    var r = await fetch("/api/contact", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        name: this.name.value,
+        email: this.email.value,
+        subject: this.subject.value,
+        message: this.message.value
+      })
+    });
+
+    if(r.ok) {
+      status.textContent = "Message sent! We'll reply within 24 hours.";
+      this.reset();
+      btn.textContent = "Send Message";
+      btn.disabled = false;
+    } else {
+      status.textContent = "Error sending. Try emailing: support@toolhearth.com";
+      btn.textContent = "Send Message";
+      btn.disabled = false;
+    }
+  } catch(e) {
+    status.textContent = "Error sending. Try emailing: support@toolhearth.com";
+    btn.textContent = "Send Message";
+    btn.disabled = false;
+  }
+});
+
+document.getElementById("email-form").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  var btn = this.querySelector("button");
+  btn.disabled = true;
+  btn.textContent = "Subscribing...";
+  try {
+    var r = await fetch("/api/subscribe", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({email: this.email.value, source: "toolhearth"})
+    });
+    if(r.ok) {
+      btn.textContent = "Check your email!";
+      this.email.value = "";
+      setTimeout(function() { btn.disabled = false; btn.textContent = "Subscribe"; }, 3000);
+    } else {
+      btn.textContent = "Try again"; btn.disabled = false;
+    }
+  } catch(e) {
+    btn.textContent = "Try again"; btn.disabled = false;
+  }
+});
+
+if(!document.cookie.includes("consent=yes")) {
+  document.getElementById("cookie-consent").style.display = "flex";
+  document.getElementById("cookie-accept").onclick = function() {
+    document.cookie = "consent=yes; path=/; max-age=31536000";
+    document.getElementById("cookie-consent").style.display = "none";
+  };
 }
 </script>
+
 </body>
 </html>
