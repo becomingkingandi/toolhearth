@@ -32,6 +32,42 @@
   </div>
 </section>
 
+<section class="card revenue-callout">
+  <div>
+    <p class="eyebrow">Revenue engine</p>
+    <h2>Turn utility traffic into email subscribers and affiliate clicks.</h2>
+    <p class="callout-copy">The fastest path to money here is high-intent SEO, a newsletter list, and tools that point to software buyers.</p>
+  </div>
+  <div class="revenue-actions">
+    <a class="btn revenue-link" href="/affiliate-best-email-tools.html">Email tools</a>
+    <a class="btn revenue-link" href="/affiliate-best-crm-software.html">CRM tools</a>
+    <a class="btn revenue-link" href="/niche-directory.html">AI directory</a>
+  </div>
+  <form id="home-newsletter" class="newsletter-inline">
+    <input type="email" name="email" placeholder="Get tool updates by email" required>
+    <button class="btn" type="submit">Join list</button>
+    <span id="newsletterStatus" class="newsletter-status"></span>
+  </form>
+</section>
+
+<section class="revenue-grid">
+  <article class="revenue-card">
+    <p class="eyebrow">Ad slot</p>
+    <h3>Homepage inventory</h3>
+    <p>Reserve this space for a leaderboard or native sponsor block once ads are live.</p>
+  </article>
+  <article class="revenue-card">
+    <p class="eyebrow">Affiliate hub</p>
+    <h3>Software buyers</h3>
+    <p>CRM, email, hosting, AI writing, and business tools already have pages on site.</p>
+  </article>
+  <article class="revenue-card">
+    <p class="eyebrow">Newsletter</p>
+    <h3>Repeat traffic</h3>
+    <p>Capture returning visitors so the site does not depend on search traffic alone.</p>
+  </article>
+</section>
+
 <div id="toolContainer">
 <section class="cat-section" data-category="calculators">
   <h2 id="calculators">Calculators</h2>
@@ -191,6 +227,29 @@ function filterTools(q) {
     section.style.display = visible ? 'block' : 'none';
   });
 }
+
+document.getElementById("home-newsletter").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const status = document.getElementById("newsletterStatus");
+  const button = this.querySelector("button");
+  button.disabled = true;
+  button.textContent = "Joining...";
+  try {
+    const res = await fetch("/api/subscribe", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({email: this.email.value, source: "toolhearth-home"})
+    });
+    status.textContent = res.ok ? "You're in." : "Try again.";
+    if (res.ok) this.reset();
+  } catch (err) {
+    status.textContent = "Try again.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Join list";
+    setTimeout(() => { status.textContent = ""; }, 3000);
+  }
+});
 </script>
 </div><!-- /container -->
 <footer class="site-footer">
