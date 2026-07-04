@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Build toolhearth.com — inject template into all pages, generate homepage."""
 
-import os, re, json
+import os, re, json, html as html_lib
 from collections import OrderedDict
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+SITE_URL = "https://toolhearth.com"
+SITE_NAME = "toolhearth.com"
+SITE_DESCRIPTION = "Free online tools, calculators, converters, and utilities."
 
 # ── Category definitions ──────────────────────────────────────────────
 CATEGORIES = OrderedDict([
@@ -163,6 +166,131 @@ def display_name(slug):
     return slug.replace("-", " ").title()
 
 
+def html_escape(value):
+    return (
+        value.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def normalize_text(value):
+    previous = None
+    current = value
+    while current != previous:
+        previous = current
+        current = html_lib.unescape(current)
+    return current
+
+
+def make_seo_tags(*, title, description, canonical, og_type="website", json_ld=None):
+    tags = [
+        f"<title>{html_escape(title)}</title>",
+        f'<meta name="description" content="{html_escape(description)}">',
+        '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">',
+        f'<link rel="canonical" href="{canonical}">',
+        f'<meta property="og:site_name" content="{SITE_NAME}">',
+        f'<meta property="og:title" content="{html_escape(title)}">',
+        f'<meta property="og:description" content="{html_escape(description)}">',
+        f'<meta property="og:type" content="{og_type}">',
+        f'<meta property="og:url" content="{canonical}">',
+        f'<meta name="twitter:card" content="summary_large_image">',
+        f'<meta name="twitter:title" content="{html_escape(title)}">',
+        f'<meta name="twitter:description" content="{html_escape(description)}">',
+    ]
+    if json_ld is not None:
+        tags.append(
+            '<script type="application/ld+json">'
+            + json.dumps(json_ld, separators=(",", ":"))
+            + "</script>"
+        )
+    return "\n".join(tags) + "\n"
+
+
+def make_shared_page_script():
+    return '''<script>
+const emailForm = document.getElementById("email-form");
+if (emailForm) {
+  emailForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    var btn = this.querySelector("button");
+    btn.disabled = true;
+    btn.textContent = "Subscribing...";
+    try {
+      var r = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({email: this.email.value, source: "toolhearth"})
+      });
+      if (r.ok) {
+        btn.textContent = "Check your email!";
+        this.email.value = "";
+        setTimeout(function() { btn.disabled = false; btn.textContent = "Subscribe"; }, 3000);
+      } else {
+        btn.textContent = "Try again";
+        btn.disabled = false;
+      }
+    } catch (e) {
+      btn.textContent = "Try again";
+      btn.disabled = false;
+    }
+  });
+}
+
+const contactForm = document.getElementById("contact-form");
+if (contactForm) {
+  contactForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    var btn = this.querySelector("button");
+    var status = document.getElementById("form-status");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    if (status) status.textContent = "";
+
+    try {
+      var r = await fetch("/api/contact", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          name: this.name.value,
+          email: this.email.value,
+          subject: this.subject.value,
+          message: this.message.value
+        })
+      });
+
+      if (r.ok) {
+        if (status) status.textContent = "Message sent! We'll reply within 24 hours.";
+        this.reset();
+        btn.textContent = "Send Message";
+        btn.disabled = false;
+      } else {
+        if (status) status.textContent = "Error sending. Try emailing: support@toolhearth.com";
+        btn.textContent = "Send Message";
+        btn.disabled = false;
+      }
+    } catch (e) {
+      if (status) status.textContent = "Error sending. Try emailing: support@toolhearth.com";
+      btn.textContent = "Send Message";
+      btn.disabled = false;
+    }
+  });
+}
+
+const cookieConsent = document.getElementById("cookie-consent");
+const cookieAccept = document.getElementById("cookie-accept");
+if (cookieConsent && cookieAccept && !document.cookie.includes("consent=yes")) {
+  cookieConsent.style.display = "flex";
+  cookieAccept.onclick = function() {
+    document.cookie = "consent=yes; path=/; max-age=31536000";
+    cookieConsent.style.display = "none";
+  };
+}
+</script>
+'''
+
+
 # ── Template parts ────────────────────────────────────────────────────
 
 def make_header():
@@ -171,6 +299,7 @@ def make_header():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#8a4b2c">
 <!-- toolhearth.com -->
 <link rel="stylesheet" href="/style.css">
 '''
@@ -192,6 +321,18 @@ def make_header_close():
 </header>
 <div class="container">
 '''
+
+
+MONEY_PAGES = [
+    ("affiliate-best-web-hosting", "Best Web Hosting"),
+    ("affiliate-best-email-tools", "Best Email Tools"),
+    ("affiliate-best-crm-software", "Best CRM Software"),
+    ("affiliate-best-ai-writing", "Best AI Writing"),
+    ("affiliate-best-ai-marketing-tools", "Best AI Marketing Tools"),
+    ("virtual-assistant-agency", "Virtual Assistant Agency"),
+    ("template-marketplace", "Template Marketplace"),
+    ("remote-ai-jobs-board", "Remote AI Jobs Board"),
+]
 
 def make_breadcrumbs(tool_name, category):
     cat_slug = category.lower().replace(" & ", "-").replace(" ", "-") if category else ""
@@ -234,10 +375,23 @@ FOOTER = f'''</div><!-- /container -->
 
 def build_homepage():
     out = make_header()
-    out += '''<title>toolhearth.com — Free Online Tools, Calculators & Utilities</title>
-<meta name="description" content="Free online tools, calculators, converters, and utilities. BMI calculator, currency converter, password generator, and 100+ more tools.">
-<link rel="canonical" href="https://toolhearth.com/">
-'''
+    out += make_seo_tags(
+        title="toolhearth.com — Free Online Tools, Calculators & Utilities",
+        description="Free online tools, calculators, converters, and utilities. BMI calculator, currency converter, password generator, and 100+ more tools.",
+        canonical=f"{SITE_URL}/",
+        json_ld={
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": SITE_NAME,
+            "url": f"{SITE_URL}/",
+            "description": SITE_DESCRIPTION,
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": f"{SITE_URL}/?q={{search_term_string}}",
+                "query-input": "required name=search_term_string",
+            },
+        },
+    )
     out += make_header_close()
     out += '''
 <section class="hero">
@@ -264,6 +418,16 @@ def build_homepage():
     out += '''
 </div>
 
+<section class="cat-section" data-category="money-pages">
+  <h2 id="money-pages">High-Intent Money Pages</h2>
+  <div class="cat-grid">
+'''
+    for slug, label in MONEY_PAGES:
+        out += f'    <a href="/{slug}.html" class="cat-link" data-tool="{slug}">{label}</a>\n'
+    out += '''
+  </div>
+</section>
+
 <script>
 function filterTools(q) {
   q = q.toLowerCase();
@@ -287,20 +451,20 @@ def inject_tool_page(filepath):
     """Read an existing HTML tool page, extract content between <body> tags,
     inject into template with breadcrumbs."""
     with open(filepath, 'r', encoding='utf-8') as f:
-        html = f.read()
+        source_html = f.read()
 
     # Extract title and metadata
-    title_match = re.search(r'<title>(.*?)</title>', html, re.DOTALL)
-    title = title_match.group(1).strip() if title_match else ""
+    title_match = re.search(r'<title>(.*?)</title>', source_html, re.DOTALL)
+    title = normalize_text(title_match.group(1).strip()) if title_match else ""
 
-    desc_match = re.search(r'<meta name="description" content="(.*?)"', html)
-    desc = desc_match.group(1).strip() if desc_match else ""
+    desc_match = re.search(r'<meta name="description" content="(.*?)"', source_html)
+    desc = normalize_text(desc_match.group(1).strip()) if desc_match else ""
 
     # Extract primary content - everything between <body>...</body>
-    body_match = re.search(r'<body[^>]*>(.*?)</body>', html, re.DOTALL)
+    body_match = re.search(r'<body[^>]*>(.*?)</body>', source_html, re.DOTALL)
     if not body_match:
-        body_match = re.search(r'<body[^>]*>(.*)', html, re.DOTALL)
-    body_content = body_match.group(1).strip() if body_match else html
+        body_match = re.search(r'<body[^>]*>(.*)', source_html, re.DOTALL)
+    body_content = body_match.group(1).strip() if body_match else source_html
 
     # If this page has already been injected, unwrap the previous site shell so
     # repeated builds stay idempotent instead of nesting headers and footers.
@@ -330,23 +494,96 @@ def inject_tool_page(filepath):
     # Clean up body content - remove inline styles, scripts that were in head
     # Remove the massive <style> block
     body_content = re.sub(r'<style>.*?</style>', '', body_content, flags=re.DOTALL)
+    body_content = re.sub(r'(?:</body>\s*</html>\s*)+$', '', body_content, flags=re.IGNORECASE | re.DOTALL).strip()
+    if "email-form" in body_content or "contact-form" in body_content or "cookie-consent" in body_content:
+        body_content = re.sub(
+            r'<script>.*?document\.getElementById\("(?:contact-form|email-form)"\).*?</script>',
+            make_shared_page_script(),
+            body_content,
+            count=1,
+            flags=re.DOTALL,
+        )
 
     # Get file slug for breadcrumbs
     basename = os.path.basename(filepath)
     slug = basename.replace(".html", "")
     cat = get_category(slug)
+    is_blog = os.path.basename(os.path.dirname(filepath)) == "blog"
+    page_path = f"/blog/{slug}" if is_blog else f"/{slug}"
+    if is_blog and slug == "index":
+        page_path = "/blog/"
+    canonical = f"{SITE_URL}{page_path}"
+
+    if is_blog and slug == "index":
+        json_ld = {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": title,
+            "description": desc or title,
+            "mainEntityOfPage": canonical,
+            "url": canonical,
+            "publisher": {
+                "@type": "Organization",
+                "name": SITE_NAME,
+                "url": f"{SITE_URL}/",
+            },
+        }
+    elif is_blog:
+        json_ld = {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": title,
+            "description": desc or title,
+            "mainEntityOfPage": canonical,
+            "url": canonical,
+            "publisher": {
+                "@type": "Organization",
+                "name": SITE_NAME,
+                "url": f"{SITE_URL}/",
+            },
+        }
+    else:
+        json_ld = {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": title,
+            "description": desc or title,
+            "url": canonical,
+            "breadcrumb": {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": f"{SITE_URL}/",
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": display_name(slug),
+                        "item": canonical,
+                    },
+                ],
+            },
+        }
 
     # Build output
     out = make_header()
-    out += f'<title>{title}</title>\n'
-    if desc:
-        out += f'<meta name="description" content="{desc}">\n'
-    out += f'<link rel="canonical" href="https://toolhearth.com/{basename}">\n'
+    out += make_seo_tags(
+        title=title,
+        description=desc or SITE_DESCRIPTION,
+        canonical=canonical,
+        og_type="website" if is_blog and slug == "index" else ("article" if is_blog else "website"),
+        json_ld=json_ld,
+    )
     out += make_header_close()
     out += make_breadcrumbs(slug, cat)
     out += '<div class="tool-content">\n'
     out += body_content
     out += '\n</div>\n'
+    if ("email-form" in body_content or "contact-form" in body_content or "cookie-consent" in body_content) and "<script>" not in body_content:
+        out += make_shared_page_script()
     out += FOOTER
 
     return out
