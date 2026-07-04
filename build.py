@@ -309,13 +309,17 @@ def make_header_close():
 </head>
 <body>
 <header class="site-header">
+  <div class="site-announcement">Free tools, high-intent pages, and monetization infrastructure built for organic traffic.</div>
   <div class="header-inner">
     <a href="/" class="logo">tool<span>hearth</span></a>
     <nav class="header-nav">
       <a href="/">Home</a>
+      <a href="/#money-pages">Money Pages</a>
       <a href="/#calculators">Calculators</a>
       <a href="/#converters">Converters</a>
       <a href="/#dev-tools">Dev Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contact.html">Contact</a>
     </nav>
   </div>
 </header>
@@ -401,6 +405,34 @@ def build_homepage():
     <input type="text" id="toolSearch" placeholder="Search tools..." oninput="filterTools(this.value)">
   </div>
 </section>
+
+<section class="card revenue-callout">
+  <div class="callout-copy">
+    <p class="eyebrow">Revenue stack</p>
+    <h2>Traffic that can pay for itself.</h2>
+    <p class="subtitle">These pages are designed to rank, keep users engaged, and push them into affiliate, email, and sponsor flows without hurting the free-tool experience.</p>
+  </div>
+  <div class="revenue-actions">
+    <a class="btn revenue-link" href="/#money-pages">Browse money pages</a>
+    <a class="btn revenue-link" href="/blog/">Read the blog</a>
+    <a class="btn revenue-link" href="/contact.html">Sponsor a page</a>
+  </div>
+</section>
+
+<div class="revenue-grid">
+  <article class="revenue-card">
+    <h3>High-intent pages</h3>
+    <p>Shipping commercial pages around hosting, CRM, AI, and growth topics creates the best chance of paid traffic.</p>
+  </article>
+  <article class="revenue-card">
+    <h3>Affiliate capture</h3>
+    <p>Routes for hosting, email, CRM, and AI tools can earn commissions without changing the free-tool model.</p>
+  </article>
+  <article class="revenue-card">
+    <h3>Email and retargeting</h3>
+    <p>Search traffic becomes a list, and the list becomes repeat visits, offers, and sponsor inventory.</p>
+  </article>
+</div>
 
 <div id="toolContainer">
 '''
