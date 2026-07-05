@@ -406,6 +406,16 @@ def build_homepage():
   </div>
 </section>
 
+<section style="margin: 48px 0; padding: 32px; background: var(--color-cream-200); border-radius: 8px; text-align: center;">
+  <h2 style="margin-top: 0;">Popular Right Now</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 24px;">
+    <a href="/bmi-calculator.html" class="cat-link" style="padding: 16px; background: white; border-radius: 6px; text-decoration: none; color: inherit;">BMI Calculator</a>
+    <a href="/currency-converter.html" class="cat-link" style="padding: 16px; background: white; border-radius: 6px; text-decoration: none; color: inherit;">Currency Converter</a>
+    <a href="/password-generator.html" class="cat-link" style="padding: 16px; background: white; border-radius: 6px; text-decoration: none; color: inherit;">Password Generator</a>
+    <a href="/qr-generator.html" class="cat-link" style="padding: 16px; background: white; border-radius: 6px; text-decoration: none; color: inherit;">QR Code Generator</a>
+  </div>
+</section>
+
 <div id="toolContainer">
 '''
     for cat, tools in CATEGORIES.items():
