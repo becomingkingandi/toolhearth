@@ -302,6 +302,7 @@ def make_header():
 <meta name="theme-color" content="#8a4b2c">
 <!-- toolhearth.com -->
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/hc-design.css">
 '''
 
 def make_header_close():
