@@ -1,6 +1,2 @@
-# AdSense (add pub-ID once approved by Google)
-google.com, pub-XXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
-
-# OpenX (fallback contextual network)
-openx.com, 537124758, DIRECT
-openx.com, 537124758, RESELLER
+# No advertising sellers are authorized yet.
+# Add only verified seller records supplied by an approved ad network.

@@ -2,12 +2,23 @@
 """Build toolhearth.com — inject template into all pages, generate homepage."""
 
 import os, re, json, html as html_lib
+from datetime import date
 from collections import OrderedDict
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE_URL = "https://toolhearth.com"
 SITE_NAME = "toolhearth.com"
 SITE_DESCRIPTION = "Free online tools, calculators, converters, and utilities."
+SOCIAL_IMAGE = f"{SITE_URL}/social-preview.svg"
+
+LEGACY_LINK_ALIASES = {
+    "/online-timer.html": "/timer.html",
+    "/color-palette-generator.html": "/color-palette.html",
+    "/html-entity-encoder.html": "/html-entities.html",
+    "/password-strength-checker.html": "/password-strength.html",
+    "/qr-code-generator.html": "/qr-generator.html",
+    "/random-quote-generator.html": "/random-quote.html",
+}
 
 # ── Category definitions ──────────────────────────────────────────────
 CATEGORIES = OrderedDict([
@@ -195,9 +206,14 @@ def make_seo_tags(*, title, description, canonical, og_type="website", json_ld=N
         f'<meta property="og:description" content="{html_escape(description)}">',
         f'<meta property="og:type" content="{og_type}">',
         f'<meta property="og:url" content="{canonical}">',
+        f'<meta property="og:image" content="{SOCIAL_IMAGE}">',
+        '<meta property="og:image:width" content="1200">',
+        '<meta property="og:image:height" content="630">',
+        '<meta property="og:image:alt" content="toolhearth.com — free online tools and calculators">',
         f'<meta name="twitter:card" content="summary_large_image">',
         f'<meta name="twitter:title" content="{html_escape(title)}">',
         f'<meta name="twitter:description" content="{html_escape(description)}">',
+        f'<meta name="twitter:image" content="{SOCIAL_IMAGE}">',
     ]
     if json_ld is not None:
         tags.append(
@@ -300,6 +316,7 @@ def make_header():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#8a4b2c">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <!-- toolhearth.com -->
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/hc-design.css">
@@ -360,6 +377,15 @@ def make_footer_links():
         lines.append(f'  </div>')
     return '\n'.join(lines)
 
+def make_trust_links():
+    return '''
+      <nav class="footer-trust" aria-label="Company and legal">
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </nav>'''
+
 FOOTER = f'''</div><!-- /container -->
 <footer class="site-footer">
   <div class="footer-inner">
@@ -368,6 +394,7 @@ FOOTER = f'''</div><!-- /container -->
     </div>
     <div class="footer-bottom">
       &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
+{make_trust_links()}
     </div>
   </div>
 </footer>
@@ -385,15 +412,23 @@ def build_homepage():
         canonical=f"{SITE_URL}/",
         json_ld={
             "@context": "https://schema.org",
-            "@type": "WebSite",
-            "name": SITE_NAME,
-            "url": f"{SITE_URL}/",
-            "description": SITE_DESCRIPTION,
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": f"{SITE_URL}/?q={{search_term_string}}",
-                "query-input": "required name=search_term_string",
-            },
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": f"{SITE_URL}/#organization",
+                    "name": "toolhearth",
+                    "url": f"{SITE_URL}/",
+                    "email": "support@toolhearth.com",
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": f"{SITE_URL}/#website",
+                    "name": SITE_NAME,
+                    "url": f"{SITE_URL}/",
+                    "description": SITE_DESCRIPTION,
+                    "publisher": {"@id": f"{SITE_URL}/#organization"},
+                },
+            ],
         },
     )
     out += make_header_close()
@@ -431,6 +466,12 @@ def build_homepage():
 
     out += '''
 </div>
+
+<section class="homepage-about" aria-labelledby="why-toolhearth">
+  <h2 id="why-toolhearth">Useful answers without the friction</h2>
+  <p>toolhearth brings practical calculators, converters, generators, and browser-based utilities into one fast, free collection. Tools run directly in your browser and do not require an account.</p>
+  <p>Use the categories above to find everyday health, finance, developer, writing, and time tools. Important decisions should always be checked against qualified professional advice and authoritative sources.</p>
+</section>
 
 <section class="cat-section" data-category="money-pages">
   <h2 id="money-pages">High-Intent Money Pages</h2>
@@ -509,6 +550,8 @@ def inject_tool_page(filepath):
     # Remove the massive <style> block
     body_content = re.sub(r'<style>.*?</style>', '', body_content, flags=re.DOTALL)
     body_content = re.sub(r'(?:</body>\s*</html>\s*)+$', '', body_content, flags=re.IGNORECASE | re.DOTALL).strip()
+    for old_url, current_url in LEGACY_LINK_ALIASES.items():
+        body_content = body_content.replace(old_url, current_url)
     if "email-form" in body_content or "contact-form" in body_content or "cookie-consent" in body_content:
         body_content = re.sub(
             r'<script>.*?document\.getElementById\("(?:contact-form|email-form)"\).*?</script>',
@@ -523,7 +566,7 @@ def inject_tool_page(filepath):
     slug = basename.replace(".html", "")
     cat = get_category(slug)
     is_blog = os.path.basename(os.path.dirname(filepath)) == "blog"
-    page_path = f"/blog/{slug}" if is_blog else f"/{slug}"
+    page_path = f"/blog/{slug}.html" if is_blog else f"/{slug}.html"
     if is_blog and slug == "index":
         page_path = "/blog/"
     canonical = f"{SITE_URL}{page_path}"
@@ -603,6 +646,39 @@ def inject_tool_page(filepath):
     return out
 
 
+def generate_sitemap():
+    """Generate a sitemap containing only URLs that exist in this static build."""
+    entries = [(f"{SITE_URL}/", "1.0")]
+    for directory, url_prefix in ((ROOT, ""), (os.path.join(ROOT, "blog"), "/blog")):
+        if not os.path.isdir(directory):
+            continue
+        for filename in sorted(os.listdir(directory)):
+            if not filename.endswith(".html") or (directory == ROOT and filename == "index.html"):
+                continue
+            if directory.endswith("blog") and filename == "index.html":
+                url = f"{SITE_URL}/blog/"
+            else:
+                url = f"{SITE_URL}{url_prefix}/{filename}"
+            entries.append((url, "0.7" if url_prefix == "" else "0.6"))
+
+    today = date.today().isoformat()
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for url, priority in entries:
+        lines.extend([
+            "  <url>",
+            f"    <loc>{html_escape(url)}</loc>",
+            f"    <lastmod>{today}</lastmod>",
+            "    <changefreq>monthly</changefreq>",
+            f"    <priority>{priority}</priority>",
+            "  </url>",
+        ])
+    lines.append("</urlset>")
+    with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as sitemap:
+        sitemap.write("\n".join(lines) + "\n")
+    print(f"[OK] sitemap.xml — {len(entries)} live URLs")
+
+
 # ── Main ───────────────────────────────────────────────────────────────
 
 def main():
@@ -643,6 +719,7 @@ def main():
 
     print(f"[OK] {injected} pages injected with template")
     print(f"[OK] Total files: {len([f for f in os.listdir(ROOT) if f.endswith('.html')])} HTML files")
+    generate_sitemap()
 
 if __name__ == "__main__":
     main()
