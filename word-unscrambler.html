@@ -67,6 +67,17 @@ function counts(s){const c={};s.toLowerCase().replace(/[^a-z]/g,"").split("").fo
 function canMake(word, bag){const wc=counts(word);for(const k in wc){if(wc[k]>(bag[k]||0))return false}return true}
 function unscramble(){const raw=document.getElementById("letters").value;const out=document.getElementById("results");if(!raw.trim()){out.innerHTML='<div class="empty-msg">Enter letters to begin.</div>';return}const bag=counts(raw);const found=(window.TOOLHEARTH_WORDS||[]).filter(w=>w.length>1&&canMake(w,bag)).sort((a,b)=>b.length-a.length||a.localeCompare(b)).slice(0,120);out.innerHTML=found.length?found.map(w=>'<div class="word-row"><span>'+w+'</span><span class="freq">'+w.length+'</span></div>').join(""):'<div class="empty-msg">No words found.</div>'}
 </script>
+
+<aside class="commercial-funnel" aria-label="Recommended next step">
+  <div>
+    <span class="commercial-eyebrow">Recommended next step</span>
+    <h2>Build on your result</h2>
+    <p>Compare tools for publishing, marketing, and growing your work.</p>
+  </div>
+  <a class="commercial-cta" href="/affiliate-best-ai-marketing-tools.html" data-commercial-cta="affiliate-best-ai-marketing-tools">Explore the guide</a>
+</aside>
+<div class="ad-slot" data-ad-slot="tool-after-content" hidden aria-hidden="true"></div>
+
 </div>
 </div><!-- /container -->
 <footer class="site-footer">

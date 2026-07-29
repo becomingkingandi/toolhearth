@@ -68,6 +68,17 @@
 function clean(s){return s.toLowerCase().replace(/[^a-z]/g,"")}
 function solveWordle(){const p=(document.getElementById("pattern").value.toLowerCase()||".....").padEnd(5,".").slice(0,5);const inc=clean(document.getElementById("include").value).split("");const exc=new Set(clean(document.getElementById("exclude").value).split(""));const out=document.getElementById("results");const found=(window.TOOLHEARTH_WORDS||[]).filter(w=>w.length===5).filter(w=>[...w].every((ch,i)=>(p[i]=="."||p[i]===ch)&&!exc.has(ch))).filter(w=>inc.every(ch=>w.includes(ch))).slice(0,100);out.innerHTML=found.length?found.map(w=>'<div class="word-row"><span>'+w+'</span><span class="freq">5</span></div>').join(""):'<div class="empty-msg">No candidates found.</div>'}
 </script>
+
+<aside class="commercial-funnel" aria-label="Recommended next step">
+  <div>
+    <span class="commercial-eyebrow">Recommended next step</span>
+    <h2>Build on your result</h2>
+    <p>Compare tools for publishing, marketing, and growing your work.</p>
+  </div>
+  <a class="commercial-cta" href="/affiliate-best-ai-marketing-tools.html" data-commercial-cta="affiliate-best-ai-marketing-tools">Explore the guide</a>
+</aside>
+<div class="ad-slot" data-ad-slot="tool-after-content" hidden aria-hidden="true"></div>
+
 </div>
 </div><!-- /container -->
 <footer class="site-footer">

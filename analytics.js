@@ -7,11 +7,34 @@
 
   document.addEventListener("click", function (event) {
     var link = event.target.closest("a[href]");
+    var button = event.target.closest("button, input[type='submit']");
+
+    if (button) {
+      window.va("event", {
+        name: "tool_action",
+        data: {
+          action: button.id || button.name || (button.textContent || button.value || "button").trim().slice(0, 60),
+          page: window.location.pathname
+        }
+      });
+    }
+
     if (!link) return;
+
+    if (link.dataset.commercialCta) {
+      window.va("event", {
+        name: "commercial_cta_click",
+        data: {
+          destination: link.dataset.commercialCta,
+          page: window.location.pathname
+        }
+      });
+    }
 
     var isAffiliate =
       (link.rel || "").split(/\s+/).includes("sponsored") ||
-      Boolean(link.closest(".affiliate, .affiliate-box"));
+      Boolean(link.closest(".affiliate, .affiliate-box")) ||
+      Boolean(link.dataset.affiliate);
 
     if (isAffiliate) {
       var destination;

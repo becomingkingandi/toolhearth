@@ -173,7 +173,7 @@ function render() {
           </div>
           <div class="card-actions">
             <button class="btn btn-preview" onclick="alert(' ${t.name}\\n\\n${t.desc}\\n\\nCategory: ${t.category}\\nPrice: \$${t.price}')">Preview</button>
-            <a class="btn btn-buy" href="https://gumroad.com/checkout?product=template-${t.id}" target="_blank" rel="noopener">Buy Now</a>
+            <a class="btn btn-buy" href="#launch-list" data-product="${t.name}">Join Launch List</a>
           </div>
         </div>
       </div>
@@ -205,9 +205,55 @@ searchInput.addEventListener('input', () => {
 render();
 </script>
 
+<section class="card" id="launch-list" aria-labelledby="launch-list-title">
+  <h2 id="launch-list-title">Get launch pricing</h2>
+  <p>Products are being prepared for release. Join the list and we will email you when verified downloads and secure checkout are live.</p>
+  <form id="marketplace-launch-form">
+    <label for="marketplace-email">Email address</label>
+    <div class="row">
+      <input id="marketplace-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+      <button type="submit">Join the launch list</button>
+    </div>
+    <input id="marketplace-product" name="product" type="hidden" value="Template Marketplace">
+    <p id="marketplace-status" role="status" aria-live="polite"></p>
+  </form>
+</section>
+<script>
+document.addEventListener('click', function (event) {
+  const link = event.target.closest('[data-product]');
+  if (!link) return;
+  document.getElementById('marketplace-product').value = link.dataset.product;
+});
+document.getElementById('marketplace-launch-form').addEventListener('submit', async function (event) {
+  event.preventDefault();
+  const status = document.getElementById('marketplace-status');
+  const button = this.querySelector('button');
+  button.disabled = true;
+  status.textContent = 'Joining…';
+  try {
+    const response = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email: document.getElementById('marketplace-email').value,
+        source: 'template-marketplace:' + document.getElementById('marketplace-product').value
+      })
+    });
+    if (!response.ok) throw new Error('Subscription failed');
+    status.textContent = 'You are on the list. Watch your inbox for launch details.';
+    this.reset();
+  } catch (_) {
+    status.textContent = 'We could not add you yet. Please try again or use the contact page.';
+  } finally {
+    button.disabled = false;
+  }
+});
+</script>
+
 <!-- Ad unit - responsive display (placeholder, uncomment when approved) -->
 <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
 <!-- <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+
 
 <section class="card related-box" aria-labelledby="related-tools">
   <h2 id="related-tools">Related Tools</h2>

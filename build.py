@@ -562,6 +562,46 @@ def make_related_block(slug, category):
 </section>
 '''
 
+def make_affiliate_disclosure(slug):
+    if not slug.startswith("affiliate-best-"):
+        return ""
+    return '''
+<aside class="affiliate-disclosure" aria-label="Affiliate disclosure">
+  <strong>Affiliate disclosure</strong>
+  <span>ToolHearth may earn a commission if you purchase through links on this page, at no extra cost to you. Rankings and editorial opinions are our own.</span>
+</aside>
+'''
+
+def commercial_destination(slug, category):
+    if slug.startswith("affiliate-best-") or slug in {"template-marketplace", "virtual-assistant-agency"}:
+        return None
+    if slug in FINANCE_CLUSTER:
+        return ("template-marketplace", "Put your result into a plan", "Explore practical finance and planning templates.")
+    if slug in DEV_CLUSTER or category in {"Developer Tools", "Writing & Text"}:
+        return ("affiliate-best-ai-marketing-tools", "Build on your result", "Compare tools for publishing, marketing, and growing your work.")
+    if slug in {"password-generator", "what-is-my-ip", "browser-info", "jwt-decoder"}:
+        return ("affiliate-best-vpn-services", "Improve your privacy setup", "Compare privacy tools and services before choosing one.")
+    if category in {"Business", "Productivity"}:
+        return ("affiliate-best-crm-software", "Choose your next business tool", "See our comparison of software for organizing customers and work.")
+    return None
+
+def make_commercial_funnel(slug, category):
+    destination = commercial_destination(slug, category)
+    if not destination:
+        return ""
+    target, heading, copy = destination
+    return f'''
+<aside class="commercial-funnel" aria-label="Recommended next step">
+  <div>
+    <span class="commercial-eyebrow">Recommended next step</span>
+    <h2>{html_escape(heading)}</h2>
+    <p>{html_escape(copy)}</p>
+  </div>
+  <a class="commercial-cta" href="/{html_escape(target)}.html" data-commercial-cta="{html_escape(target)}">Explore the guide</a>
+</aside>
+<div class="ad-slot" data-ad-slot="tool-after-content" hidden aria-hidden="true"></div>
+'''
+
 FOOTER = f'''</div><!-- /container -->
 <footer class="site-footer">
   <div class="footer-inner">
@@ -752,6 +792,18 @@ def inject_tool_page(filepath):
         flags=re.DOTALL,
     )
     body_content = re.sub(
+        r'\s*<aside class="affiliate-disclosure".*?</aside>\s*',
+        '\n',
+        body_content,
+        flags=re.DOTALL,
+    )
+    body_content = re.sub(
+        r'\s*<aside class="commercial-funnel".*?</aside>\s*(?:<div class="ad-slot".*?</div>\s*)?',
+        '\n',
+        body_content,
+        flags=re.DOTALL,
+    )
+    body_content = re.sub(
         r'\s*<div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">.*?<div style="display:flex;flex-wrap:wrap;gap:\.25rem;">.*?</div>\s*</div>\s*',
         '\n',
         body_content,
@@ -867,7 +919,10 @@ def inject_tool_page(filepath):
             f'<span>Module / {html_escape(slug.upper())}</span>'
             f'</div>\n'
         )
+    out += make_affiliate_disclosure(slug)
     out += body_content
+    if not is_blog:
+        out += '\n' + make_commercial_funnel(slug, cat)
     related_block = make_related_block(slug, cat) if not is_blog else ""
     if related_block and "related-box" not in body_content and "Related Tools" not in body_content:
         out += '\n' + related_block

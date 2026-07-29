@@ -1,0 +1,22 @@
+{
+  "instructions": "Copy approved destination URLs into your implementation only after each program accepts your account. Affiliate URLs are public identifiers, not secrets.",
+  "affiliate_destinations": {
+    "web_hosting": "",
+    "email_marketing": "",
+    "crm_software": "",
+    "ai_writing": "",
+    "ai_marketing": "",
+    "vpn_services": ""
+  },
+  "checkout_destinations": {
+    "template_store": "",
+    "seo_audit_template": "",
+    "business_planner": "",
+    "finance_planner": ""
+  },
+  "advertising": {
+    "network": "",
+    "publisher_id": "",
+    "tool_after_content_slot": ""
+  }
+}

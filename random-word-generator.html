@@ -67,6 +67,17 @@
 function generateWords(){const n=Math.min(50,Math.max(1,Number(document.getElementById("count").value)||12));const words=[...(window.TOOLHEARTH_WORDS||[])].sort(()=>Math.random()-.5).slice(0,n);document.getElementById("results").innerHTML=words.map(w=>'<div class="word-row"><span>'+w+'</span><span class="freq">'+w.length+'</span></div>').join("")}
 generateWords();
 </script>
+
+<aside class="commercial-funnel" aria-label="Recommended next step">
+  <div>
+    <span class="commercial-eyebrow">Recommended next step</span>
+    <h2>Build on your result</h2>
+    <p>Compare tools for publishing, marketing, and growing your work.</p>
+  </div>
+  <a class="commercial-cta" href="/affiliate-best-ai-marketing-tools.html" data-commercial-cta="affiliate-best-ai-marketing-tools">Explore the guide</a>
+</aside>
+<div class="ad-slot" data-ad-slot="tool-after-content" hidden aria-hidden="true"></div>
+
 </div>
 </div><!-- /container -->
 <footer class="site-footer">
