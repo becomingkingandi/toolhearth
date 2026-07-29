@@ -3,6 +3,7 @@
 
 import os, re, json, html as html_lib
 from datetime import date
+from xml.etree import ElementTree as ET
 from collections import OrderedDict
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -18,6 +19,34 @@ LEGACY_LINK_ALIASES = {
     "/password-strength-checker.html": "/password-strength.html",
     "/qr-code-generator.html": "/qr-generator.html",
     "/random-quote-generator.html": "/random-quote.html",
+}
+
+GENERIC_DESCRIPTIONS = {
+    "compound-interest-calculator": "Calculate compound interest, future value, and growth over time with a free compound interest calculator.",
+    "debt-payoff-calculator": "Plan debt payoff scenarios, compare extra payment strategies, and estimate your payoff date with a free calculator.",
+    "investment-returns-calculator": "Estimate investment growth, annual returns, and future portfolio value with a free investment returns calculator.",
+    "retirement-calculator": "Estimate how much you may need for retirement and project savings growth with a free retirement calculator.",
+    "pdf-compress": "Compress PDF files online to reduce file size while keeping documents easy to share and download.",
+    "pdf-to-word": "Convert PDF files to editable Word documents online with a fast, free PDF to Word converter.",
+    "pdf-to-jpeg": "Convert PDF pages to JPEG images online with a free PDF to JPEG converter for quick image extraction.",
+    "bitcoin-flow": "Explore a visual breakdown of how bitcoin laundering and transaction flows are often discussed online.",
+}
+
+FORCE_DESCRIPTION_OVERRIDES = {
+    "privacy": "Read the ToolHearth privacy policy to learn what information we collect, how it is used, and how browser-based tools protect your data.",
+    "bmi-calculator-health-guide": "Calculate and interpret BMI, understand its limitations, and learn which additional health measurements can provide a more complete picture.",
+    "character-counter-seo-tips": "Use precise character counts to improve SEO titles and descriptions, avoid truncation, and write clearer snippets that earn more search clicks.",
+    "how-to-convert-inches-to-feet": "Convert inches to feet and feet to inches with simple formulas, a reference table, and practical examples for construction, DIY, and daily measurements.",
+    "index": "Browse practical ToolHearth guides for calculators, converters, design tools, developer utilities, personal finance, health, and everyday productivity.",
+    "json-formatter-developer-tips": "Format and validate JSON with practical techniques for debugging APIs, editing configuration files, cleaning data, and finding common syntax errors.",
+    "affiliate-best-web-hosting": "Compare top web hosting providers for small businesses with pricing, features, and expert notes.",
+    "affiliate-best-email-tools": "Compare email marketing tools for small businesses with pricing, deliverability, and key features.",
+    "affiliate-best-crm-software": "Compare CRM software for small businesses with pricing, pipelines, automations, and integrations.",
+    "affiliate-best-ai-writing": "Compare AI writing assistants with pricing, use cases, and feature breakdowns.",
+    "affiliate-best-ai-marketing-tools": "Compare AI marketing tools for small businesses with pricing, features, and workflows.",
+    "affiliate-best-online-course": "Compare online course platforms with pricing, creator tools, and feature breakdowns.",
+    "affiliate-best-vpn-services": "Compare VPN services with privacy features, speed, and pricing for secure browsing.",
+    "affiliate-best-stock-trading": "Compare stock trading apps with fees, platform features, and beginner-friendly tools.",
 }
 
 # ── Category definitions ──────────────────────────────────────────────
@@ -326,21 +355,23 @@ def make_header_close():
     return '''
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to content</a>
 <header class="site-header">
-  <div class="site-announcement">Free tools and utilities for everyone.</div>
+  <div class="site-announcement">Free tools. No accounts. Browser-first processing.</div>
   <div class="header-inner">
-    <a href="/" class="logo">tool<span>hearth</span></a>
-    <nav class="header-nav">
+    <a href="/" class="logo" aria-label="ToolHearth home">Tool<span>Hearth</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">☰</button>
+    <nav class="header-nav" id="primary-navigation" aria-label="Primary navigation">
       <a href="/">Home</a>
       <a href="/#calculators">Calculators</a>
       <a href="/#converters">Converters</a>
-      <a href="/#dev-tools">Dev Tools</a>
+      <a href="/#developer-tools">Dev Tools</a>
       <a href="/blog/">Blog</a>
       <a href="/contact.html">Contact</a>
     </nav>
   </div>
 </header>
-<div class="container">
+<div class="container" id="main-content">
 '''
 
 
@@ -352,8 +383,129 @@ MONEY_PAGES = [
     ("affiliate-best-ai-marketing-tools", "Best AI Marketing Tools"),
     ("virtual-assistant-agency", "Virtual Assistant Agency"),
     ("template-marketplace", "Template Marketplace"),
+    ("pdf-compress", "PDF Compress"),
+    ("pdf-to-word", "PDF to Word"),
+    ("pdf-to-jpeg", "PDF to JPEG"),
+    ("compound-interest-calculator", "Compound Interest"),
+    ("investment-returns-calculator", "Investment Returns"),
+    ("retirement-calculator", "Retirement Calculator"),
+    ("debt-payoff-calculator", "Debt Payoff"),
     ("remote-ai-jobs-board", "Remote AI Jobs Board"),
 ]
+
+MONEY_FOOTER_PAGES = [
+    ("affiliate-best-web-hosting", "Best Web Hosting"),
+    ("affiliate-best-email-tools", "Best Email Tools"),
+    ("affiliate-best-crm-software", "Best CRM Software"),
+    ("template-marketplace", "Template Marketplace"),
+    ("pdf-compress", "PDF Compress"),
+    ("pdf-to-word", "PDF to Word"),
+    ("pdf-to-jpeg", "PDF to JPEG"),
+    ("retirement-calculator", "Retirement Calculator"),
+]
+
+FINANCE_CLUSTER = [
+    "compound-interest-calculator",
+    "investment-calculator",
+    "investment-returns-calculator",
+    "retirement-calculator",
+    "budget-calculator",
+    "savings-goal-calculator",
+    "debt-payoff-calculator",
+    "mortgage-calculator",
+    "salary-calculator",
+    "tip-calculator",
+    "discount-calculator",
+    "fuel-cost-calculator",
+]
+
+HEALTH_CLUSTER = [
+    "bmi-calculator",
+    "body-fat-calculator",
+    "bmr-calculator",
+    "calorie-calculator",
+    "macro-calculator",
+    "ideal-weight-calculator",
+    "water-intake-calculator",
+    "sleep-calculator",
+    "blood-alcohol-calculator",
+    "running-pace-calculator",
+    "food-nutrition",
+]
+
+DEV_CLUSTER = [
+    "seo-meta-generator",
+    "json-formatter",
+    "yaml-json-converter",
+    "sql-formatter",
+    "markdown-preview",
+    "regex-tester",
+    "base64",
+    "jwt-decoder",
+    "uuid-generator",
+    "html-preview",
+    "diff-checker",
+    "csv-viewer",
+    "word-counter",
+    "character-counter",
+    "browser-info",
+    "what-is-my-ip",
+]
+
+MONEY_CLUSTER = [
+    "affiliate-best-web-hosting",
+    "affiliate-best-email-tools",
+    "affiliate-best-crm-software",
+    "affiliate-best-ai-writing",
+    "affiliate-best-ai-marketing-tools",
+    "template-marketplace",
+    "virtual-assistant-agency",
+    "pdf-compress",
+    "pdf-to-word",
+    "pdf-to-jpeg",
+    "retirement-calculator",
+]
+
+def smart_description(slug, title, desc):
+    if slug in FORCE_DESCRIPTION_OVERRIDES:
+        return FORCE_DESCRIPTION_OVERRIDES[slug]
+    desc = (desc or "").strip()
+    if not desc or desc == SITE_DESCRIPTION:
+        if slug in GENERIC_DESCRIPTIONS:
+            return GENERIC_DESCRIPTIONS[slug]
+        if "calculator" in slug:
+            return f"Use {title} to get quick, accurate results with a free online calculator."
+        if "converter" in slug or "to-" in slug:
+            return f"Use {title} to convert values quickly with a free online tool."
+        if "generator" in slug or "picker" in slug:
+            return f"Use {title} to create results instantly with a free online generator."
+        if slug.endswith("-tool"):
+            return f"Use {title} online with a fast, free utility."
+        return f"Use {title} online with a fast, free tool."
+    return desc
+
+def make_related_links(items, exclude_slug=None):
+    links = []
+    for tool in items:
+        if tool == exclude_slug:
+            continue
+        links.append(f'    <a href="/{tool}.html" class="cat-link" data-tool="{tool}">{display_name(tool)}</a>')
+        if len(links) >= 6:
+            break
+    return links
+
+def get_related_cluster(slug, category):
+    if slug in FINANCE_CLUSTER:
+        return FINANCE_CLUSTER
+    if slug in HEALTH_CLUSTER:
+        return HEALTH_CLUSTER
+    if slug in DEV_CLUSTER:
+        return DEV_CLUSTER
+    if slug in MONEY_CLUSTER or slug.startswith("pdf-") or slug.startswith("affiliate-best-") or slug in {"template-marketplace", "virtual-assistant-agency"}:
+        return MONEY_CLUSTER
+    if category and category in CATEGORIES:
+        return CATEGORIES[category]
+    return []
 
 def make_breadcrumbs(tool_name, category):
     cat_slug = category.lower().replace(" & ", "-").replace(" ", "-") if category else ""
@@ -375,6 +527,11 @@ def make_footer_links():
             fname = t if t.endswith(".html") else t + ".html"
             lines.append(f'    <a href="/{fname}">{display_name(t)}</a>')
         lines.append(f'  </div>')
+    lines.append('  <div class="footer-col">')
+    lines.append('    <h4>Money Pages</h4>')
+    for slug, label in MONEY_FOOTER_PAGES:
+        lines.append(f'    <a href="/{slug}.html">{label}</a>')
+    lines.append('  </div>')
     return '\n'.join(lines)
 
 def make_trust_links():
@@ -385,6 +542,25 @@ def make_trust_links():
         <a href="/privacy.html">Privacy</a>
         <a href="/terms.html">Terms</a>
       </nav>'''
+
+def make_related_block(slug, category):
+    items = get_related_cluster(slug, category)
+    if not items:
+        return ""
+
+    links = make_related_links(items, exclude_slug=slug)
+    if not links:
+        return ""
+
+    return f'''
+<section class="card related-box" aria-labelledby="related-tools">
+  <h2 id="related-tools">Related Tools</h2>
+  <p class="text-muted">More tools in the same category that people often use next.</p>
+  <div class="cat-grid">
+{chr(10).join(links)}
+  </div>
+</section>
+'''
 
 FOOTER = f'''</div><!-- /container -->
 <footer class="site-footer">
@@ -398,6 +574,31 @@ FOOTER = f'''</div><!-- /container -->
     </div>
   </div>
 </footer>
+<nav class="mobile-dock" aria-label="Mobile navigation">
+  <a href="/">Tools</a>
+  <a href="/#calculators">Calc</a>
+  <a href="/#generators">Generate</a>
+  <a href="/blog/">Learn</a>
+</nav>
+<script src="/analytics.js" defer></script>
+<script>
+(() => {{
+  const header = document.querySelector(".site-header");
+  const toggle = document.querySelector(".menu-toggle");
+  if (!header || !toggle) return;
+  toggle.addEventListener("click", () => {{
+    const open = header.dataset.menuOpen !== "true";
+    header.dataset.menuOpen = String(open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  }});
+  header.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {{
+    header.dataset.menuOpen = "false";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open navigation");
+  }}));
+}})();
+</script>
 </body>
 </html>'''
 
@@ -405,30 +606,23 @@ FOOTER = f'''</div><!-- /container -->
 # ── Homepage ───────────────────────────────────────────────────────────
 
 def build_homepage():
+    homepage_description = "Free online tools, calculators, converters, and utilities. BMI calculator, currency converter, password generator, and 100+ more tools."
     out = make_header()
     out += make_seo_tags(
         title="toolhearth.com — Free Online Tools, Calculators & Utilities",
-        description="Free online tools, calculators, converters, and utilities. BMI calculator, currency converter, password generator, and 100+ more tools.",
+        description=homepage_description,
         canonical=f"{SITE_URL}/",
         json_ld={
             "@context": "https://schema.org",
-            "@graph": [
-                {
-                    "@type": "Organization",
-                    "@id": f"{SITE_URL}/#organization",
-                    "name": "toolhearth",
-                    "url": f"{SITE_URL}/",
-                    "email": "support@toolhearth.com",
-                },
-                {
-                    "@type": "WebSite",
-                    "@id": f"{SITE_URL}/#website",
-                    "name": SITE_NAME,
-                    "url": f"{SITE_URL}/",
-                    "description": SITE_DESCRIPTION,
-                    "publisher": {"@id": f"{SITE_URL}/#organization"},
-                },
-            ],
+            "@type": "WebSite",
+            "name": SITE_NAME,
+            "url": f"{SITE_URL}/",
+            "description": homepage_description,
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": f"{SITE_URL}/?q={{search_term_string}}",
+                "query-input": "required name=search_term_string",
+            },
         },
     )
     out += make_header_close()
@@ -523,9 +717,9 @@ def inject_tool_page(filepath):
 
     # If this page has already been injected, unwrap the previous site shell so
     # repeated builds stay idempotent instead of nesting headers and footers.
-    tool_marker = '<div class="tool-content">'
-    if tool_marker in body_content:
-        body_content = body_content.split(tool_marker)[-1]
+    tool_marker_pattern = r'<div class="tool-content[^"]*"[^>]*>'
+    if re.search(tool_marker_pattern, body_content):
+        body_content = re.split(tool_marker_pattern, body_content)[-1]
         body_content = re.sub(
             r'\s*</div>\s*</div><!-- /container -->\s*<footer class="site-footer">.*$',
             '',
@@ -545,13 +739,34 @@ def inject_tool_page(filepath):
             body_content,
             flags=re.DOTALL,
         ).strip()
+    body_content = re.sub(
+        r'\s*<section class="card related-box" aria-labelledby="related-tools">.*?</section>\s*',
+        '\n',
+        body_content,
+        flags=re.DOTALL,
+    )
+    body_content = re.sub(
+        r'\s*<div class="workbench-kicker">.*?</div>\s*',
+        '\n',
+        body_content,
+        flags=re.DOTALL,
+    )
+    body_content = re.sub(
+        r'\s*<div style="max-width:720px;margin:0 auto;padding:0 1rem 2rem;">.*?<div style="display:flex;flex-wrap:wrap;gap:\.25rem;">.*?</div>\s*</div>\s*',
+        '\n',
+        body_content,
+        flags=re.DOTALL,
+    )
+    for old_url, current_url in LEGACY_LINK_ALIASES.items():
+        body_content = body_content.replace(old_url, current_url)
 
     # Clean up body content - remove inline styles, scripts that were in head
     # Remove the massive <style> block
     body_content = re.sub(r'<style>.*?</style>', '', body_content, flags=re.DOTALL)
     body_content = re.sub(r'(?:</body>\s*</html>\s*)+$', '', body_content, flags=re.IGNORECASE | re.DOTALL).strip()
-    for old_url, current_url in LEGACY_LINK_ALIASES.items():
-        body_content = body_content.replace(old_url, current_url)
+    body_without_scripts = re.sub(r'<script\b.*?</script>', '', body_content, flags=re.IGNORECASE | re.DOTALL)
+    if not is_blog_path(filepath) and not re.search(r'<h1\b', body_without_scripts, flags=re.IGNORECASE):
+        body_content = f'<h1 class="sr-only">{html_escape(title or display_name(os.path.basename(filepath)))}</h1>\n' + body_content
     if "email-form" in body_content or "contact-form" in body_content or "cookie-consent" in body_content:
         body_content = re.sub(
             r'<script>.*?document\.getElementById\("(?:contact-form|email-form)"\).*?</script>',
@@ -566,17 +781,18 @@ def inject_tool_page(filepath):
     slug = basename.replace(".html", "")
     cat = get_category(slug)
     is_blog = os.path.basename(os.path.dirname(filepath)) == "blog"
-    page_path = f"/blog/{slug}.html" if is_blog else f"/{slug}.html"
+    page_path = f"/blog/{slug}" if is_blog else f"/{slug}"
     if is_blog and slug == "index":
         page_path = "/blog/"
     canonical = f"{SITE_URL}{page_path}"
+    desc = smart_description(slug, title, desc)
 
     if is_blog and slug == "index":
         json_ld = {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
             "name": title,
-            "description": desc or title,
+            "description": desc,
             "mainEntityOfPage": canonical,
             "url": canonical,
             "publisher": {
@@ -590,7 +806,7 @@ def inject_tool_page(filepath):
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": title,
-            "description": desc or title,
+            "description": desc,
             "mainEntityOfPage": canonical,
             "url": canonical,
             "publisher": {
@@ -604,7 +820,7 @@ def inject_tool_page(filepath):
             "@context": "https://schema.org",
             "@type": "WebPage",
             "name": title,
-            "description": desc or title,
+            "description": desc,
             "url": canonical,
             "breadcrumb": {
                 "@type": "BreadcrumbList",
@@ -629,15 +845,32 @@ def inject_tool_page(filepath):
     out = make_header()
     out += make_seo_tags(
         title=title,
-        description=desc or SITE_DESCRIPTION,
+        description=desc,
         canonical=canonical,
         og_type="website" if is_blog and slug == "index" else ("article" if is_blog else "website"),
         json_ld=json_ld,
     )
     out += make_header_close()
     out += make_breadcrumbs(slug, cat)
-    out += '<div class="tool-content">\n'
+    category_key = (
+        cat.lower().replace(" & ", "-").replace(" ", "-")
+        if cat else ("article" if is_blog else "utility")
+    )
+    out += (
+        f'<div class="tool-content tool-workbench" '
+        f'data-tool="{html_escape(slug)}" data-category="{html_escape(category_key)}">\n'
+    )
+    if not is_blog and slug != "seo-meta-generator":
+        out += (
+            f'<div class="workbench-kicker">'
+            f'<span>{html_escape(cat or "ToolHearth Utility")}</span>'
+            f'<span>Module / {html_escape(slug.upper())}</span>'
+            f'</div>\n'
+        )
     out += body_content
+    related_block = make_related_block(slug, cat) if not is_blog else ""
+    if related_block and "related-box" not in body_content and "Related Tools" not in body_content:
+        out += '\n' + related_block
     out += '\n</div>\n'
     if ("email-form" in body_content or "contact-form" in body_content or "cookie-consent" in body_content) and "<script>" not in body_content:
         out += make_shared_page_script()
@@ -646,37 +879,44 @@ def inject_tool_page(filepath):
     return out
 
 
-def generate_sitemap():
-    """Generate a sitemap containing only URLs that exist in this static build."""
-    entries = [(f"{SITE_URL}/", "1.0")]
-    for directory, url_prefix in ((ROOT, ""), (os.path.join(ROOT, "blog"), "/blog")):
-        if not os.path.isdir(directory):
-            continue
-        for filename in sorted(os.listdir(directory)):
-            if not filename.endswith(".html") or (directory == ROOT and filename == "index.html"):
-                continue
-            if directory.endswith("blog") and filename == "index.html":
-                url = f"{SITE_URL}/blog/"
-            else:
-                url = f"{SITE_URL}{url_prefix}/{filename}"
-            entries.append((url, "0.7" if url_prefix == "" else "0.6"))
+def is_blog_path(filepath):
+    return os.path.basename(os.path.dirname(filepath)) == "blog"
 
+
+def generate_sitemap():
+    namespace = "http://www.sitemaps.org/schemas/sitemap/0.9"
+    ET.register_namespace("", namespace)
+    urlset = ET.Element(f"{{{namespace}}}urlset")
     today = date.today().isoformat()
-    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
-             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for url, priority in entries:
-        lines.extend([
-            "  <url>",
-            f"    <loc>{html_escape(url)}</loc>",
-            f"    <lastmod>{today}</lastmod>",
-            "    <changefreq>monthly</changefreq>",
-            f"    <priority>{priority}</priority>",
-            "  </url>",
-        ])
-    lines.append("</urlset>")
-    with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as sitemap:
-        sitemap.write("\n".join(lines) + "\n")
-    print(f"[OK] sitemap.xml — {len(entries)} live URLs")
+
+    paths = [("index.html", "/")]
+    paths.extend(
+        (fname, f"/{fname[:-5]}")
+        for fname in sorted(os.listdir(ROOT))
+        if fname.endswith(".html") and fname != "index.html"
+    )
+    blog_dir = os.path.join(ROOT, "blog")
+    if os.path.isdir(blog_dir):
+        paths.extend(
+            (
+                f"blog/{fname}",
+                "/blog/" if fname == "index.html" else f"/blog/{fname[:-5]}",
+            )
+            for fname in sorted(os.listdir(blog_dir))
+            if fname.endswith(".html")
+        )
+
+    for source, route in paths:
+        url = ET.SubElement(urlset, f"{{{namespace}}}url")
+        ET.SubElement(url, f"{{{namespace}}}loc").text = f"{SITE_URL}{route}"
+        ET.SubElement(url, f"{{{namespace}}}lastmod").text = today
+        ET.SubElement(url, f"{{{namespace}}}changefreq").text = "weekly" if route in {"/", "/blog/"} else "monthly"
+        priority = "1.0" if route == "/" else ("0.8" if route == "/blog/" else "0.7")
+        ET.SubElement(url, f"{{{namespace}}}priority").text = priority
+
+    tree = ET.ElementTree(urlset)
+    ET.indent(tree, space="  ")
+    tree.write(os.path.join(ROOT, "sitemap.xml"), encoding="UTF-8", xml_declaration=True)
 
 
 # ── Main ───────────────────────────────────────────────────────────────
@@ -717,9 +957,10 @@ def main():
             except Exception as e:
                 print(f"[FAIL] blog/{fname}: {e}")
 
+    generate_sitemap()
+    print("[OK] sitemap.xml — complete route inventory generated")
     print(f"[OK] {injected} pages injected with template")
     print(f"[OK] Total files: {len([f for f in os.listdir(ROOT) if f.endswith('.html')])} HTML files")
-    generate_sitemap()
 
 if __name__ == "__main__":
     main()
