@@ -81,6 +81,11 @@ CATEGORIES = OrderedDict([
         "lorem-ipsum", "browser-info", "what-is-my-ip",
         "word-counter", "character-counter", "anagram-solver",
         "word-unscrambler", "wordle-solver", "random-word-generator",
+        "accessibility-checker", "website-performance-analyzer",
+        "broken-link-checker", "domain-inspector", "sitemap-generator",
+        "http-status-checker", "responsive-website-checker",
+        "open-graph-image-generator", "keyword-density-checker",
+        "html-to-pdf", "image-compressor", "favicon-extractor",
     ]),
     ("Generators", [
         "qr-generator", "random-number", "random-quote", "random-fact",
@@ -197,6 +202,18 @@ NAME_OVERRIDES = {
     "word-unscrambler": "Word Unscrambler",
     "wordle-solver": "Wordle Solver",
     "random-word-generator": "Random Word Generator",
+    "accessibility-checker": "Accessibility Checker",
+    "website-performance-analyzer": "Website Performance Analyzer",
+    "broken-link-checker": "Broken Link Checker",
+    "domain-inspector": "Domain Inspector",
+    "sitemap-generator": "Sitemap Generator",
+    "http-status-checker": "HTTP Status & Headers Checker",
+    "responsive-website-checker": "Responsive Website Checker",
+    "open-graph-image-generator": "Open Graph Image Generator",
+    "keyword-density-checker": "Keyword Density Checker",
+    "html-to-pdf": "HTML to PDF",
+    "image-compressor": "Image Compressor",
+    "favicon-extractor": "Favicon Extractor",
 }
 
 def display_name(slug):
@@ -349,6 +366,7 @@ def make_header():
 <!-- toolhearth.com -->
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/hc-design.css">
+<link rel="stylesheet" href="/tool-suite.css">
 '''
 
 def make_header_close():
@@ -452,6 +470,22 @@ DEV_CLUSTER = [
     "what-is-my-ip",
 ]
 
+SITE_AUDIT_CLUSTER = [
+    "accessibility-checker",
+    "website-performance-analyzer",
+    "broken-link-checker",
+    "domain-inspector",
+    "sitemap-generator",
+    "http-status-checker",
+    "responsive-website-checker",
+    "open-graph-image-generator",
+    "keyword-density-checker",
+    "html-to-pdf",
+    "image-compressor",
+    "favicon-extractor",
+    "seo-meta-generator",
+]
+
 MONEY_CLUSTER = [
     "affiliate-best-web-hosting",
     "affiliate-best-email-tools",
@@ -495,6 +529,8 @@ def make_related_links(items, exclude_slug=None):
     return links
 
 def get_related_cluster(slug, category):
+    if slug in SITE_AUDIT_CLUSTER:
+        return SITE_AUDIT_CLUSTER
     if slug in FINANCE_CLUSTER:
         return FINANCE_CLUSTER
     if slug in HEALTH_CLUSTER:
