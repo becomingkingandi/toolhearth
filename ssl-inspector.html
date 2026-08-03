@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#8a4b2c">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<!-- toolhearth.com -->
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/hc-design.css">
+<title>SSL Inspector — Certificate & Header Check</title>
+<meta name="description" content="Free SSL/TLS inspector. Paste certificate details and security headers to evaluate expiry, protocol, weak ciphers and missing security headers.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://toolhearth.com/ssl-inspector">
+<meta property="og:site_name" content="toolhearth.com">
+<meta property="og:title" content="SSL Inspector — Certificate & Header Check">
+<meta property="og:description" content="Free SSL/TLS inspector. Paste certificate details and security headers to evaluate expiry, protocol, weak ciphers and missing security headers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolhearth.com/ssl-inspector">
+<meta property="og:image" content="https://toolhearth.com/social-preview.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="toolhearth.com — free online tools and calculators">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SSL Inspector — Certificate & Header Check">
+<meta name="twitter:description" content="Free SSL/TLS inspector. Paste certificate details and security headers to evaluate expiry, protocol, weak ciphers and missing security headers.">
+<meta name="twitter:image" content="https://toolhearth.com/social-preview.svg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "SSL Inspector \u2014 Certificate &amp; Header Check", "description": "Free SSL/TLS inspector. Paste certificate details and security headers to evaluate expiry, protocol, weak ciphers and missing security headers.", "url": "https://toolhearth.com/ssl-inspector", "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://toolhearth.com/"}, {"@type": "ListItem", "position": 2, "name": "SSL Inspector \u2014 Certificate &amp; Header Check", "item": "https://toolhearth.com/ssl-inspector"}]}}</script>
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+  <div class="site-announcement">Free tools. No accounts. Browser-first processing.</div>
+  <div class="header-inner">
+    <a href="/" class="logo" aria-label="ToolHearth home">Tool<span>Hearth</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">☰</button>
+    <nav class="header-nav" id="primary-navigation" aria-label="Primary navigation">
+      <a href="/">Home</a>
+      <a href="/#calculators">Calculators</a>
+      <a href="/#converters">Converters</a>
+      <a href="/#developer-tools">Dev Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+<div class="container" id="main-content">
+<div class="breadcrumbs">
+  <a href="/">Home</a><span class="sep">/</span>
+  <a href="/#developer-tools">Developer Tools</a><span class="sep">/</span>
+  <span class="current">SSL Inspector — Certificate & Header Check</span>
+</div>
+<div class="tool-content tool-workbench" data-tool="ssl-inspector" data-category="developer-tools">
+<div class="workbench-kicker"><span>Developer Tools</span><span>Module / SSL-INSPECTOR</span></div>
+<div class="container">
+<h1>SSL Inspector — Certificate & Header Check</h1>
+<p class="subtitle">Evaluate TLS certificates and security headers from pasted data.</p>
+
+<div class="tool-card">
+  <p class="text-muted">Paste TLS certificate details or security response headers and this tool evaluates them — expiry, issuer, protocol, weak ciphers, HSTS, and missing security headers. Runs locally.</p>
+  <div class="form-group">
+    <label for="ssl-input">Certificate info or security headers</label>
+    <textarea id="ssl-input" rows="10" placeholder="subject: CN=example.com&#10;issuer: CN=R10, O=Let's Encrypt&#10;notAfter: Aug 12 2026&#10;protocol: TLSv1.3&#10;&#10;Strict-Transport-Security: max-age=63072000"></textarea>
+  </div>
+  <p><button class="btn btn-block" type="button" id="ssl-run">Evaluate TLS &amp; security headers</button></p>
+  <div class="result-box" id="ssl-out" hidden></div>
+</div>
+<script>
+(function(){
+  var run=document.getElementById('ssl-run'), inp=document.getElementById('ssl-input'), out=document.getElementById('ssl-out');
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  run.addEventListener('click',function(){
+    var text=inp.value.trim();
+    if(!text){out.hidden=false;out.innerHTML='<strong>Paste certificate/header data first.</strong>';return;}
+    var issues=[], ok=[];
+    // expiry
+    var m=text.match(/notAfter\s*[:=]?\s*([A-Za-z]{3}\s+[0-9]{1,2}\s+20[0-9]{2})/i)||text.match(/expiry\s*[:=]?\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/i);
+    if(m){
+      var d=new Date(m[1]); var now=new Date();
+      var days=Math.round((d-now)/86400000);
+      if(days<0) issues.push('Certificate expired '+Math.abs(days)+' days ago.');
+      else if(days<30) issues.push('Certificate expires in '+days+' days — renew soon.');
+      else ok.push('Certificate valid for '+days+' more days.');
+    }
+    // protocol
+    var p=text.match(/protocol\s*[:=]?\s*(TLSv?[0-9.]+)/i);
+    if(p){
+      var v=p[1].toLowerCase();
+      if(v.indexOf('1.3')>=0) ok.push('Using '+p[1]+' — modern.');
+      else if(v.indexOf('1.2')>=0) ok.push('Using '+p[1]+' — acceptable.');
+      else issues.push('Legacy protocol '+p[1]+' — upgrade to TLS 1.2+ (ideally 1.3).');
+    }
+    // issuer
+    var iss=text.match(/issuer\s*[:=]?\s*CN=([^,]+)/i);
+    if(iss) ok.push('Issued by: '+iss[1]);
+    // HSTS
+    if(/strict-transport-security/i.test(text)){
+      var h=text.match(/strict-transport-security\s*[:=]?\s*(.+)/i);
+      if(h && h[1].indexOf('includeSubDomains')>=0) ok.push('HSTS present with includeSubDomains.');
+      else if(h) issues.push('HSTS present but missing includeSubDomains.');
+    } else issues.push('Missing Strict-Transport-Security (HSTS) header.');
+    // other headers
+    if(!/content-security-policy/i.test(text)) issues.push('Missing Content-Security-Policy header.');
+    if(!/x-frame-options/i.test(text) && !/frame-ancestors/i.test(text)) issues.push('Missing X-Frame-Options / frame-ancestors (clickjacking protection).');
+    if(!/x-content-type-options/i.test(text)) issues.push('Missing X-Content-Type-Options: nosniff.');
+    if(/ssl|tls ?1\.0|rc4|3des/i.test(text)) issues.push('Possible weak cipher/TLS mention — audit cipher suite.');
+    out.hidden=false;
+    out.innerHTML='<strong>'+issues.length+' issues, '+ok.length+' good findings</strong>'
+      +'<ul>'+ok.map(function(s){return '<li class="ok">✅ '+s+'</li>';}).join('')+issues.map(function(s){return '<li class="warn">⚠️ '+s+'</li>';}).join('')+'</ul>'
+      +'<p class="text-muted">For a live scan use <code>sslscan example.com</code> or <code>testssl.sh example.com</code> and paste the output here.</p>';
+  });
+})();
+</script>
+
+<aside class="commercial-funnel" aria-label="Recommended next step">
+  <div>
+    <span class="commercial-eyebrow">Recommended next step</span>
+    <h2>Build on your result</h2>
+    <p>Compare tools for publishing, marketing, and growing your work.</p>
+  </div>
+  <a class="commercial-cta" href="/affiliate-best-ai-marketing-tools.html" data-commercial-cta="affiliate-best-ai-marketing-tools">Explore the guide</a>
+</aside>
+<div class="ad-slot" data-ad-slot="tool-after-content" hidden aria-hidden="true"></div>
+
+<section class="card related-box" aria-labelledby="related-tools">
+  <h2 id="related-tools">Related Tools</h2>
+  <p class="text-muted">More tools in the same category that people often use next.</p>
+  <div class="cat-grid">
+    <a href="/seo-meta-generator.html" class="cat-link" data-tool="seo-meta-generator">SEO Meta Tag Generator</a>
+    <a href="/character-counter.html" class="cat-link" data-tool="character-counter">Character Counter</a>
+    <a href="/keyword-density-checker.html" class="cat-link" data-tool="keyword-density-checker">Keyword Density Checker</a>
+    <a href="/sitemap-generator.html" class="cat-link" data-tool="sitemap-generator">Sitemap Generator</a>
+    <a href="/open-graph-generator.html" class="cat-link" data-tool="open-graph-generator">Open Graph Generator</a>
+    <a href="/http-status-checker.html" class="cat-link" data-tool="http-status-checker">HTTP Status Checker</a>
+  </div>
+</section>
+
+</div>
+</div><!-- /container -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+  <div class="footer-col">
+    <h4>Calculators</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+  <div class="footer-col">
+    <h4>Converters</h4>
+    <a href="/unit-converter.html">Unit Converter</a>
+    <a href="/currency-converter.html">Currency Converter</a>
+    <a href="/inches-to-feet.html">Inches to Feet</a>
+    <a href="/km-to-miles.html">KM to Miles</a>
+    <a href="/mm-to-inches.html">MM to Inches</a>
+    <a href="/temperature-converter.html">Temperature Converter</a>
+    <a href="/timezone-converter.html">Timezone Converter</a>
+    <a href="/text-case-converter.html">Text Case Converter</a>
+  </div>
+  <div class="footer-col">
+    <h4>Developer Tools</h4>
+    <a href="/ascii-table.html">ASCII Table</a>
+    <a href="/regex-tester.html">Regex Tester</a>
+    <a href="/uuid-generator.html">UUID Generator</a>
+    <a href="/jwt-decoder.html">JWT Decoder</a>
+    <a href="/html-preview.html">HTML Preview</a>
+    <a href="/diff-checker.html">Diff Checker</a>
+    <a href="/csv-viewer.html">CSV Viewer</a>
+    <a href="/mime-types.html">MIME Types Reference</a>
+  </div>
+  <div class="footer-col">
+    <h4>Generators</h4>
+    <a href="/qr-generator.html">QR Code Generator</a>
+    <a href="/random-number.html">Random Number Generator</a>
+    <a href="/random-quote.html">Random Quote Generator</a>
+    <a href="/random-fact.html">Random Fact Generator</a>
+    <a href="/random-name-generator.html">Random Name Generator</a>
+    <a href="/password-generator.html">Password Generator</a>
+    <a href="/list-randomizer.html">List Randomizer</a>
+    <a href="/decision-maker.html">Decision Maker</a>
+  </div>
+  <div class="footer-col">
+    <h4>Timers & Clocks</h4>
+    <a href="/pomodoro-timer.html">Pomodoro Timer</a>
+    <a href="/timer.html">Timer</a>
+    <a href="/stopwatch.html">Stopwatch</a>
+    <a href="/metronome.html">Metronome</a>
+    <a href="/world-clock.html">World Clock</a>
+    <a href="/countdown-timer.html">Countdown Timer</a>
+  </div>
+  <div class="footer-col">
+    <h4>Health & Fitness</h4>
+    <a href="/bmi-calculator.html">BMI Calculator</a>
+    <a href="/calorie-calculator.html">Calorie Calculator</a>
+    <a href="/body-fat-calculator.html">Body Fat Calculator</a>
+    <a href="/bmr-calculator.html">BMR Calculator</a>
+    <a href="/ideal-weight-calculator.html">Ideal Weight Calculator</a>
+    <a href="/macro-calculator.html">Macro Calculator</a>
+    <a href="/water-intake-calculator.html">Water Intake Calculator</a>
+    <a href="/sleep-calculator.html">Sleep Calculator</a>
+  </div>
+  <div class="footer-col">
+    <h4>Money Pages</h4>
+    <a href="/affiliate-best-web-hosting.html">Best Web Hosting</a>
+    <a href="/affiliate-best-email-tools.html">Best Email Tools</a>
+    <a href="/affiliate-best-crm-software.html">Best CRM Software</a>
+    <a href="/template-marketplace.html">Template Marketplace</a>
+    <a href="/pdf-compress.html">PDF Compress</a>
+    <a href="/pdf-to-word.html">PDF to Word</a>
+    <a href="/pdf-to-jpeg.html">PDF to JPEG</a>
+    <a href="/retirement-calculator.html">Retirement Calculator</a>
+  </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 <a href="https://toolhearth.com">toolhearth.com</a> &mdash; Free online tools, calculators, and utilities.
+
+      <nav class="footer-trust" aria-label="Company and legal">
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+<nav class="mobile-dock" aria-label="Mobile navigation">
+  <a href="/">Tools</a>
+  <a href="/#calculators">Calc</a>
+  <a href="/#generators">Generate</a>
+  <a href="/blog/">Learn</a>
+</nav>
+<script src="/analytics.js" defer></script>
+<script>
+(() => {
+  const header = document.querySelector(".site-header");
+  const toggle = document.querySelector(".menu-toggle");
+  if (!header || !toggle) return;
+  toggle.addEventListener("click", () => {
+    const open = header.dataset.menuOpen !== "true";
+    header.dataset.menuOpen = String(open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  });
+  header.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
+    header.dataset.menuOpen = "false";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open navigation");
+  }));
+})();
+</script>
+</body>
+</html>
