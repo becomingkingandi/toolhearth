@@ -4,7 +4,7 @@
 .direct-tool .result-panel {
   padding: 22px;
   border: 1px solid var(--forge-line);
-  background: #202224;
+  background: #ffffff;
 }
 .direct-tool .control-grid { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
 .direct-tool .control-grid.stack { grid-template-columns: 1fr; }
@@ -13,7 +13,7 @@
   min-height: 46px;
   border: 1px solid var(--forge-line);
   border-radius: 0;
-  background: #151718;
+  background: #ffffff;
   color: var(--forge-text);
 }
 .direct-tool textarea { min-height: 180px; resize: vertical; }
@@ -22,7 +22,7 @@
   padding: 0 18px;
   border: 0;
   background: var(--forge-blue);
-  color: #111;
+  color: #ffffff;
   font: 700 11px/1 var(--forge-mono);
   letter-spacing: .05em;
   text-transform: uppercase;
@@ -31,11 +31,11 @@
 .direct-tool .status { min-height: 22px; margin: 12px 0 0; color: var(--forge-muted); }
 .direct-tool .status.error { color: #ff9b8c; }
 .direct-tool .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-.direct-tool .metric { padding: 14px; border: 1px solid var(--forge-line); background: #17191a; }
+.direct-tool .metric { padding: 14px; border: 1px solid var(--forge-line); background: #f8fafc; }
 .direct-tool .metric strong { display: block; color: var(--forge-blue); font-size: 22px; }
 .direct-tool .metric span { color: var(--forge-muted); font: 700 9px/1.4 var(--forge-mono); text-transform: uppercase; }
 .direct-tool .result-list { display: grid; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
-.direct-tool .result-list li { padding: 10px 12px; border-left: 3px solid var(--forge-blue); background: #17191a; overflow-wrap: anywhere; }
+.direct-tool .result-list li { padding: 10px 12px; border-left: 3px solid var(--forge-blue); background: #f8fafc; overflow-wrap: anywhere; }
 .direct-tool .result-list li.fail { border-left-color: #ff806f; }
 .direct-tool canvas, .direct-tool iframe, .direct-tool img.preview {
   max-width: 100%;
