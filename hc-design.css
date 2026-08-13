@@ -829,7 +829,7 @@ button:active, input[type="button"]:active, input[type="submit"]:active, .btn:ac
 .affiliate-disclosure,
 .commercial-funnel {
   border: 1px solid var(--forge-line);
-  background: #202224;
+  background: #ffffff;
   color: var(--forge-text);
 }
 
